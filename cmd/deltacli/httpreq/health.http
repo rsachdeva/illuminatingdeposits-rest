@@ -1,0 +1,2 @@
+GET http://{{server}}/v1/health
+Accept: application/json
