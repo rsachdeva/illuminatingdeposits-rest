@@ -1,17 +1,24 @@
 package main
 
 import (
+	"context"
 	"flag"
 	"fmt"
 	"log"
 	"os"
 	"runtime"
 	"runtime/pprof"
+	"time"
 
 	"github.com/pkg/errors"
 	"github.com/rsachdeva/illuminatingdeposits/cmd/deltacli/internal/handlers"
 	"github.com/rsachdeva/illuminatingdeposits/internal/invest"
+	"github.com/rsachdeva/illuminatingdeposits/internal/platform/auth"
+	"github.com/rsachdeva/illuminatingdeposits/internal/platform/conf"
+	"github.com/rsachdeva/illuminatingdeposits/internal/platform/database"
 	"github.com/rsachdeva/illuminatingdeposits/internal/platform/inout"
+	"github.com/rsachdeva/illuminatingdeposits/internal/platform/schema"
+	"github.com/rsachdeva/illuminatingdeposits/internal/user"
 )
 
 func main() {
@@ -23,6 +30,61 @@ func main() {
 }
 
 func run() error {
+	var err error
+
+	var cfg struct {
+		DB struct {
+			User       string `conf:"default:postgres"`
+			Password   string `conf:"default:postgres,noprint"`
+			Host       string `conf:"default:localhost"`
+			Name       string `conf:"default:postgres"`
+			DisableTLS bool   `conf:"default:true"`
+		}
+		Args conf.Args
+	}
+
+	if err := conf.Parse(os.Args[1:], "DEPOSITS", &cfg); err != nil {
+		if err == conf.ErrHelpWanted {
+			usage, err := conf.Usage("DEPOSITS", &cfg)
+			if err != nil {
+				return errors.Wrap(err, "generating usage")
+			}
+			fmt.Println(usage)
+			return nil
+		}
+		return errors.Wrap(err, "error: parsing config")
+	}
+
+	// This is used for multiple commands below.
+	dbConfig := database.Config{
+		User:       cfg.DB.User,
+		Password:   cfg.DB.Password,
+		Host:       cfg.DB.Host,
+		Name:       cfg.DB.Name,
+		DisableTLS: cfg.DB.DisableTLS,
+	}
+
+	switch cfg.Args.Num(0) {
+	case "getBatch":
+		err = getBatch()
+	case "useradd":
+		err = useradd(dbConfig, cfg.Args.Num(1), cfg.Args.Num(2))
+	case "migrate":
+		err = migrate(dbConfig)
+	case "seed":
+		err = seed(dbConfig)
+	default:
+		err = errors.New("Must specify a command")
+	}
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func getBatch() error {
 	var cpuprofile = flag.String("cpuprofile", "", "write cpu profile to `file`")
 	var memprofile = flag.String("memprofile", "", "write memory profile to `file`")
 	flag.Parse()
@@ -43,8 +105,8 @@ func run() error {
 	hi := handlers.Interest{Log: log}
 	var ni invest.NewInterestBanks
 
-	fmt.Println("flag.Arg(0) is", flag.Arg(0))
-	if err := inout.InputJSON(flag.Arg(0), &ni); err != nil {
+	fmt.Println("flag.Arg(1) is", flag.Arg(1))
+	if err := inout.InputJSON(flag.Arg(1), &ni); err != nil {
 		return errors.Wrap(err, "parsing json file for interest")
 	}
 	executionTimes := 1
@@ -67,5 +129,77 @@ func run() error {
 			log.Fatal("could not write memory profile: ", err)
 		}
 	}
+	return nil
+}
+
+func useradd(cfg database.Config, email, password string) error {
+	db, err := database.Open(cfg)
+	if err != nil {
+		return err
+	}
+	defer db.Close()
+
+	if email == "" || password == "" {
+		return errors.New("useradd command must be called with two additional arguments for email and password")
+	}
+
+	fmt.Printf("Admin user will be created with email %q and password %q\n", email, password)
+	fmt.Print("Continue? (1/0) ")
+
+	var confirm bool
+	if _, err := fmt.Scanf("%t\n", &confirm); err != nil {
+		return errors.Wrap(err, "processing response")
+	}
+
+	if !confirm {
+		fmt.Println("Canceling")
+		return nil
+	}
+
+	ctx := context.Background()
+
+	nu := user.NewUser{
+		Email:           email,
+		Password:        password,
+		PasswordConfirm: password,
+		Roles:           []string{auth.RoleAdmin, auth.RoleUser},
+	}
+
+	u, err := user.Create(ctx, db, nu, time.Now())
+	if err != nil {
+		return err
+	}
+
+	fmt.Println("User created with id:", u.ID)
+	return nil
+}
+
+func migrate(cfg database.Config) error {
+	db, err := database.Open(cfg)
+	if err != nil {
+		return err
+	}
+	defer db.Close()
+
+	if err := schema.Migrate(db); err != nil {
+		return err
+	}
+
+	fmt.Println("Migrations complete")
+	return nil
+}
+
+func seed(cfg database.Config) error {
+	db, err := database.Open(cfg)
+	if err != nil {
+		return err
+	}
+	defer db.Close()
+
+	if err := schema.Seed(db); err != nil {
+		return err
+	}
+
+	fmt.Println("Seed data complete")
 	return nil
 }
