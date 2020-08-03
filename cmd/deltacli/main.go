@@ -65,8 +65,8 @@ func run() error {
 	}
 
 	switch cfg.Args.Num(0) {
-	case "getBatch":
-		err = getBatch()
+	case "create":
+		err = create()
 	case "useradd":
 		err = useradd(dbConfig, cfg.Args.Num(1), cfg.Args.Num(2))
 	case "migrate":
@@ -84,7 +84,7 @@ func run() error {
 	return nil
 }
 
-func getBatch() error {
+func create() error {
 	var cpuprofile = flag.String("cpuprofile", "", "write cpu profile to `file`")
 	var memprofile = flag.String("memprofile", "", "write memory profile to `file`")
 	flag.Parse()
@@ -114,7 +114,7 @@ func getBatch() error {
 		executionTimes = 100000
 	}
 	fmt.Println("executionTimes is", executionTimes)
-	if err := hi.BatchGet(os.Stdout, ni, executionTimes); err != nil {
+	if err := hi.Create(os.Stdout, ni, executionTimes); err != nil {
 		return errors.Wrap(err, "printing all banks calculations")
 	}
 

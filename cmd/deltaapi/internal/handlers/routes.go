@@ -22,5 +22,10 @@ func API(shutdown chan os.Signal, db *sqlx.DB, log *log.Logger) http.Handler {
 		app.Handle(http.MethodGet, "/v1/health", c.Health)
 	}
 
+	{
+		i := Interest{log: log}
+		app.Handle(http.MethodPost, "/v1/interests", i.Create)
+	}
+
 	return app
 }

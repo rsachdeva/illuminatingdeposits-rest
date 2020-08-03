@@ -25,11 +25,11 @@ type NewInterestBanks struct {
 	NewBanks []NewBank `json:"banks"`
 }
 
-// InterestBanks is for outout/response
+// InterestBanks is for output/response
 type InterestBanks struct {
 	Banks []Bank `json:"banks"`
 
-	Delta float64 `json:"30daysDelta"`
+	Delta float64 `json:"30daysInterest"`
 }
 
 // NewBank is for input/request with Bank data and its deposits
@@ -43,7 +43,7 @@ type Bank struct {
 	Name     string    `json:"name"`
 	Deposits []Deposit `json:"deposits"`
 
-	Delta float64 `json:"30daysDelta"`
+	Delta float64 `json:"30daysInterest"`
 }
 
 // NewDeposit is is for input/request with Bank data and its deposits
@@ -65,7 +65,7 @@ type Deposit struct {
 	Years  float64 `json:"years"`
 	Amount float64 `json:"amount"`
 
-	Delta float64 `json:"30daysDelta"`
+	Delta float64 `json:"30daysInterest"`
 }
 
 // CalDelta calcuates deltacli - interest for 30 days for output/response Deposit

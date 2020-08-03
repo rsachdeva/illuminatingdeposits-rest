@@ -14,8 +14,8 @@ type Interest struct {
 	Log *log.Logger
 }
 
-// BatchGet calculates deltacli for all banks, sent to the desired writer in JSON format
-func (ih Interest) BatchGet(w io.Writer, nibs invest.NewInterestBanks, executionTimes int) error {
+// Create calculates deltacli for all banks, sent to the desired writer in JSON format
+func (ih Interest) Create(w io.Writer, nibs invest.NewInterestBanks, executionTimes int) error {
 	var ibs invest.InterestBanks
 	var err error
 	for j := 0; j < executionTimes; j++ {
