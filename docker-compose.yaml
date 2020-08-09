@@ -27,3 +27,18 @@ services:
     image: openzipkin/zipkin:2.11
     ports:
       - 9411:9411
+
+  deltaapi:
+    build: .
+    container_name: deltaapi
+    networks:
+      - shared-network
+    command: ./deltaapi
+    ports:
+      - 3000:3000
+      - 4000:4000
+    environment:
+      - DEPOSITS_DB_DISABLE_TLS=true
+    depends_on:
+      - zipkin
+      - db

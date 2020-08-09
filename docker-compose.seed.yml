@@ -1,0 +1,21 @@
+# https://docs.docker.com/compose/compose-file
+# docker-compose up
+# docker-compose stop
+# docker-compose down
+version: '3'
+
+networks:
+  shared-network:
+    driver: bridge
+
+services:
+
+  dbdata:
+    build: .
+    networks:
+      - shared-network
+    command: >
+      bash -c "./deltacli migrate
+      && ./deltacli seed"
+    environment:
+      - DEPOSITS_DB_DISABLE_TLS=true

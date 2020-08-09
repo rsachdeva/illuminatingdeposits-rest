@@ -32,13 +32,15 @@ func main() {
 func run() error {
 	var err error
 
+	//DEPOSITS_DB_DISABLE_TLS=true for local testing with db
+	//DEPOSITS_DB_HOST=192.168.254.33
 	var cfg struct {
 		DB struct {
 			User       string `conf:"default:postgres"`
 			Password   string `conf:"default:postgres,noprint"`
-			Host       string `conf:"default:localhost"`
+			Host       string `conf:"default:db"`
 			Name       string `conf:"default:postgres"`
-			DisableTLS bool   `conf:"default:true"`
+			DisableTLS bool   `conf:"default:false"`
 		}
 		Args conf.Args
 	}

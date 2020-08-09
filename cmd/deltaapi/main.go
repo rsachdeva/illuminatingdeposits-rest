@@ -34,15 +34,15 @@ func run() error {
 	// =========================================================================
 	// Logging
 
-	log := log.New(os.Stdout, "SALES : ", log.LstdFlags|log.Lmicroseconds|log.Llongfile)
+	log := log.New(os.Stdout, "DEPOSITS : ", log.LstdFlags|log.Lmicroseconds|log.Llongfile)
 
 	// =========================================================================
 	// Configuration
 
 	var cfg struct {
 		Web struct {
-			Address         string        `conf:"default:localhost:8000"`
-			Debug           string        `conf:"default:localhost:6060"`
+			Address         string        `conf:"default:0.0.0.0:3000"`
+			Debug           string        `conf:"default:0.0.0.0:4000"`
 			ReadTimeout     time.Duration `conf:"default:5s"`
 			WriteTimeout    time.Duration `conf:"default:5s"`
 			ShutdownTimeout time.Duration `conf:"default:5s"`
@@ -50,12 +50,12 @@ func run() error {
 		DB struct {
 			User       string `conf:"default:postgres"`
 			Password   string `conf:"default:postgres,noprint"`
-			Host       string `conf:"default:localhost"`
+			Host       string `conf:"default:db"`
 			Name       string `conf:"default:postgres"`
 			DisableTLS bool   `conf:"default:true"`
 		}
 		Trace struct {
-			URL         string  `conf:"default:http://localhost:9411/api/v2/spans"`
+			URL         string  `conf:"default:http://zipkin:9411/api/v2/spans"`
 			Service     string  `conf:"default:deltaapi"`
 			Probability float64 `conf:"default:1"`
 		}

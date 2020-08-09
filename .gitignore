@@ -1,4 +1,5 @@
 notes
 my*.json
 My*.svg
+docker-remove.sh
 *.out

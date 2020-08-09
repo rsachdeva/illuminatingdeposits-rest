@@ -3,7 +3,7 @@ Accept: application/json
 
 ###
 
-# curl --location --request POST 'http://localhost:8000/v1/interests'
+# curl --location --request POST 'http://localhost:3000/v1/interests'
 #--header 'Content-Type: application/json'
 #--data-raw '{
 #  "banks": [
@@ -66,7 +66,8 @@ Accept: application/json
 #    }
 #  ]
 #}'
-POST http://localhost:8000/v1/interests
+
+POST http://{{server}}/v1/interests
 Content-Type: application/json
 
 {
