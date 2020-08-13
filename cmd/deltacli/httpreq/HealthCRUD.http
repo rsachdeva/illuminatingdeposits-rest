@@ -1,6 +1,17 @@
 GET http://{{server}}/v1/health
 Accept: application/json
 
+
+###
+
+# curl --location --request POST 'http://localhost:3000/v1/users'
+#--header 'Authorization: Basic cm9oaXRzM0Bkcmlubm92YXRpb25zLnVzOnBoYXNl'
+POST http://{{server}}/v1/users
+Authorization: Basic cm9oaXRzNDAwMDAwMDBAZHJpbm5vdmF0aW9ucy51czpwaGFzZQ==
+
+###
+
+
 ###
 
 # curl --location --request POST 'http://localhost:3000/v1/interests'
