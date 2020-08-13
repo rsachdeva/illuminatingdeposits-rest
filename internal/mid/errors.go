@@ -36,7 +36,7 @@ func Errors(log *log.Logger) web.Middleware {
 			if err := before(ctx, w, r); err != nil {
 
 				// Log the error.
-				log.Printf("%s : ERROR : %+v web.IsShutdown(err) is %v", v.TraceID, err, web.IsShutdown(err))
+				log.Printf("TraceID %s : \n ERROR :\n %+v  web.IsShutdown(err) is %v", v.TraceID, err, web.IsShutdown(err))
 
 				// Respond to the error.
 				if err := web.RespondError(ctx, w, err); err != nil {

@@ -23,6 +23,15 @@ func API(shutdown chan os.Signal, db *sqlx.DB, log *log.Logger) http.Handler {
 	}
 
 	{
+		// Register user handlers.
+		u := Users{db: db}
+
+		// The route can't be authenticated because we need this route to
+		// create the user in the first place.
+		app.Handle(http.MethodPost, "/v1/users", u.Create)
+	}
+
+	{
 		i := Interest{log: log}
 		app.Handle(http.MethodPost, "/v1/interests", i.Create)
 	}

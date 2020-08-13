@@ -67,10 +67,10 @@ func run() error {
 	}
 
 	switch cfg.Args.Num(0) {
-	case "create":
-		err = create()
-	case "useradd":
-		err = useradd(dbConfig, cfg.Args.Num(1), cfg.Args.Num(2))
+	case "createAdmin":
+		err = createAdmin(dbConfig, cfg.Args.Num(1), cfg.Args.Num(2))
+	case "createInterest":
+		err = createInterest()
 	case "migrate":
 		err = migrate(dbConfig)
 	case "seed":
@@ -86,14 +86,14 @@ func run() error {
 	return nil
 }
 
-func create() error {
+func createInterest() error {
 	var cpuprofile = flag.String("cpuprofile", "", "write cpu profile to `file`")
 	var memprofile = flag.String("memprofile", "", "write memory profile to `file`")
 	flag.Parse()
 	if *cpuprofile != "" {
 		f, err := os.Create(*cpuprofile)
 		if err != nil {
-			log.Fatal("could not create CPU profile: ", err)
+			log.Fatal("could not createInterest CPU profile: ", err)
 		}
 		defer f.Close() // error handling omitted for example
 		if err := pprof.StartCPUProfile(f); err != nil {
@@ -102,7 +102,7 @@ func create() error {
 		defer pprof.StopCPUProfile()
 	}
 
-	log := log.New(os.Stdout, "ILLUMINATINGDEPOSITS : ", log.LstdFlags|log.Lmicroseconds|log.Lshortfile)
+	log := log.New(os.Stdout, "DEPOSITS : ", log.LstdFlags|log.Lmicroseconds|log.Lshortfile)
 
 	hi := handlers.Interest{Log: log}
 	var ni invest.NewInterestBanks
@@ -123,7 +123,7 @@ func create() error {
 	if *memprofile != "" {
 		f, err := os.Create(*memprofile)
 		if err != nil {
-			log.Fatal("could not create memory profile: ", err)
+			log.Fatal("could not createInterest memory profile: ", err)
 		}
 		defer f.Close() // error handling omitted for example
 		runtime.GC()    // get up-to-date statistics
@@ -134,7 +134,7 @@ func create() error {
 	return nil
 }
 
-func useradd(cfg database.Config, email, password string) error {
+func createAdmin(cfg database.Config, email, password string) error {
 	db, err := database.Open(cfg)
 	if err != nil {
 		return err
@@ -142,7 +142,7 @@ func useradd(cfg database.Config, email, password string) error {
 	defer db.Close()
 
 	if email == "" || password == "" {
-		return errors.New("useradd command must be called with two additional arguments for email and password")
+		return errors.New("createAdmin command must be called with two additional arguments for email and password")
 	}
 
 	fmt.Printf("Admin user will be created with email %q and password %q\n", email, password)
