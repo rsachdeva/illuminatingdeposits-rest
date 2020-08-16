@@ -76,7 +76,7 @@ func run() error {
 	case "seed":
 		err = seed(dbConfig)
 	default:
-		err = errors.New("Must specify a command")
+		err = errors.New("Must specify a command with correct option createAdmin, createInterest, migrate and seed")
 	}
 
 	if err != nil {
