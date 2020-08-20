@@ -1,10 +1,12 @@
+# Runs from root directory of the app for build context
+
 FROM golang:alpine AS build
 WORKDIR /illuminatingdeposits
 COPY go.mod .
 RUN go mod download
 COPY internal/ ./internal/
+COPY cmd/deltacli ./cmd/deltacli
 WORKDIR /illuminatingdeposits/cmd/deltacli
-COPY cmd/deltacli .
 RUN go build
 
 FROM alpine

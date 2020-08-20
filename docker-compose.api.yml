@@ -29,7 +29,9 @@ services:
       - 9411:9411
 
   deltaapi:
-    build: .
+    build:
+      context: .
+      dockerfile: ./build/Dockerfile.api
     container_name: deltaapi
     networks:
       - shared-network

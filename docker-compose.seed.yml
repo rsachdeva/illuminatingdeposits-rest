@@ -11,7 +11,9 @@ networks:
 services:
 
   dbdata:
-    build: .
+    build:
+      context: .
+      dockerfile: ./build/Dockerfile.seed
     networks:
       - shared-network
     command: >

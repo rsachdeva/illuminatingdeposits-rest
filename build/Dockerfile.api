@@ -1,0 +1,14 @@
+FROM golang:alpine AS build
+WORKDIR /illuminatingdeposits
+COPY go.mod .
+RUN go mod download
+COPY internal/ ./internal/
+COPY cmd/deltaapi ./cmd/deltaapi
+WORKDIR /illuminatingdeposits/cmd/deltaapi
+RUN go build
+
+FROM alpine
+RUN apk update
+RUN apk add bash
+WORKDIR /cmd
+COPY --from=build /illuminatingdeposits/cmd/deltaapi/deltaapi .
