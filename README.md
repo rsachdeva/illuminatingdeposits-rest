@@ -2,23 +2,26 @@ Illuminating Deposits - CLI and API
 
 ![Illuminating Deposits Project Logo](logo.png)
 
-# To start all services:
+# Local Development
+ 
+### To start all services:
 #### docker-compose -f docker-compose.api.yml --build
 
 The --build option is there for any code changes.
 
-## Then Migrate and set up seed data:
+### Then Migrate and set up seed data:
 #### export COMPOSE_IGNORE_ORPHANS=True
 #### docker-compose -f docker-compose.seed.yml up --build
 
-# To view logs of running services:
-#### docker-compose logs -f --tail 1
+COMPOSE_IGNORE_ORPHANS is there for 
+docker compose [setting](https://docs.docker.com/compose/reference/envvars/#compose_ignore_orphans).
 
-# To run HTTP requests:
+##### To view logs of running services in a separate terminal:
+###### docker-compose -f docker-compose.api.yml logs -f --tail 1
 
-See cmd/deltacli/httpreq/HealthCRUD.http
+##### To run HTTP requests:
+See cmd/deltacli/httpreq/HealthCRUD.http for examples.
 Use dev env for localhost or change for prod if running web service at different IP address
-
 
 #### As a Side note to run quick calculations with JSON output without HTTP 
 Run at terminal:
