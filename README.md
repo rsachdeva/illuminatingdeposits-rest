@@ -5,12 +5,11 @@ Illuminating Deposits - CLI and API
 # Local Development
  
 ### To start all services:
-#### docker-compose -f docker-compose.api.yml --build
+#### docker-compose -f docker-compose.api.yml up --build
 
 The --build option is there for any code changes.
 
-### Then Migrate and set up seed data:
-#### export COMPOSE_IGNORE_ORPHANS=True
+### Then Migrate and set up seed data:#### export COMPOSE_IGNORE_ORPHANS=True
 #### docker-compose -f docker-compose.seed.yml up --build
 
 COMPOSE_IGNORE_ORPHANS is there for 
@@ -22,6 +21,11 @@ docker compose [setting](https://docs.docker.com/compose/reference/envvars/#comp
 ##### To run HTTP requests:
 See cmd/deltacli/httpreq/HealthCRUD.http for examples.
 Use dev env for localhost or change for prod if running web service at different IP address
+
+
+### Shutdown 
+
+#### docker-compose -f docker-compose.api.yml down
 
 #### As a Side note to run quick calculations with JSON output without HTTP 
 Run at terminal:
