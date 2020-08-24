@@ -14,7 +14,7 @@ type Interest struct {
 	Log *log.Logger
 }
 
-// Create calculates deltacli for all banks, sent to the desired writer in JSON format
+// Create investment calculates for all banks, sent to the desired writer in JSON format
 func (ih Interest) Create(w io.Writer, nibs invest.NewInterestBanks, executionTimes int) error {
 	var ibs invest.InterestBanks
 	var err error
@@ -22,7 +22,7 @@ func (ih Interest) Create(w io.Writer, nibs invest.NewInterestBanks, executionTi
 		ibs, err = invest.Delta(nibs)
 	}
 	if err != nil {
-		return errors.Wrap(err, "calculating deltacli for invest.NewInterestBanks")
+		return errors.Wrap(err, "create calculating for invest.NewInterestBanks")
 	}
 	return inout.OutputJSON(w, ibs)
 }

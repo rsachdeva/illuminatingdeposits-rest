@@ -17,7 +17,7 @@ services:
     networks:
       - shared-network
     command: >
-      bash -c "./deltacli migrate
-      && ./deltacli seed"
+      bash -c "./dbclient migrate
+      && ./dbclient seed"
     environment:
       - DEPOSITS_DB_DISABLE_TLS=true

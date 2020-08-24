@@ -11,7 +11,7 @@ import (
 	"time"
 
 	"github.com/pkg/errors"
-	"github.com/rsachdeva/illuminatingdeposits/cmd/deltacli/internal/handlers"
+	"github.com/rsachdeva/illuminatingdeposits/cmd/dbclient/internal/handlers"
 	"github.com/rsachdeva/illuminatingdeposits/internal/invest"
 	"github.com/rsachdeva/illuminatingdeposits/internal/platform/auth"
 	"github.com/rsachdeva/illuminatingdeposits/internal/platform/conf"

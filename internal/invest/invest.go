@@ -68,12 +68,12 @@ type Deposit struct {
 	Delta float64 `json:"30daysInterest"`
 }
 
-// CalDelta calcuates deltacli - interest for 30 days for output/response Deposit
+// CalDelta calculates interest for 30 days for output/response Deposit
 func (d Deposit) CalDelta() (float64, error) {
 	e := earned(d)
 	e30Days, err := earned30days(e, d.Years)
 	if err != nil {
-		return 0, errors.Wrapf(err, "deltacli calculation for Account: %s", d.Account)
+		return 0, errors.Wrapf(err, "calculation for Account: %s", d.Account)
 	}
 	return e30Days, nil
 }

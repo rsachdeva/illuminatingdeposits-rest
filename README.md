@@ -19,7 +19,7 @@ docker compose [setting](https://docs.docker.com/compose/reference/envvars/#comp
 ###### docker-compose -f docker-compose.api.yml logs -f --tail 1
 
 ##### To run HTTP requests:
-See cmd/deltacli/httpreq/HealthCRUD.http for examples.
+See cmd/dbclient/httpreq/HealthCRUD.http for examples.
 Use dev env for localhost or change for prod if running web service at different IP address
 
 
