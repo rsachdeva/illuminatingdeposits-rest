@@ -9,7 +9,8 @@ Illuminating Deposits - CLI and API
 
 The --build option is there for any code changes.
 
-### Then Migrate and set up seed data:#### export COMPOSE_IGNORE_ORPHANS=True
+### Then Migrate and set up seed data:
+#### export COMPOSE_IGNORE_ORPHANS=True
 #### docker-compose -f docker-compose.seed.yml up --build
 
 COMPOSE_IGNORE_ORPHANS is there for 
@@ -26,6 +27,7 @@ Use dev env for localhost or change for prod if running web service at different
 ### Shutdown 
 
 #### docker-compose -f docker-compose.api.yml down
+#### docker-compose -f docker-compose.seed.yml down
 
 #### As a Side note to run quick calculations with JSON output without HTTP 
 Run at terminal:

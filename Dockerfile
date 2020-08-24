@@ -6,7 +6,7 @@ COPY internal/ ./internal/
 COPY cmd/ ./cmd/
 WORKDIR /illuminatingdeposits/cmd/dbclient
 RUN go build
-WORKDIR /illuminatingdeposits/cmd/deltaapi
+WORKDIR /illuminatingdeposits/cmd/interestapi
 RUN go build
 
 FROM alpine
@@ -14,4 +14,4 @@ RUN apk update
 RUN apk add bash
 WORKDIR /cmd
 COPY --from=build /illuminatingdeposits/cmd/dbclient/dbclient .
-COPY --from=build /illuminatingdeposits/cmd/deltaapi/deltaapi .
+COPY --from=build /illuminatingdeposits/cmd/interestapi/interestapi .

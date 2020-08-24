@@ -28,14 +28,14 @@ services:
     ports:
       - 9411:9411
 
-  deltaapi:
+  interestapi:
     build:
       context: .
       dockerfile: ./build/Dockerfile.api
-    container_name: deltaapi
+    container_name: interestapi
     networks:
       - shared-network
-    command: ./deltaapi
+    command: ./interestapi
     ports:
       - 3000:3000
       - 4000:4000
