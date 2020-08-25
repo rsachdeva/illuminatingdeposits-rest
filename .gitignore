@@ -3,3 +3,4 @@ my*.json
 My*.svg
 docker-remove.sh
 *.out
+build/Dockerfile.mycalculate
