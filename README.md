@@ -2,7 +2,7 @@ Illuminating Deposits - CLI and API
 
 ![Illuminating Deposits Project Logo](logo.png)
 
-# Local Development
+# Docker Compose Based Deployment
  
 ### To start all services:
 #### docker-compose -f docker-compose.api.yml up --build
@@ -35,4 +35,15 @@ Run at terminal:
 docker build -f ./build/Dockerfile.calculate -t illumcalculate  . && \
 docker run illumcalculate
 
-WIP
+# Push Images to Docker Hub
+
+docker build -t rsachdeva/illuminatingdeposits.api:v0.1 -f ./build/Dockerfile.api .  
+
+docker push rsachdeva/illuminatingdeposits.api:v0.1 (as an example) 
+
+docker build -t rsachdeva/illuminatingdeposits.seed:v0.1 -f ./build/Dockerfile.seed . 
+
+docker push rsachdeva/illuminatingdeposits.seed:v0.1 (as an example) 
+
+
+(Development is WIP)
