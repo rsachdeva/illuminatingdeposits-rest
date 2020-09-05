@@ -12,7 +12,7 @@ services:
 
   dbdata:
     build:
-      context: ..
+      context: ../..
       dockerfile: ./build/Dockerfile.seed
     networks:
       - shared-network
