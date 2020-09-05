@@ -30,7 +30,7 @@ services:
 
   interestapi:
     build:
-      context: .
+      context: ..
       dockerfile: ./build/Dockerfile.api
     container_name: interestapi
     networks:
