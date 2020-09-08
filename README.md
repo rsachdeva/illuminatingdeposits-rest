@@ -1,6 +1,8 @@
-Illuminating Deposits - CLI and API
+# Illuminating Deposits Public Facing REST API
 
-![Illuminating Deposits Project Logo](logo.png)
+<p align="center">
+<img src="./logo.png" alt="Illuminating Deposits Project Logo" title="Illuminating Deposits Project Logo" />
+</p>
 
 # Docker Compose Deployment
  
@@ -17,12 +19,7 @@ COMPOSE_IGNORE_ORPHANS is there for
 docker compose [setting](https://docs.docker.com/compose/reference/envvars/#compose_ignore_orphans).
 
 ##### To view logs of running services in a separate terminal:
-###### docker-compose -f ./deploy/compose/docker-compose.api.yml logs -f --tail 1
-
-##### To run HTTP requests:
-See cmd/httpclient/editorsupport/HealthCRUD.http for examples.
-Use dev env for localhost or change for prod if running web service at different IP address
-
+###### docker-compose -f ./deploy/compose/docker-compose.api.yml logs -f --tail 1  
 
 ### Shutdown 
 
@@ -57,5 +54,9 @@ Access [zipkin](https://zipkin.io/) service at [http://zipkin.127.0.0.1.nip.io/z
 ### Shutdown
 
 kubectl delete -f deploy/kubernetes/.
+
+# HTTP Client Requests:
+See cmd/httpclient/editorsupport/HealthCRUD.http for examples.
+Use dev env for localhost or change for prod if running web service at different IP address
 
 (Development is WIP)
