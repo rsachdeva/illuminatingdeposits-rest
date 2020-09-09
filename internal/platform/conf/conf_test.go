@@ -8,7 +8,7 @@ import (
 	"time"
 
 	"github.com/google/go-cmp/cmp"
-	"github.com/rsachdeva/garagesales/internal/platform/conf"
+	"github.com/rsachdeva/illuminatingdeposits/internal/platform/conf"
 )
 
 const (
