@@ -145,5 +145,87 @@ Content-Type: application/json
 
 ###
 
+# Sampke Response Addition
+
+#HTTP/1.1 201 Created
+#Content-Type: application/json; charset=utf-8
+#Date: Wed, 09 Sep 2020 04:35:52 GMT
+#Content-Length: 827
+
+#{
+#  "banks": [
+#    {
+#      "name": "HAPPIEST",
+#      "deposits": [
+#        {
+#          "account": "1234",
+#          "annualType": "Checking",
+#          "annualRate%": 0,
+#          "years": 1,
+#          "amount": 1,
+#          "30daysInterest": 0
+#        },
+#        {
+#          "account": "1256",
+#          "annualType": "CD",
+#          "annualRate%": 24,
+#          "years": 2,
+#          "amount": 7700,
+#          "30daysInterest": 170.12
+#        },
+#        {
+#          "account": "1111",
+#          "annualType": "CD",
+#          "annualRate%": 1.01,
+#          "years": 10,
+#          "amount": 27000,
+#          "30daysInterest": 23.46
+#        }
+#      ],
+#      "30daysInterest": 193.58
+#    },
+#    {
+#      "name": "NICE",
+#      "deposits": [
+#        {
+#          "account": "1234",
+#          "annualType": "Brokered CD",
+#          "annualRate%": 2.4,
+#          "years": 7,
+#          "amount": 10990,
+#          "30daysInterest": 21.68
+#        }
+#      ],
+#      "30daysInterest": 21.68
+#    },
+#    {
+#      "name": "ANGRY",
+#      "deposits": [
+#        {
+#          "account": "1234",
+#          "annualType": "Brokered CD",
+#          "annualRate%": 5,
+#          "years": 7,
+#          "amount": 10990,
+#          "30daysInterest": 45.16
+#        },
+#        {
+#          "account": "9898",
+#          "annualType": "CD",
+#          "annualRate%": 2.22,
+#          "years": 1,
+#          "amount": 5500,
+#          "30daysInterest": 10.04
+#        }
+#      ],
+#      "30daysInterest": 55.2
+#    }
+#  ],
+#  "30daysInterest": 270.46
+#}
+
+# Response code: 201 (Created); Time: 182ms; Content length: 827 bytes
+###
+
 
 
