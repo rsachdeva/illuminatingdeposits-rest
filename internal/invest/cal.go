@@ -3,6 +3,7 @@
 package invest
 
 import (
+	"fmt"
 	"math"
 )
 
@@ -22,13 +23,12 @@ func Delta(ni NewInterestBanks) (InterestBanks, error) {
 				Years:       nd.Years,
 				Amount:      nd.Amount,
 			}
-			delta, err := d.CalDelta()
+			err := d.CalDelta()
 			if err != nil {
 				return i, err
 			}
-			d.Delta = roundToNearest(delta)
 			ds = append(ds, d)
-			bDelta = bDelta + roundToNearest(delta)
+			bDelta = bDelta + d.Delta
 		}
 		bk := Bank{
 			Name:     nb.Name,
@@ -61,7 +61,7 @@ func compoundInterest(apy float64, years float64, amount float64) float64 {
 	return intEarned
 }
 
-func earned(d Deposit) float64 {
+func earned(d *Deposit) float64 {
 	switch d.AccountType {
 	case Sa, CD:
 		return compoundInterest(d.APY, d.Years, d.Amount)
@@ -70,4 +70,13 @@ func earned(d Deposit) float64 {
 	default:
 		return 0.0
 	}
+}
+
+func earned30days(iEarned float64, years float64) (float64, error) {
+	if years*365 < 30 {
+		return 0, fmt.Errorf("NewDeposit period in years %v should not be less than 30 days", years)
+	}
+	i1Day := iEarned / (years * 365)
+	i30 := i1Day * 30
+	return math.Round(i30*100) / 100, nil
 }

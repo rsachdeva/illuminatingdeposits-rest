@@ -2,9 +2,6 @@
 package invest
 
 import (
-	"fmt"
-	"math"
-
 	"github.com/pkg/errors"
 )
 
@@ -69,20 +66,12 @@ type Deposit struct {
 }
 
 // CalDelta calculates interest for 30 days for output/response Deposit
-func (d Deposit) CalDelta() (float64, error) {
+func (d *Deposit) CalDelta() error {
 	e := earned(d)
 	e30Days, err := earned30days(e, d.Years)
 	if err != nil {
-		return 0, errors.Wrapf(err, "calculation for Account: %s", d.Account)
+		return errors.Wrapf(err, "calculation for Account: %s", d.Account)
 	}
-	return e30Days, nil
-}
-
-func earned30days(iEarned float64, years float64) (float64, error) {
-	if years*365 < 30 {
-		return 0, fmt.Errorf("NewDeposit period in years %v should not be less than 30 days", years)
-	}
-	i1Day := iEarned / (years * 365)
-	i30 := i1Day * 30
-	return math.Round(i30*100) / 100, nil
+	d.Delta = roundToNearest(e30Days)
+	return nil
 }
