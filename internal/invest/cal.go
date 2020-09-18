@@ -8,41 +8,56 @@ import (
 )
 
 // Delta calculations for all banks
-func Delta(ni NewInterestBanks) (InterestBanks, error) {
-	var i InterestBanks
-	var ibs []Bank
-	var iDelta float64
+func Delta(ni NewBanksRoot) (BanksRoot, error) {
+	var bks []Bank
+	var delta float64
+	bks, delta, err := banksWithDelta(ni, bks, delta)
+	if err != nil {
+		return BanksRoot{}, err
+	}
+	intBanks := BanksRoot{
+		Banks: bks,
+		Delta: roundToNearest(delta),
+	}
+	return intBanks, nil
+}
+
+func banksWithDelta(ni NewBanksRoot, bks []Bank, delta float64) ([]Bank, float64, error) {
 	for _, nb := range ni.NewBanks {
 		var ds []Deposit
 		var bDelta float64
-		for _, nd := range nb.NewDeposits {
-			d := Deposit{
-				Account:     nd.Account,
-				AccountType: nd.AccountType,
-				APY:         nd.APY,
-				Years:       nd.Years,
-				Amount:      nd.Amount,
-			}
-			err := d.CalDelta()
-			if err != nil {
-				return i, err
-			}
-			ds = append(ds, d)
-			bDelta = bDelta + d.Delta
+		ds, bDelta, err := depositsWithDelta(nb, ds, bDelta)
+		if err != nil {
+			return nil, 0, err
 		}
 		bk := Bank{
 			Name:     nb.Name,
 			Deposits: ds,
 			Delta:    roundToNearest(bDelta),
 		}
-		ibs = append(ibs, bk)
-		iDelta = iDelta + bk.Delta
+		bks = append(bks, bk)
+		delta = delta + bk.Delta
 	}
-	i = InterestBanks{
-		Banks: ibs,
-		Delta: roundToNearest(iDelta),
+	return bks, delta, nil
+}
+
+func depositsWithDelta(nb NewBank, ds []Deposit, bDelta float64) ([]Deposit, float64, error) {
+	for _, nd := range nb.NewDeposits {
+		d := Deposit{
+			Account:     nd.Account,
+			AccountType: nd.AccountType,
+			APY:         nd.APY,
+			Years:       nd.Years,
+			Amount:      nd.Amount,
+		}
+		err := d.CalDelta()
+		if err != nil {
+			return nil, 0, err
+		}
+		ds = append(ds, d)
+		bDelta = bDelta + d.Delta
 	}
-	return i, nil
+	return ds, bDelta, nil
 }
 
 func roundToNearest(n float64) float64 {

@@ -24,7 +24,7 @@ func (*Interest) Create(ctx context.Context, w http.ResponseWriter, r *http.Requ
 	defer span.End()
 
 	debug.Dump(r)
-	var nibs invest.NewInterestBanks
+	var nibs invest.NewBanksRoot
 	if err := web.Decode(r, &nibs); err != nil {
 		return errors.Wrap(err, "decoding new banks and deposits")
 	}

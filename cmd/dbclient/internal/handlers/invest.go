@@ -15,14 +15,14 @@ type Interest struct {
 }
 
 // Create investment calculates for all banks, sent to the desired writer in JSON format
-func (ih Interest) Create(w io.Writer, nibs invest.NewInterestBanks, executionTimes int) error {
-	var ibs invest.InterestBanks
+func (ih Interest) Create(w io.Writer, nibs invest.NewBanksRoot, executionTimes int) error {
+	var ibs invest.BanksRoot
 	var err error
 	for j := 0; j < executionTimes; j++ {
 		ibs, err = invest.Delta(nibs)
 	}
 	if err != nil {
-		return errors.Wrap(err, "create calculating for invest.NewInterestBanks")
+		return errors.Wrap(err, "create calculating for invest.NewBanksRoot")
 	}
 	return inout.OutputJSON(w, ibs)
 }

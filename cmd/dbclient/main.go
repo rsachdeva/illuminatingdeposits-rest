@@ -105,7 +105,7 @@ func createInterest() error {
 	log := log.New(os.Stdout, "DEPOSITS : ", log.LstdFlags|log.Lmicroseconds|log.Lshortfile)
 
 	hi := handlers.Interest{Log: log}
-	var ni invest.NewInterestBanks
+	var ni invest.NewBanksRoot
 
 	fmt.Println("flag.Arg(1) is", flag.Arg(1))
 	if err := inout.InputJSON(flag.Arg(1), &ni); err != nil {
