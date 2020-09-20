@@ -16,7 +16,7 @@ import (
 	openzipkin "github.com/openzipkin/zipkin-go"
 	zipkinHTTP "github.com/openzipkin/zipkin-go/reporter/http"
 	"github.com/pkg/errors"
-	"github.com/rsachdeva/illuminatingdeposits/cmd/interestapi/internal/handlers"
+	"github.com/rsachdeva/illuminatingdeposits/cmd/interestrestapi/internal/handlers"
 	"github.com/rsachdeva/illuminatingdeposits/internal/platform/conf"
 	"github.com/rsachdeva/illuminatingdeposits/internal/platform/database"
 	"go.opencensus.io/trace"
@@ -56,7 +56,7 @@ func run() error {
 		}
 		Trace struct {
 			URL         string  `conf:"default:http://zipkin:9411/api/v2/spans"`
-			Service     string  `conf:"default:interestapi"`
+			Service     string  `conf:"default:interestrestapi"`
 			Probability float64 `conf:"default:1"`
 		}
 	}
