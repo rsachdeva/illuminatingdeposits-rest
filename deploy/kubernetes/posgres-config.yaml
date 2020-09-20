@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgres-config-deposits
+  labels:
+    app: postgres
+data:
+  DEPOSITS_DB_POSTGRES_HOST: postgres
+  DEPOSITS_DB_POSTGRES_USER: postgres
+  DEPOSITS_DB_POSTGRES_PASSWORD: postgres
+  DEPOSITS_DB_DISABLE_TLS: true

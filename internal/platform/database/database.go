@@ -2,6 +2,7 @@ package database
 
 import (
 	"context"
+	"log"
 	"net/url"
 
 	"github.com/jmoiron/sqlx"
@@ -42,6 +43,8 @@ func Open(cfg Config) (*sqlx.DB, error) {
 		RawQuery: q.Encode(),
 	}
 
+	log.Println("u.String() is ", u.String())
+	// postgres://postgres:postgres@db/postgres?sslmode=disable&timezone=utc when connecting (for debugging)
 	return sqlx.Open("postgres", u.String())
 }
 
