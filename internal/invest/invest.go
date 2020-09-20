@@ -17,13 +17,13 @@ const (
 	Br = "Brokered CD"
 )
 
-// NewBanksRoot is for input/request
-type NewBanksRoot struct {
+// NewInterest is for input/request
+type NewInterest struct {
 	NewBanks []NewBank `json:"banks"`
 }
 
-// BanksRoot is for output/response
-type BanksRoot struct {
+// Interest is for output/response
+type Interest struct {
 	Banks []Bank `json:"banks"`
 
 	Delta float64 `json:"30daysInterest"`

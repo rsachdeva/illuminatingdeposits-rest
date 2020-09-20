@@ -24,15 +24,15 @@ func (*Interest) Create(ctx context.Context, w http.ResponseWriter, r *http.Requ
 	defer span.End()
 
 	debug.Dump(r)
-	var nibs invest.NewBanksRoot
-	if err := web.Decode(r, &nibs); err != nil {
-		return errors.Wrap(err, "decoding new banks and deposits")
+	var nin invest.NewInterest
+	if err := web.Decode(r, &nin); err != nil {
+		return errors.Wrap(err, "decoding new interest calculation request with banks and deposits")
 	}
 
-	ibs, err := invest.Delta(nibs)
+	in, err := invest.Delta(nin)
 	if err != nil {
-		return errors.Wrap(err, "creating new calculation for delta")
+		return errors.Wrap(err, "creating new interest calculations")
 	}
 
-	return web.Respond(ctx, w, &ibs, http.StatusCreated)
+	return web.Respond(ctx, w, &in, http.StatusCreated)
 }

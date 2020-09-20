@@ -8,25 +8,23 @@ import (
 )
 
 // Delta calculations for all banks
-func Delta(ni NewBanksRoot) (BanksRoot, error) {
-	var bks []Bank
-	var delta float64
-	bks, delta, err := banksWithDelta(ni, bks, delta)
+func Delta(ni NewInterest) (Interest, error) {
+	bks, delta, err := banksWithDelta(ni)
 	if err != nil {
-		return BanksRoot{}, err
+		return Interest{}, err
 	}
-	intBanks := BanksRoot{
+	intBanks := Interest{
 		Banks: bks,
 		Delta: roundToNearest(delta),
 	}
 	return intBanks, nil
 }
 
-func banksWithDelta(ni NewBanksRoot, bks []Bank, delta float64) ([]Bank, float64, error) {
+func banksWithDelta(ni NewInterest) ([]Bank, float64, error) {
+	var bks []Bank
+	var delta float64
 	for _, nb := range ni.NewBanks {
-		var ds []Deposit
-		var bDelta float64
-		ds, bDelta, err := depositsWithDelta(nb, ds, bDelta)
+		ds, bDelta, err := depositsWithDelta(nb)
 		if err != nil {
 			return nil, 0, err
 		}
@@ -41,7 +39,9 @@ func banksWithDelta(ni NewBanksRoot, bks []Bank, delta float64) ([]Bank, float64
 	return bks, delta, nil
 }
 
-func depositsWithDelta(nb NewBank, ds []Deposit, bDelta float64) ([]Deposit, float64, error) {
+func depositsWithDelta(nb NewBank) ([]Deposit, float64, error) {
+	var ds []Deposit
+	var bDelta float64
 	for _, nd := range nb.NewDeposits {
 		d := Deposit{
 			Account:     nd.Account,

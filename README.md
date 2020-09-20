@@ -56,7 +56,7 @@ Access [zipkin](https://zipkin.io/) service at [http://zipkin.127.0.0.1.nip.io/z
 kubectl delete -f deploy/kubernetes/.
 
 # HTTP Client Requests:
-See cmd/httpclient/editorsupport/HealthCRUD.http for request examples and sample response.
+See resteditorclient/HealthCRUD.http for request examples and sample response.
 Use dev env for localhost or change for prod if running web service at different IP address
 
 (Development is WIP)

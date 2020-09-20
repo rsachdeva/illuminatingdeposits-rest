@@ -1,3 +1,4 @@
+# Ready to accept requests with db ready check
 GET http://{{server}}/v1/health
 Accept: application/json
 
@@ -77,7 +78,6 @@ Authorization: Basic cm9oaXRzNDAwMDAwMDBAZHJpbm5vdmF0aW9ucy51czpwaGFzZQ==
 #    }
 #  ]
 #}'
-
 POST http://{{server}}/v1/interests
 Content-Type: application/json
 
