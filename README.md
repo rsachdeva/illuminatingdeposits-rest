@@ -1,9 +1,12 @@
-# Illuminating Deposits Public Facing REST API
+# Illuminating Deposits
+# All command should be executed from the root directory (illuminatingdeposits) of the project 
+(Development is WIP)
 
 <p align="center">
 <img src="./logo.png" alt="Illuminating Deposits Project Logo" title="Illuminating Deposits Project Logo" />
 </p>
 
+# REST API using JSON for Messages
 # Docker Compose Deployment
  
 ### To start all services:
@@ -59,4 +62,6 @@ kubectl delete -f deploy/kubernetes/.
 See resteditorclient/HealthCRUD.http for request examples and sample response.
 Use dev env for localhost or change for prod if running web service at different IP address
 
-(Development is WIP)
+# TLS files
+docker build -t tlscert:v0.1 -f ./build/Dockerfile.openssl . && \
+docker run -v $PWD/config/tls:/tls -ti tlscert:v0.1
