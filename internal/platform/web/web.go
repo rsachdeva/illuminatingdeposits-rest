@@ -28,7 +28,7 @@ type Values struct {
 	Start      time.Time
 }
 
-// Handler is the signature used by all application handlers in this service.
+// Handler is the signature used by all application interestsvc in this service.
 type Handler func(context.Context, http.ResponseWriter, *http.Request) error
 
 // App is the entrypoint into our application and what controls the context of

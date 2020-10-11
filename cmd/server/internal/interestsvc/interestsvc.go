@@ -1,4 +1,4 @@
-package handlers
+package interestsvc
 
 import (
 	"log"
@@ -10,8 +10,8 @@ import (
 	"github.com/rsachdeva/illuminatingdeposits/internal/platform/web"
 )
 
-// API constructs an http.Handler with all application routes defined.
-func API(shutdown chan os.Signal, db *sqlx.DB, log *log.Logger) http.Handler {
+// Register constructs an http.Handler with all application routes defined.
+func Register(shutdown chan os.Signal, db *sqlx.DB, log *log.Logger) http.Handler {
 
 	// Construct the web.App which holds all routes as well as common Middleware.
 	app := web.NewApp(shutdown, log, mid.Logger(log), mid.Errors(log), mid.Metrics(), mid.Panics(log))
@@ -23,7 +23,7 @@ func API(shutdown chan os.Signal, db *sqlx.DB, log *log.Logger) http.Handler {
 	}
 
 	{
-		// Register user handlers.
+		// Register user interestsvc.
 		u := Users{db: db}
 
 		// The route can't be authenticated because we need this route to

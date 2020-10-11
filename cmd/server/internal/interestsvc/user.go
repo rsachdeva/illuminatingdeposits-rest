@@ -1,4 +1,4 @@
-package handlers
+package interestsvc
 
 import (
 	"context"
@@ -14,13 +14,13 @@ import (
 	"go.opencensus.io/trace"
 )
 
-// Users holds handlers for dealing with user.
+// Users holds interestsvc for dealing with user.
 type Users struct {
 	db *sqlx.DB
 }
 
 func (us *Users) Create(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
-	ctx, span := trace.StartSpan(ctx, "handlers.Users.Create")
+	ctx, span := trace.StartSpan(ctx, "interestsvc.Users.Create")
 	defer span.End()
 
 	email, pass, ok := r.BasicAuth()

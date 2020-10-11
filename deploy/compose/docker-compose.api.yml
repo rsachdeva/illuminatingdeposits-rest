@@ -28,14 +28,14 @@ services:
     ports:
       - 9411:9411
 
-  interestrestapi:
+  server:
     build:
       context: ../..
       dockerfile: ./build/Dockerfile.api
-    container_name: interestrestapi
+    container_name: server
     networks:
       - shared-network
-    command: ./interestrestapi
+    command: ./server
     ports:
       - 3000:3000
       - 4000:4000

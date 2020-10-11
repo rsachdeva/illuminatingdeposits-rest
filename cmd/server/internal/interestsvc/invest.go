@@ -1,4 +1,4 @@
-package handlers
+package interestsvc
 
 import (
 	"context"
@@ -20,7 +20,7 @@ type Interest struct {
 // Create decodes the body of a request to create interest calculations. The full
 // banks and deposit details with generated 30 days Interest fields are sent back in the response.
 func (*Interest) Create(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
-	ctx, span := trace.StartSpan(ctx, "handlers.Invest.Create")
+	ctx, span := trace.StartSpan(ctx, "interestsvc.Invest.Create")
 	defer span.End()
 
 	debug.Dump(r)

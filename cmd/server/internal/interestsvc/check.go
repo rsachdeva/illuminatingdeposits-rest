@@ -1,4 +1,4 @@
-package handlers
+package interestsvc
 
 import (
 	"context"
@@ -19,7 +19,7 @@ type Check struct {
 
 // Health validates the service is healthy and ready to accept requests.
 func (c *Check) Health(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
-	ctx, span := trace.StartSpan(ctx, "handlers.Check.Health")
+	ctx, span := trace.StartSpan(ctx, "interestsvc.Check.Health")
 	defer span.End()
 
 	var health struct {

@@ -3,12 +3,12 @@ WORKDIR /illuminatingdeposits
 COPY go.mod .
 RUN go mod download
 COPY internal/ ./internal/
-COPY cmd/interestrestapi ./cmd/interestrestapi
-WORKDIR /illuminatingdeposits/cmd/interestrestapi
+COPY cmd/server ./cmd/server
+WORKDIR /illuminatingdeposits/cmd/server
 RUN go build
 
 FROM alpine
 RUN apk update
 RUN apk add bash
 WORKDIR /cmd
-COPY --from=build /illuminatingdeposits/cmd/interestrestapi/interestrestapi .
+COPY --from=build /illuminatingdeposits/cmd/server/server .
