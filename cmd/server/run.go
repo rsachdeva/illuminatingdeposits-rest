@@ -6,8 +6,6 @@ import (
 	"net/http"
 	_ "net/http/pprof" // Register the pprof interestsvc
 	"os"
-	"os/signal"
-	"syscall"
 
 	"github.com/pkg/errors"
 	"github.com/rsachdeva/illuminatingdeposits/cmd/server/internal/rest"
@@ -105,9 +103,11 @@ func RunServerWithRegisteredService() error {
 	// Start API Service
 
 	// Make a channel to listen for an interrupt or terminate signal from the OS.
-	// Use a buffered channel because the signal package requires it.
+	// Set up channel on which to send signal notifications.
+	// We must use a buffered channel or risk missing the signal
+	// if we're not ready to receive when the signal is sent.
+	// https://golang.org/pkg/os/signal/#Notify
 	shutdownCh := make(chan os.Signal, 1)
-	signal.Notify(shutdownCh, os.Interrupt, syscall.SIGTERM)
 
 	server := NewServer(cfg)
 	rest.RegisterInterestService(server, log, db, shutdownCh)

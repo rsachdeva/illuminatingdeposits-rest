@@ -9,7 +9,7 @@ import (
 	"github.com/pkg/errors"
 )
 
-// Respond converts a Go value to JSON and sends it to the client.
+// Respond converts a Go value to JSON and sends it to the cli.
 func Respond(ctx context.Context, w http.ResponseWriter, data interface{}, statusCode int) error {
 
 	// Set the status code for the request logger middleware.
@@ -31,13 +31,13 @@ func Respond(ctx context.Context, w http.ResponseWriter, data interface{}, statu
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	w.WriteHeader(statusCode)
 	if _, err := w.Write(res); err != nil {
-		return errors.Wrap(err, "writing to client")
+		return errors.Wrap(err, "writing to cli")
 	}
 
 	return nil
 }
 
-// RespondError sends an error reponse back to the client.
+// RespondError sends an error reponse back to the cli.
 func RespondError(ctx context.Context, w http.ResponseWriter, err error) error {
 
 	// If the error was of the type *web.ErrorRequest, the handler has

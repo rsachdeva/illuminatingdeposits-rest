@@ -10,14 +10,14 @@ networks:
 
 services:
 
-  dbdata:
+  dbcli:
     build:
       context: ../..
       dockerfile: ./build/Dockerfile.seed
     networks:
       - shared-network
     command: >
-      bash -c "./dbclient migrate
-      && ./dbclient seed"
+      bash -c "./dbcli migrate
+      && ./dbcli seed"
     environment:
       - DEPOSITS_DB_DISABLE_TLS=true

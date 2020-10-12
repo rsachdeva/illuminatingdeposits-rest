@@ -5,15 +5,15 @@ WORKDIR /illuminatingdeposits
 COPY go.mod .
 RUN go mod download
 COPY internal/ ./internal/
-COPY cmd/dbclient ./cmd/dbclient
-WORKDIR /illuminatingdeposits/cmd/dbclient
+COPY tools/calcli ./tools/calcli
+WORKDIR /illuminatingdeposits/tools/calcli
 RUN go build
 
 FROM alpine
 RUN apk update
 RUN apk add bash
-WORKDIR /cmd
-COPY --from=build /illuminatingdeposits/cmd/dbclient/dbclient .
-COPY --from=build /illuminatingdeposits/cmd/dbclient/data/sampleinvest.json ./data/
-ENTRYPOINT ["./dbclient", "createInterest"]
+WORKDIR /tools
+COPY --from=build /illuminatingdeposits/tools/calcli .
+COPY --from=build /illuminatingdeposits/tools/calcli/data/sampleinvest.json ./data/
+ENTRYPOINT ["./calcli", "createInterest"]
 CMD ["./data/sampleinvest.json"]

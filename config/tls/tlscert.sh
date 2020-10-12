@@ -6,7 +6,7 @@ CN=drinnovations.us
 # out ca.key
 openssl genrsa -passout pass:1111 -des3 -out ca.key 4096
 
-# out ca.crt from ca.key  -- ca.crt used by client, hence shared
+# out ca.crt from ca.key  -- ca.crt used by cli, hence shared
 openssl req -passin pass:1111 -new -x509 -days 3650 -key ca.key -out ca.crt -subj "/CN=${CN}"
 
 # out server.pem format from server.key -- server.pem used by server, hence shared

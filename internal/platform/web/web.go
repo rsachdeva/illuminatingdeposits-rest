@@ -55,7 +55,7 @@ func NewApp(shutdown chan os.Signal, log *log.Logger, mw ...Middleware) *App {
 	// the initial span and annotate it with information about the request/response.
 	//
 	// This is configured to use the W3C TraceContext standard to set the remote
-	// parent if an client request includes the appropriate headers.
+	// parent if an cli request includes the appropriate headers.
 	// https://w3c.github.io/trace-context/
 	app.och = &ochttp.Handler{
 		Handler:     app.mux,
@@ -68,7 +68,7 @@ func NewApp(shutdown chan os.Signal, log *log.Logger, mw ...Middleware) *App {
 // Handle associates a handler function with an HTTP Method and URL pattern.
 //
 // It converts our custom handler type to the std lib Handler type. It captures
-// errors from the handler and serves them to the client in a uniform way.
+// errors from the handler and serves them to the cli in a uniform way.
 func (a *App) Handle(method, url string, h Handler, mw ...Middleware) {
 
 	// First wrap handler specific middleware around this handler.

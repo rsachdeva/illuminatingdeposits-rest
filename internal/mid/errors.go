@@ -11,7 +11,7 @@ import (
 )
 
 // Errors handles errors coming out of the call chain. It detects normal
-// application errors which are used to respond to the client in a uniform way.
+// application errors which are used to respond to the cli in a uniform way.
 // Unexpected errors (status >= 500) are logged.
 func Errors(log *log.Logger) web.Middleware {
 

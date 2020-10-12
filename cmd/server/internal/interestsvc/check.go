@@ -29,7 +29,7 @@ func (c *Check) Health(ctx context.Context, w http.ResponseWriter, r *http.Reque
 	// Check if the database is ready.
 	if err := database.StatusCheck(ctx, c.db); err != nil {
 
-		// If the database is not ready we will tell the client and use a 500
+		// If the database is not ready we will tell the cli and use a 500
 		// status. Do not respond by just returning an error because further up in
 		// the call stack will interpret that as an unhandled error.
 		health.Status = "db not ready"
