@@ -2,6 +2,7 @@ package rest
 
 import (
 	"fmt"
+	"log"
 	"os"
 	"time"
 
@@ -11,11 +12,12 @@ import (
 
 type AppConfig struct {
 	Web struct {
-		Address         string        `conf:"default:0.0.0.0:3000"`
-		Debug           string        `conf:"default:0.0.0.0:4000"`
-		ReadTimeout     time.Duration `conf:"default:5s"`
-		WriteTimeout    time.Duration `conf:"default:5s"`
-		ShutdownTimeout time.Duration `conf:"default:5s"`
+		ServiceServerTLS bool          `conf:"default:false"`
+		Address          string        `conf:"default:0.0.0.0:3000"`
+		Debug            string        `conf:"default:0.0.0.0:4000"`
+		ReadTimeout      time.Duration `conf:"default:5s"`
+		WriteTimeout     time.Duration `conf:"default:5s"`
+		ShutdownTimeout  time.Duration `conf:"default:5s"`
 	}
 	DB struct {
 		User       string `conf:"default:postgres"`
@@ -43,5 +45,6 @@ func ParsedConfig(cfg AppConfig) (AppConfig, error) {
 		}
 		return AppConfig{}, errors.Wrap(err, "parsing config")
 	}
+	log.Printf("AppConfig is %v", cfg)
 	return cfg, nil
 }

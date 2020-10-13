@@ -1,6 +1,7 @@
 package main
 
 import (
+	"crypto/tls"
 	_ "expvar" // Register the expvar interestsvc
 	"log"
 	"net/http"
@@ -109,7 +110,11 @@ func RunServerWithRegisteredService() error {
 	// https://golang.org/pkg/os/signal/#Notify
 	shutdownCh := make(chan os.Signal, 1)
 
-	server := NewServer(cfg)
+	var tl *tls.Config
+	if cfg.Web.ServiceServerTLS {
+		tl = tlsConfig()
+	}
+	server := NewServer(cfg, tl)
 	rest.RegisterInterestService(server, log, db, shutdownCh)
 
 	err = rest.ListenAndServeWithShutdown(server, log, shutdownCh, cfg)
@@ -120,11 +125,25 @@ func RunServerWithRegisteredService() error {
 	return nil
 }
 
-func NewServer(cfg rest.AppConfig) *http.Server {
+func tlsConfig() *tls.Config {
+	certFile := "config/tls/server.crt"
+	keyFile := "config/tls/server.key"
+	cert, _ := tls.LoadX509KeyPair(certFile, keyFile)
+	tl := tls.Config{
+		Certificates: []tls.Certificate{cert},
+	}
+	return &tl
+}
+
+func NewServer(cfg rest.AppConfig, tl *tls.Config) *http.Server {
+	log.Printf("tl passed is %+v and is nil check is %v", tl, tl == nil)
 	server := http.Server{
 		Addr:         cfg.Web.Address,
 		ReadTimeout:  cfg.Web.ReadTimeout,
 		WriteTimeout: cfg.Web.WriteTimeout,
+	}
+	if tl != nil {
+		server.TLSConfig = tl
 	}
 	return &server
 }

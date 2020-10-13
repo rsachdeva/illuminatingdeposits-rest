@@ -23,6 +23,10 @@ func ListenAndServeWithShutdown(server *http.Server, log *log.Logger, shutdownCh
 	go func() {
 		log.Printf("main : Register listening on %s", server.Addr)
 		// send signal to serverErrorCh
+		if cfg.Web.ServiceServerTLS {
+			serverErrorsCh <- server.ListenAndServeTLS("", "")
+			return
+		}
 		serverErrorsCh <- server.ListenAndServe()
 	}()
 
