@@ -16,4 +16,4 @@ services:
       - "$PWD/config/tls:/tlscurl"
     networks:
       - deposits_shared_network
-    command: "--cacert ca.crt --request POST 'https://interestsvcserver:3000/v1/health' --header 'Content-Type: application/json'"
+    command: "--cacert tlscurl/cacert.crt --request POST 'https://interestsvcserver:3000/v1/health' --header 'Content-Type: application/json'"
