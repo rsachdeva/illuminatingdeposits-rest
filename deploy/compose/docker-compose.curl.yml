@@ -10,14 +10,10 @@ networks:
 
 services:
 
-  dbcli:
-    build:
-      context: ../..
-      dockerfile: ./build/Dockerfile.seed
+  curlcli:
+    image: curlimages/curl
+    volumes:
+      - "$PWD/config/tls:/tlscurl"
     networks:
       - deposits_shared_network
-    command: >
-      bash -c "./dbcli migrate
-      && ./dbcli seed"
-    environment:
-      - DEPOSITS_DB_DISABLE_TLS=true
+    command: "--cacert ca.crt --request POST 'https://interestsvcserver:3000/v1/health' --header 'Content-Type: application/json'"

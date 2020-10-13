@@ -89,6 +89,9 @@ OpenSSL 1.1.1g  21 Apr 2020
 # curl 
 # https://www.digitalocean.com/community/questions/how-to-ping-docker-container-from-another-container-by-name
 # https://hub.docker.com/r/curlimages/curl
-docker run -it -v "$PWD/config/tls:/tlscurl" --network bridge curlimages/curl \
---location --request POST 'https://127.0.0.1:3000/v1/health' \
+docker run --network=compose_deposits_shared_network -it -v "$PWD/config/tls:/tlscurl" curlimages/curl \
+--location --request POST 'http://0.0.0.0:3000/v1/health' \
 --header 'Content-Type: application/json'
+
+
+docker-compose -f ./deploy/compose/docker-compose.curl.yml up

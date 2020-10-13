@@ -1,7 +1,6 @@
 # Ready to accept requests with db ready check
 curl --location --request POST 'https://localhost:3000/v1/health' \
---header 'Content-Type: application/json' \
---cert ca.crt:1111 --key ca.key
+--header 'Content-Type: application/json'
 
 ###
 #
