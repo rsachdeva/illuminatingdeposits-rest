@@ -5,10 +5,12 @@ import (
 	"log"
 	_ "net/http/pprof" // Register the pprof interestsvc
 	"os"
+
+	"github.com/rsachdeva/illuminatingdeposits/cmd/server/internal/rest"
 )
 
 func main() {
-	if err := RunServerWithRegisteredService(); err != nil {
+	if err := rest.ConfigureAndServe(); err != nil {
 		log.Println("shutting down, error:", err)
 		os.Exit(1)
 	}

@@ -1,4 +1,4 @@
-package main
+package rest
 
 import (
 	"crypto/tls"
@@ -9,11 +9,10 @@ import (
 	"os"
 
 	"github.com/pkg/errors"
-	"github.com/rsachdeva/illuminatingdeposits/cmd/server/internal/rest"
 	"github.com/rsachdeva/illuminatingdeposits/internal/platform/conf"
 )
 
-func RunServerWithRegisteredService() error {
+func ConfigureAndServe() error {
 
 	// =========================================================================
 	// Logging
@@ -23,7 +22,7 @@ func RunServerWithRegisteredService() error {
 	// =========================================================================
 	// Configuration
 
-	cfg, err := rest.ParsedConfig(rest.AppConfig{})
+	cfg, err := ParsedConfig(AppConfig{})
 	if err != nil {
 		return err
 	}
@@ -43,7 +42,7 @@ func RunServerWithRegisteredService() error {
 	// =========================================================================
 	// Start Database
 
-	db, err := rest.Db(cfg)
+	db, err := Db(cfg)
 	if err != nil {
 		return errors.Wrap(err, "connecting to db")
 	}
@@ -52,7 +51,7 @@ func RunServerWithRegisteredService() error {
 	// =========================================================================
 	// Start Tracing Support
 
-	closer, err := rest.RegisterTracer(
+	closer, err := RegisterTracer(
 		cfg.Trace.Service,
 		cfg.Web.Address,
 		cfg.Trace.URL,
@@ -76,7 +75,7 @@ func RunServerWithRegisteredService() error {
 	//
 	// Not concerned with shutting this down when the application is shutdownCh.
 	go func() {
-		rest.Debug(log, cfg)
+		Debug(log, cfg)
 	}()
 
 	// fmt.Println("hi there")
@@ -115,9 +114,9 @@ func RunServerWithRegisteredService() error {
 		tl = tlsConfig()
 	}
 	server := NewServer(cfg, tl)
-	rest.RegisterInterestService(server, log, db, shutdownCh)
+	RegisterInterestService(server, log, db, shutdownCh)
 
-	err = rest.ListenAndServeWithShutdown(server, log, shutdownCh, cfg)
+	err = ListenAndServeWithShutdown(server, log, shutdownCh, cfg)
 	if err != nil {
 		return err
 	}
@@ -135,7 +134,7 @@ func tlsConfig() *tls.Config {
 	return &tl
 }
 
-func NewServer(cfg rest.AppConfig, tl *tls.Config) *http.Server {
+func NewServer(cfg AppConfig, tl *tls.Config) *http.Server {
 	log.Printf("tl passed is %+v and is nil check is %v", tl, tl == nil)
 	server := http.Server{
 		Addr:         cfg.Web.Address,

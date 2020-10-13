@@ -76,4 +76,19 @@ kubectl delete -f deploy/kubernetes/.
 
 # TLS files
 docker build -t tlscert:v0.1 -f ./build/Dockerfile.openssl . && \
-docker run -v $PWD/config/tls:/tls -ti tlscert:v0.1
+docker run -v $PWD/config/tls:/tls tlscert:v0.1
+
+To see openssl version being used in Docker:
+docker build -t tlscert:v0.1 -f ./build/Dockerfile.openssl . && \
+docker run -ti -v $PWD/config/tls:/tls tlscert:v0.1 sh
+
+/tls # openssl version
+OpenSSL 1.1.1g  21 Apr 2020
+
+# CLIENT WIP
+# curl 
+# https://www.digitalocean.com/community/questions/how-to-ping-docker-container-from-another-container-by-name
+# https://hub.docker.com/r/curlimages/curl
+docker run -it -v "$PWD/config/tls:/tlscurl" --network bridge curlimages/curl \
+--location --request POST 'https://127.0.0.1:3000/v1/health' \
+--header 'Content-Type: application/json'
