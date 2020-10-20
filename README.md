@@ -58,11 +58,17 @@ docker push rsachdeva/illuminatingdeposits.seed:v0.1
 
 # Kubernetes Deployment - WIP
 
-kubectl apply -f deploy/kubernetes/zipkin-deployment.yaml   
-kubectl apply -f deploy/kubernetes/zipkin-service.yaml  
+kubectl apply -f deploy/kubernetes/traefik-ingress-daemonset-service.yaml 
 
-kubectl apply -f deploy/kubernetes/ic-traefik-lb.yaml  
-kubectl apply -f deploy/kubernetes/ingress.yaml  
+kubectl apply -f deploy/kubernetes/zipkin-deployment.yaml   
+kubectl apply -f deploy/kubernetes/zipkin-service.yaml   
+kubectl apply -f deploy/kubernetes/zipkin-ingress.yaml  
+
+https://www.bmc.com/blogs/kubernetes-postgresql/
+kubectl apply -f deploy/kubernetes/postgres-config.yaml 
+kubectl apply -f deploy/kubernetes/postgres-stateful.yaml  
+kubectl apply -f deploy/kubernetes/postgres-service.yaml  
+
 
 Access Traefik Dashboard at [http://localhost:3000/dashboard/#/](http://localhost:3000/dashboard/#/)   
 
