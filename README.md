@@ -64,11 +64,16 @@ kubectl apply -f deploy/kubernetes/zipkin-deployment.yaml
 kubectl apply -f deploy/kubernetes/zipkin-service.yaml   
 kubectl apply -f deploy/kubernetes/zipkin-ingress.yaml  
 
-https://www.bmc.com/blogs/kubernetes-postgresql/
 kubectl apply -f deploy/kubernetes/postgres-config.yaml 
 kubectl apply -f deploy/kubernetes/postgres-stateful.yaml  
 kubectl apply -f deploy/kubernetes/postgres-service.yaml  
-
+To connect external tool with postgres to see database internals use:
+Use a connection string similar to:
+jdbc:postgresql://127.0.0.1:30007/postgres
+If still an issue you can try
+kubectl port-forward service/postgres 5432:postgres
+Now can easily connect using
+jdbc:postgresql://localhost:5432/postgres
 
 Access Traefik Dashboard at [http://localhost:3000/dashboard/#/](http://localhost:3000/dashboard/#/)   
 
