@@ -1,7 +1,6 @@
 package main
 
 import (
-	"crypto/tls"
 	"crypto/x509"
 	"fmt"
 	"io/ioutil"
@@ -169,20 +168,32 @@ func NewClientTLSFromFile(certFile, serverNameOverride string) (*x509.CertPool, 
 	return cp, nil
 }
 
+func nonTlsGetRequestHealth() {
+	resp, err := http.Get("http://localhost:3000/v1/health")
+	if err != nil {
+		log.Fatalf("err in get is %v", err)
+	}
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	fmt.Println("body is ", string(body))
+}
+
 func main() {
-	certFile := "config/tls/ca.crt"
-	cp, err := NewClientTLSFromFile(certFile, "")
-	if err != nil {
-		log.Fatalf("loading certificate error is %v", err)
-	}
-	fmt.Printf("CertPool cp is %v\n", cp)
+	// certFile := "config/tls/ca.crt"
+	// cp, err := NewClientTLSFromFile(certFile, "")
+	// if err != nil {
+	// 	log.Fatalf("loading certificate error is %v", err)
+	// }
+	// fmt.Printf("CertPool cp is %v\n", cp)
+	//
+	// tlsConfig := &tls.Config{RootCAs: cp, InsecureSkipVerify: false}
+	//
+	// transport := &http.Transport{TLSClientConfig: tlsConfig, DisableKeepAlives: true}
+	// client := &http.Client{Transport: transport}
+	// _, err = client.Get("https://localhost:3000/v1/health")
+	// if err != nil {
+	// 	log.Println("Error making request. ", err)
+	// }
 
-	tlsConfig := &tls.Config{RootCAs: cp, InsecureSkipVerify: false}
-
-	transport := &http.Transport{TLSClientConfig: tlsConfig, DisableKeepAlives: true}
-	client := &http.Client{Transport: transport}
-	_, err = client.Get("https://localhost:3000/v1/health")
-	if err != nil {
-		log.Println("Error making request. ", err)
-	}
+	nonTlsGetRequestHealth()
 }

@@ -29,7 +29,7 @@ func (*Interest) Create(ctx context.Context, w http.ResponseWriter, r *http.Requ
 		return errors.Wrap(err, "decoding new interest calculation request with banks and deposits")
 	}
 
-	in, err := invest.Delta(nin)
+	in, err := nin.ComputeDelta()
 	if err != nil {
 		return errors.Wrap(err, "creating new interest calculations")
 	}

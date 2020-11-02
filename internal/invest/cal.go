@@ -5,11 +5,13 @@ package invest
 import (
 	"fmt"
 	"math"
+
+	"github.com/pkg/errors"
 )
 
-// Delta calculations for all banks
-func Delta(ni NewInterest) (Interest, error) {
-	bks, delta, err := banksWithDelta(ni)
+// ComputeDelta calculations for all banks
+func (ni NewInterest) ComputeDelta() (Interest, error) {
+	bks, delta, err := ni.computeBanksDelta()
 	if err != nil {
 		return Interest{}, err
 	}
@@ -20,11 +22,11 @@ func Delta(ni NewInterest) (Interest, error) {
 	return intBanks, nil
 }
 
-func banksWithDelta(ni NewInterest) ([]Bank, float64, error) {
+func (ni NewInterest) computeBanksDelta() ([]Bank, float64, error) {
 	var bks []Bank
 	var delta float64
 	for _, nb := range ni.NewBanks {
-		ds, bDelta, err := depositsWithDelta(nb)
+		ds, bDelta, err := nb.computeBankDelta()
 		if err != nil {
 			return nil, 0, err
 		}
@@ -39,7 +41,7 @@ func banksWithDelta(ni NewInterest) ([]Bank, float64, error) {
 	return bks, delta, nil
 }
 
-func depositsWithDelta(nb NewBank) ([]Deposit, float64, error) {
+func (nb NewBank) computeBankDelta() ([]Deposit, float64, error) {
 	var ds []Deposit
 	var bDelta float64
 	for _, nd := range nb.NewDeposits {
@@ -50,7 +52,7 @@ func depositsWithDelta(nb NewBank) ([]Deposit, float64, error) {
 			Years:       nd.Years,
 			Amount:      nd.Amount,
 		}
-		err := d.CalDelta()
+		err := d.computeDepositDelta()
 		if err != nil {
 			return nil, 0, err
 		}
@@ -60,9 +62,32 @@ func depositsWithDelta(nb NewBank) ([]Deposit, float64, error) {
 	return ds, bDelta, nil
 }
 
+// ComputeDelta calculates interest for 30 days for output/response Deposit
+func (d *Deposit) computeDepositDelta() error {
+	e := d.earned()
+	e30Days, err := earned30days(e, d.Years)
+	if err != nil {
+		return errors.Wrapf(err, "calculation for Account: %s", d.Account)
+	}
+	d.Delta = roundToNearest(e30Days)
+	return nil
+}
+
+func (d *Deposit) earned() float64 {
+	switch d.AccountType {
+	case Sa, CD:
+		return compoundInterest(d.APY, d.Years, d.Amount)
+	case Br:
+		return simpleInterest(d.APY, d.Years, d.Amount)
+	default:
+		return 0.0
+	}
+}
+
 func roundToNearest(n float64) float64 {
 	return math.Round(n*100) / 100
 }
+
 func simpleInterest(apy float64, years float64, amount float64) float64 {
 	rateInDecimal := apy / 100
 	intEarned := amount * rateInDecimal * years

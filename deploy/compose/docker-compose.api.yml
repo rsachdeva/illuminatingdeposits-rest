@@ -40,7 +40,7 @@ services:
       - 3000:3000
       - 4000:4000
     environment:
-      - DEPOSITS_WEB_SERVICE_SERVER_TLS=true
+#      - DEPOSITS_WEB_SERVICE_SERVER_TLS=true
       - DEPOSITS_DB_DISABLE_TLS=true
     depends_on:
       - zipkin
