@@ -3,6 +3,8 @@ package rest
 import (
 	"crypto/tls"
 	_ "expvar" // Register the expvar interestsvc
+	"fmt"
+	"io/ioutil"
 	"log"
 	"net/http"
 	_ "net/http/pprof" // Register the pprof interestsvc
@@ -11,6 +13,38 @@ import (
 	"github.com/pkg/errors"
 	"github.com/rsachdeva/illuminatingdeposits/internal/platform/conf"
 )
+
+func tlsConfig() *tls.Config {
+	certFile := "config/tls/server.crt"
+	keyFile := "config/tls/server.key"
+	_, err := ioutil.ReadFile(certFile)
+	if err != nil {
+		log.Fatalf("Error in reading cert file %v", certFile)
+	}
+	_, err = ioutil.ReadFile(keyFile)
+	if err != nil {
+		log.Fatalf("Error in reading key file %v", keyFile)
+	}
+	fmt.Println("Ok to load cert and key files")
+	cert, _ := tls.LoadX509KeyPair(certFile, keyFile)
+	tl := tls.Config{
+		Certificates: []tls.Certificate{cert},
+	}
+	return &tl
+}
+
+func NewServer(cfg AppConfig, tl *tls.Config) *http.Server {
+	log.Printf("tls passed is %+v and is nil check is %v", tl, tl == nil)
+	server := http.Server{
+		Addr:         cfg.Web.Address,
+		ReadTimeout:  cfg.Web.ReadTimeout,
+		WriteTimeout: cfg.Web.WriteTimeout,
+	}
+	if tl != nil {
+		server.TLSConfig = tl
+	}
+	return &server
+}
 
 func ConfigureAndServe() error {
 
@@ -122,27 +156,4 @@ func ConfigureAndServe() error {
 	}
 
 	return nil
-}
-
-func tlsConfig() *tls.Config {
-	certFile := "config/tls/server.crt"
-	keyFile := "config/tls/server.key"
-	cert, _ := tls.LoadX509KeyPair(certFile, keyFile)
-	tl := tls.Config{
-		Certificates: []tls.Certificate{cert},
-	}
-	return &tl
-}
-
-func NewServer(cfg AppConfig, tl *tls.Config) *http.Server {
-	log.Printf("tl passed is %+v and is nil check is %v", tl, tl == nil)
-	server := http.Server{
-		Addr:         cfg.Web.Address,
-		ReadTimeout:  cfg.Web.ReadTimeout,
-		WriteTimeout: cfg.Web.WriteTimeout,
-	}
-	if tl != nil {
-		server.TLSConfig = tl
-	}
-	return &server
 }

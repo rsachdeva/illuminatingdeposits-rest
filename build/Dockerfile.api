@@ -11,4 +11,5 @@ FROM alpine
 RUN apk update
 RUN apk add bash
 WORKDIR /cmd
+COPY config/tls  ./config/tls
 COPY --from=build /illuminatingdeposits/cmd/server/server .

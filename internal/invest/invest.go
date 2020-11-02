@@ -67,11 +67,22 @@ type Deposit struct {
 
 // CalDelta calculates interest for 30 days for output/response Deposit
 func (d *Deposit) CalDelta() error {
-	e := earned(d)
+	e := d.earned()
 	e30Days, err := earned30days(e, d.Years)
 	if err != nil {
 		return errors.Wrapf(err, "calculation for Account: %s", d.Account)
 	}
 	d.Delta = roundToNearest(e30Days)
 	return nil
+}
+
+func (d *Deposit) earned() float64 {
+	switch d.AccountType {
+	case Sa, CD:
+		return compoundInterest(d.APY, d.Years, d.Amount)
+	case Br:
+		return simpleInterest(d.APY, d.Years, d.Amount)
+	default:
+		return 0.0
+	}
 }

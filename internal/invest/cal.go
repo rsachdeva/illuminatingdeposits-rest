@@ -76,17 +76,6 @@ func compoundInterest(apy float64, years float64, amount float64) float64 {
 	return intEarned
 }
 
-func earned(d *Deposit) float64 {
-	switch d.AccountType {
-	case Sa, CD:
-		return compoundInterest(d.APY, d.Years, d.Amount)
-	case Br:
-		return simpleInterest(d.APY, d.Years, d.Amount)
-	default:
-		return 0.0
-	}
-}
-
 func earned30days(iEarned float64, years float64) (float64, error) {
 	if years*365 < 30 {
 		return 0, fmt.Errorf("NewDeposit period in years %v should not be less than 30 days", years)
