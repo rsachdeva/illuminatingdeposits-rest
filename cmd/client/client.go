@@ -198,7 +198,7 @@ func nonTlsGetRequestHealth() {
 }
 
 func tlsGetRequestHealth() {
-	caCert, err := ioutil.ReadFile("config/tls/ca.crt")
+	caCert, err := ioutil.ReadFile("config/tls/cacrtto.pem")
 	if err != nil {
 		log.Fatal(err)
 	}

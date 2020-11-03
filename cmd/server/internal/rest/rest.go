@@ -3,6 +3,7 @@ package rest
 import (
 	"crypto/tls"
 	_ "expvar" // Register the expvar interestsvc
+	"fmt"
 	"log"
 	"net/http"
 	_ "net/http/pprof" // Register the pprof interestsvc
@@ -13,8 +14,8 @@ import (
 )
 
 func tlsConfig() (*tls.Config, error) {
-	certFile := "config/tls/server.crt"
-	keyFile := "config/tls/server.pem"
+	certFile := "config/tls/servercrtto.pem"
+	keyFile := "config/tls/serverkeyto.pem"
 	// _, err := ioutil.ReadFile(certFile)
 	// if err != nil {
 	// 	log.Fatalf("Error in reading cert file %v", certFile)
@@ -31,8 +32,12 @@ func tlsConfig() (*tls.Config, error) {
 		// // that redirected to https://golang.org/pkg/crypto/tls/#LoadX509KeyPair
 		// LoadX509KeyPair reads and parses a public/private key pair from a pair of files. The files must contain PEM encoded data.
 		// so we need PEM files jmd
+		// Next error private key does not match public key
+		// Based on https://stackoverflow.com/questions/991758/how-to-get-pem-file-from-key-and-crt-files JMD
+		// 2020/11/03 16:16:51 shutting down, error: LoadX509KeyPair error: tls: failed to find certificate PEM data in certificate input, but did find a private key; PEM inputs may have been switched
 		return nil, errors.Wrap(err, "LoadX509KeyPair error")
 	}
+	fmt.Println("No errors with LoadX509KeyPair")
 	tl := tls.Config{
 		Certificates: []tls.Certificate{cert},
 	}
@@ -40,7 +45,6 @@ func tlsConfig() (*tls.Config, error) {
 }
 
 func NewServer(cfg AppConfig, tl *tls.Config) *http.Server {
-	log.Printf("tls passed is %+v and is nil check is %v", tl, tl == nil)
 	server := http.Server{
 		Addr:         cfg.Web.Address,
 		ReadTimeout:  cfg.Web.ReadTimeout,
@@ -49,6 +53,8 @@ func NewServer(cfg AppConfig, tl *tls.Config) *http.Server {
 	if tl != nil {
 		server.TLSConfig = tl
 	}
+	fmt.Println("DEPOSITS_WEB_SERVICE_SERVER_TLS is ", cfg.Web.ServiceServerTLS)
+	fmt.Println("server.TLSConfig is ", server.TLSConfig)
 	return &server
 }
 
