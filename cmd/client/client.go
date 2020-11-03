@@ -1,6 +1,7 @@
 package main
 
 import (
+	"crypto/tls"
 	"crypto/x509"
 	"fmt"
 	"io/ioutil"
@@ -155,18 +156,36 @@ func main() {
 
 // from search 'golang capool to tls -mTLS' to https://play.golang.org/p/WUgzKP5Jvh
 // google search keywords got from https://github.com/cf-routing/golang-app 'Using one-way TLS (server cert only)'
-func NewClientTLSFromFile(certFile, serverNameOverride string) (*x509.CertPool, error) {
-	b, err := ioutil.ReadFile(certFile)
-	if err != nil {
-		log.Printf("Error in reading file %v", certFile)
-		return nil, err
-	}
-	cp := x509.NewCertPool()
-	if !cp.AppendCertsFromPEM(b) {
-		return nil, fmt.Errorf("credentials: failed to append certificates")
-	}
-	return cp, nil
-}
+
+// func NewClientTLSFromFile(certFile, serverNameOverride string) (*x509.CertPool, error) {
+// 	b, err := ioutil.ReadFile(certFile)
+// 	if err != nil {
+// 		log.Printf("Error in reading file %v", certFile)
+// 		return nil, err
+// 	}
+// 	cp := x509.NewCertPool()
+// 	if !cp.AppendCertsFromPEM(b) {
+// 		return nil, fmt.Errorf("credentials: failed to append certificates")
+// 	}
+// 	return cp, nil
+// }
+// certFile := "config/tls/ca.crt"
+// cp, err := NewClientTLSFromFile(certFile, "")
+// if err != nil {
+// 	log.Fatalf("loading certificate error is %v", err)
+// }
+// fmt.Printf("CertPool cp is %v\n", cp)
+//
+// tlsConfig := &tls.Config{RootCAs: cp, InsecureSkipVerify: false}
+//
+// transport := &http.Transport{TLSClientConfig: tlsConfig, DisableKeepAlives: true}
+// client := &http.Client{Transport: transport}
+// _, err = client.Get("https://localhost:3000/v1/health")
+// if err != nil {
+// 	log.Println("Error making request. ", err)
+// }
+
+// https://stackoverflow.com/questions/38822764/how-to-send-a-https-request-with-a-certificate-golang
 
 func nonTlsGetRequestHealth() {
 	resp, err := http.Get("http://localhost:3000/v1/health")
@@ -178,22 +197,36 @@ func nonTlsGetRequestHealth() {
 	fmt.Println("body is ", string(body))
 }
 
-func main() {
-	// certFile := "config/tls/ca.crt"
-	// cp, err := NewClientTLSFromFile(certFile, "")
-	// if err != nil {
-	// 	log.Fatalf("loading certificate error is %v", err)
-	// }
-	// fmt.Printf("CertPool cp is %v\n", cp)
-	//
-	// tlsConfig := &tls.Config{RootCAs: cp, InsecureSkipVerify: false}
-	//
-	// transport := &http.Transport{TLSClientConfig: tlsConfig, DisableKeepAlives: true}
-	// client := &http.Client{Transport: transport}
-	// _, err = client.Get("https://localhost:3000/v1/health")
-	// if err != nil {
-	// 	log.Println("Error making request. ", err)
-	// }
+func tlsGetRequestHealth() {
+	caCert, err := ioutil.ReadFile("config/tls/ca.crt")
+	if err != nil {
+		log.Fatal(err)
+	}
+	caCertPool := x509.NewCertPool()
+	// // AppendCertsFromPEM attempts to parse a series of PEM encoded certificates.
+	caCertPool.AppendCertsFromPEM(caCert)
 
-	nonTlsGetRequestHealth()
+	client := &http.Client{
+		Transport: &http.Transport{
+			TLSClientConfig: &tls.Config{
+				RootCAs: caCertPool,
+			},
+		},
+	}
+
+	// resp, err := client.Get("https://secure.domain.com")
+	// if err != nil {
+	// 	panic(err)
+	// }
+	resp, err := client.Get("https://localhost:3000/v1/health")
+	if err != nil {
+		log.Fatalf("err in get is %v", err)
+	}
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	fmt.Println("body is ", string(body))
+}
+
+func main() {
+	tlsGetRequestHealth()
 }

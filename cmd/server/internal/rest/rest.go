@@ -3,8 +3,6 @@ package rest
 import (
 	"crypto/tls"
 	_ "expvar" // Register the expvar interestsvc
-	"fmt"
-	"io/ioutil"
 	"log"
 	"net/http"
 	_ "net/http/pprof" // Register the pprof interestsvc
@@ -14,23 +12,31 @@ import (
 	"github.com/rsachdeva/illuminatingdeposits/internal/platform/conf"
 )
 
-func tlsConfig() *tls.Config {
+func tlsConfig() (*tls.Config, error) {
 	certFile := "config/tls/server.crt"
-	keyFile := "config/tls/server.key"
-	_, err := ioutil.ReadFile(certFile)
+	keyFile := "config/tls/server.pem"
+	// _, err := ioutil.ReadFile(certFile)
+	// if err != nil {
+	// 	log.Fatalf("Error in reading cert file %v", certFile)
+	// }
+	// _, err = ioutil.ReadFile(keyFile)
+	// if err != nil {
+	// 	log.Fatalf("Error in reading key file %v", keyFile)
+	// }
+	// fmt.Println("Ok to load cert and key files")
+	cert, err := tls.LoadX509KeyPair(certFile, keyFile)
 	if err != nil {
-		log.Fatalf("Error in reading cert file %v", certFile)
+		// https://github.com/stellar/go/issues/64 shutting down, error: LoadX509KeyPair error: tls: failed to parse private key
+		// From https://github.com/pulumi/pulumi-kafka/issues/15
+		// // that redirected to https://golang.org/pkg/crypto/tls/#LoadX509KeyPair
+		// LoadX509KeyPair reads and parses a public/private key pair from a pair of files. The files must contain PEM encoded data.
+		// so we need PEM files jmd
+		return nil, errors.Wrap(err, "LoadX509KeyPair error")
 	}
-	_, err = ioutil.ReadFile(keyFile)
-	if err != nil {
-		log.Fatalf("Error in reading key file %v", keyFile)
-	}
-	fmt.Println("Ok to load cert and key files")
-	cert, _ := tls.LoadX509KeyPair(certFile, keyFile)
 	tl := tls.Config{
 		Certificates: []tls.Certificate{cert},
 	}
-	return &tl
+	return &tl, nil
 }
 
 func NewServer(cfg AppConfig, tl *tls.Config) *http.Server {
@@ -145,7 +151,10 @@ func ConfigureAndServe() error {
 
 	var tl *tls.Config
 	if cfg.Web.ServiceServerTLS {
-		tl = tlsConfig()
+		tl, err = tlsConfig()
+		if err != nil {
+			return err
+		}
 	}
 	server := NewServer(cfg, tl)
 	RegisterInterestService(server, log, db, shutdownCh)
