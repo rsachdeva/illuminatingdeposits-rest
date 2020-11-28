@@ -6,7 +6,7 @@ import (
 	_ "net/http/pprof" // Register the pprof interestsvc
 	"os"
 
-	"github.com/rsachdeva/illuminatingdeposits/cmd/server/internal/rest"
+	"github.com/rsachdeva/illuminatingdeposits/rest"
 )
 
 func main() {

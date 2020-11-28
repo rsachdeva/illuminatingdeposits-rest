@@ -8,7 +8,7 @@ import (
 	"runtime/debug"
 
 	"github.com/pkg/errors"
-	"github.com/rsachdeva/illuminatingdeposits/internal/platform/web"
+	"github.com/rsachdeva/illuminatingdeposits/platform/web"
 	"go.opencensus.io/trace"
 )
 

@@ -9,9 +9,9 @@ import (
 	"runtime/pprof"
 
 	"github.com/pkg/errors"
-	"github.com/rsachdeva/illuminatingdeposits/internal/invest"
-	"github.com/rsachdeva/illuminatingdeposits/internal/platform/inout"
-	"github.com/rsachdeva/illuminatingdeposits/tools/calcli/internal/handlers"
+	"github.com/rsachdeva/illuminatingdeposits/invest"
+	"github.com/rsachdeva/illuminatingdeposits/platform/inout"
+	"github.com/rsachdeva/illuminatingdeposits/tools/calcli/handlers"
 )
 
 func main() {

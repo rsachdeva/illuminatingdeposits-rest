@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/rsachdeva/illuminatingdeposits/internal/platform/web"
+	"github.com/rsachdeva/illuminatingdeposits/platform/web"
 	"go.opencensus.io/trace"
 )
 

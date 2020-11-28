@@ -2,7 +2,12 @@ FROM golang:1.15.0-alpine AS build
 WORKDIR /illuminatingdeposits
 COPY go.mod .
 RUN go mod download
-COPY internal/ ./internal/
+COPY interestsvc/ ./interestsvc
+COPY invest/ ./invest
+COPY mid/ ./mid
+COPY rest/ ./rest
+COPY user/ ./user
+COPY platform/ ./platform
 COPY cmd/server ./cmd/server
 WORKDIR /illuminatingdeposits/cmd/server
 RUN go build

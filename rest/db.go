@@ -2,7 +2,7 @@ package rest
 
 import (
 	"github.com/jmoiron/sqlx"
-	"github.com/rsachdeva/illuminatingdeposits/internal/platform/database"
+	"github.com/rsachdeva/illuminatingdeposits/platform/database"
 )
 
 func Db(cfg AppConfig) (*sqlx.DB, error) {

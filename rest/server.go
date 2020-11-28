@@ -10,7 +10,7 @@ import (
 	"os"
 
 	"github.com/pkg/errors"
-	"github.com/rsachdeva/illuminatingdeposits/internal/platform/conf"
+	"github.com/rsachdeva/illuminatingdeposits/platform/conf"
 )
 
 func tlsConfig() (*tls.Config, error) {

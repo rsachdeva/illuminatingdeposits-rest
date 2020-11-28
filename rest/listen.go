@@ -11,7 +11,7 @@ import (
 
 	"github.com/jmoiron/sqlx"
 	"github.com/pkg/errors"
-	"github.com/rsachdeva/illuminatingdeposits/cmd/server/internal/interestsvc"
+	"github.com/rsachdeva/illuminatingdeposits/interestsvc"
 )
 
 func ListenAndServeWithShutdown(server *http.Server, log *log.Logger, shutdownCh chan os.Signal, cfg AppConfig) error {

@@ -8,11 +8,11 @@ import (
 	"time"
 
 	"github.com/pkg/errors"
-	"github.com/rsachdeva/illuminatingdeposits/internal/platform/auth"
-	"github.com/rsachdeva/illuminatingdeposits/internal/platform/conf"
-	"github.com/rsachdeva/illuminatingdeposits/internal/platform/database"
-	"github.com/rsachdeva/illuminatingdeposits/internal/platform/schema"
-	"github.com/rsachdeva/illuminatingdeposits/internal/user"
+	"github.com/rsachdeva/illuminatingdeposits/platform/auth"
+	"github.com/rsachdeva/illuminatingdeposits/platform/conf"
+	"github.com/rsachdeva/illuminatingdeposits/platform/database"
+	"github.com/rsachdeva/illuminatingdeposits/platform/schema"
+	"github.com/rsachdeva/illuminatingdeposits/user"
 )
 
 func main() {

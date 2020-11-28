@@ -6,8 +6,8 @@ import (
 	"os"
 
 	"github.com/jmoiron/sqlx"
-	"github.com/rsachdeva/illuminatingdeposits/internal/mid"
-	"github.com/rsachdeva/illuminatingdeposits/internal/platform/web"
+	"github.com/rsachdeva/illuminatingdeposits/mid"
+	"github.com/rsachdeva/illuminatingdeposits/platform/web"
 )
 
 // Register constructs an http.Handler with all application routes defined.

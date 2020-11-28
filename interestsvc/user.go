@@ -8,9 +8,9 @@ import (
 
 	"github.com/jmoiron/sqlx"
 	"github.com/pkg/errors"
-	"github.com/rsachdeva/illuminatingdeposits/internal/platform/auth"
-	"github.com/rsachdeva/illuminatingdeposits/internal/platform/web"
-	"github.com/rsachdeva/illuminatingdeposits/internal/user"
+	"github.com/rsachdeva/illuminatingdeposits/platform/auth"
+	"github.com/rsachdeva/illuminatingdeposits/platform/web"
+	"github.com/rsachdeva/illuminatingdeposits/user"
 	"go.opencensus.io/trace"
 )
 

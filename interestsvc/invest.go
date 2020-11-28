@@ -6,9 +6,9 @@ import (
 	"net/http"
 
 	"github.com/pkg/errors"
-	"github.com/rsachdeva/illuminatingdeposits/internal/invest"
-	"github.com/rsachdeva/illuminatingdeposits/internal/platform/debug"
-	"github.com/rsachdeva/illuminatingdeposits/internal/platform/web"
+	"github.com/rsachdeva/illuminatingdeposits/invest"
+	"github.com/rsachdeva/illuminatingdeposits/platform/debug"
+	"github.com/rsachdeva/illuminatingdeposits/platform/web"
 	"go.opencensus.io/trace"
 )
 

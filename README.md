@@ -46,7 +46,8 @@ docker build -f ./build/Dockerfile.calculate -t illumcalculate  . && \
 docker run illumcalculate
 
 ### Interest Service REST HTTP Methods Invoked:
-See tools/resit_editor/HealthCRUD.http for request examples and sample response.
+with tls: run cmd/client
+without tls: See tools/resteditor/HealthCRUD.http for request examples and sample response.
 Use dev env for localhost:3000
 
 # Push Images to Docker Hub
