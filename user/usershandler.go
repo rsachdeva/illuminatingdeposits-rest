@@ -10,7 +10,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/rsachdeva/illuminatingdeposits/auth"
 	"github.com/rsachdeva/illuminatingdeposits/json"
-	"github.com/rsachdeva/illuminatingdeposits/service"
+	"github.com/rsachdeva/illuminatingdeposits/transport"
 	"go.opencensus.io/trace"
 )
 
@@ -19,7 +19,7 @@ type UsersHandler struct {
 	db *sqlx.DB
 }
 
-func RegisterUserHandler(db *sqlx.DB, app *service.App) {
+func RegisterUserHandler(db *sqlx.DB, app *transport.App) {
 	{
 		// Register user interestsvc.
 		u := UsersHandler{db: db}
@@ -38,7 +38,7 @@ func (us *UsersHandler) Create(ctx context.Context, w http.ResponseWriter, r *ht
 	fmt.Printf("r.Header.GetGet(\"Authorization\") is %s", r.Header.Get("Authorization"))
 	if !ok {
 		err := errors.New("must provide email and password in Basic auth")
-		return service.NewRequestError(err, http.StatusUnauthorized)
+		return transport.NewRequestError(err, http.StatusUnauthorized)
 	}
 
 	nu := NewUser{

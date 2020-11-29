@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"runtime"
 
-	"github.com/rsachdeva/illuminatingdeposits/service"
+	"github.com/rsachdeva/illuminatingdeposits/transport"
 	"go.opencensus.io/trace"
 )
 
@@ -23,10 +23,10 @@ var m = struct {
 }
 
 // Metrics updates program counters.
-func Metrics() service.Middleware {
+func Metrics() transport.Middleware {
 
 	// This is the actual middleware function to be executed.
-	f := func(before service.Handler) service.Handler {
+	f := func(before transport.Handler) transport.Handler {
 
 		// Wrap this handler around the next one provided.
 		h := func(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
