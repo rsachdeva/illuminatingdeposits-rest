@@ -4,9 +4,7 @@ FROM golang:1.15.0-alpine AS build
 WORKDIR /illuminatingdeposits
 COPY go.mod .
 RUN go mod download
-COPY invest/ ./invest
-COPY platform/ ./platform
-COPY tools/calcli ./tools/calcli
+COPY . .
 WORKDIR /illuminatingdeposits/tools/calcli
 RUN go build
 

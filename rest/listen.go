@@ -9,9 +9,7 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/jmoiron/sqlx"
 	"github.com/pkg/errors"
-	"github.com/rsachdeva/illuminatingdeposits/interestsvc"
 )
 
 func ListenAndServeWithShutdown(server *http.Server, log *log.Logger, shutdownCh chan os.Signal, cfg AppConfig) error {
@@ -41,10 +39,6 @@ func ListenAndServeWithShutdown(server *http.Server, log *log.Logger, shutdownCh
 		return err
 	}
 	return nil
-}
-
-func RegisterInterestService(server *http.Server, log *log.Logger, db *sqlx.DB, shutdownCh chan os.Signal) {
-	server.Handler = interestsvc.Register(shutdownCh, db, log)
 }
 
 func quitGracefully(server *http.Server, log *log.Logger, cfg AppConfig, shutdownCh chan os.Signal, serverErrorsCh chan error) error {

@@ -1,0 +1,27 @@
+package rest
+
+import (
+	"log"
+	"net/http"
+	"os"
+
+	"github.com/jmoiron/sqlx"
+	"github.com/rsachdeva/illuminatingdeposits/database"
+	"github.com/rsachdeva/illuminatingdeposits/invest"
+	"github.com/rsachdeva/illuminatingdeposits/mid"
+	"github.com/rsachdeva/illuminatingdeposits/user"
+	"github.com/rsachdeva/illuminatingdeposits/web"
+)
+
+func RegisterRoutesHandlers(server *http.Server, log *log.Logger, db *sqlx.DB, shutdownCh chan os.Signal) {
+	// Construct the web.App which holds all routes as well as common Middleware.
+	app := web.NewApp(shutdownCh, log, mid.Logger(log), mid.Errors(log), mid.Metrics(), mid.Panics(log))
+
+	database.RegisterCheckHandler(db, app)
+
+	user.RegisterUserHandler(db, app)
+
+	invest.RegisterInvestHandler(log, app)
+
+	server.Handler = app
+}

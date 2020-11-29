@@ -1,4 +1,4 @@
-package web
+package json
 
 import (
 	"encoding/json"
@@ -11,6 +11,7 @@ import (
 
 	en "github.com/go-playground/locales/en"
 	ut "github.com/go-playground/universal-translator"
+	"github.com/rsachdeva/illuminatingdeposits/web"
 	validator "gopkg.in/go-playground/validator.v9"
 	en_translations "gopkg.in/go-playground/validator.v9/translations/en"
 )
@@ -56,7 +57,7 @@ func Decode(r *http.Request, val interface{}) error {
 	decoder := json.NewDecoder(r.Body)
 	decoder.DisallowUnknownFields()
 	if err := decoder.Decode(val); err != nil {
-		return NewRequestError(err, http.StatusBadRequest)
+		return web.NewRequestError(err, http.StatusBadRequest)
 	}
 
 	if err := validate.Struct(val); err != nil {
@@ -71,16 +72,16 @@ func Decode(r *http.Request, val interface{}) error {
 		// Accept-Language header if you intend to support multiple languages.
 		lang, _ := translator.GetTranslator("en")
 
-		var fields []FieldError
+		var fields []web.FieldError
 		for _, verror := range verrors {
-			field := FieldError{
+			field := web.FieldError{
 				Field: verror.Field(),
 				Error: verror.Translate(lang),
 			}
 			fields = append(fields, field)
 		}
 
-		return &ErrorRequest{
+		return &web.ErrorRequest{
 			Err:    errors.New("field validation error"),
 			Status: http.StatusBadRequest,
 			Fields: fields,

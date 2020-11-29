@@ -43,12 +43,12 @@ type App struct {
 
 // NewApp constructs an App to handle a set of routes. Any Middleware provided
 // will be ran for every request.
-func NewApp(shutdown chan os.Signal, log *log.Logger, mw ...Middleware) *App {
+func NewApp(shutdownCh chan os.Signal, log *log.Logger, mw ...Middleware) *App {
 	app := App{
 		log:      log,
 		mux:      chi.NewRouter(),
 		mws:      mw,
-		shutdown: shutdown,
+		shutdown: shutdownCh,
 	}
 
 	// Create an OpenCensus HTTP Handler which wraps the router. This will start

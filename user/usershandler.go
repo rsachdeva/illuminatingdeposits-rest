@@ -1,4 +1,4 @@
-package interestsvc
+package user
 
 import (
 	"context"
@@ -8,18 +8,29 @@ import (
 
 	"github.com/jmoiron/sqlx"
 	"github.com/pkg/errors"
-	"github.com/rsachdeva/illuminatingdeposits/platform/auth"
-	"github.com/rsachdeva/illuminatingdeposits/platform/web"
-	"github.com/rsachdeva/illuminatingdeposits/user"
+	"github.com/rsachdeva/illuminatingdeposits/auth"
+	"github.com/rsachdeva/illuminatingdeposits/json"
+	"github.com/rsachdeva/illuminatingdeposits/web"
 	"go.opencensus.io/trace"
 )
 
 // Users holds interestsvc for dealing with user.
-type Users struct {
+type UsersHandler struct {
 	db *sqlx.DB
 }
 
-func (us *Users) Create(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
+func RegisterUserHandler(db *sqlx.DB, app *web.App) {
+	{
+		// Register user interestsvc.
+		u := UsersHandler{db: db}
+
+		// The route can't be authenticated because we need this route to
+		// create the user in the first place.
+		app.Handle(http.MethodPost, "/v1/users", u.Create)
+	}
+}
+
+func (us *UsersHandler) Create(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
 	ctx, span := trace.StartSpan(ctx, "interestsvc.Users.Create")
 	defer span.End()
 
@@ -30,17 +41,17 @@ func (us *Users) Create(ctx context.Context, w http.ResponseWriter, r *http.Requ
 		return web.NewRequestError(err, http.StatusUnauthorized)
 	}
 
-	nu := user.NewUser{
+	nu := NewUser{
 		Email:           email,
 		Password:        pass,
 		PasswordConfirm: pass,
 		Roles:           []string{auth.RoleUser},
 	}
 
-	u, err := user.Create(ctx, us.db, nu, time.Now())
+	u, err := Create(ctx, us.db, nu, time.Now())
 	if err != nil {
 		return err
 	}
 
-	return web.Respond(ctx, w, u, http.StatusCreated)
+	return json.Respond(ctx, w, u, http.StatusCreated)
 }

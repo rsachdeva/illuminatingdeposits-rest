@@ -6,7 +6,7 @@ import (
 
 	"github.com/pkg/errors"
 	"github.com/rsachdeva/illuminatingdeposits/invest"
-	"github.com/rsachdeva/illuminatingdeposits/platform/inout"
+	"github.com/rsachdeva/illuminatingdeposits/json"
 )
 
 //Interest handler
@@ -24,5 +24,5 @@ func (ih Interest) Create(w io.Writer, nibs invest.NewInterest, executionTimes i
 	if err != nil {
 		return errors.Wrap(err, "create calculating for invest.NewInterest")
 	}
-	return inout.OutputJSON(w, ibs)
+	return json.Output(w, ibs)
 }

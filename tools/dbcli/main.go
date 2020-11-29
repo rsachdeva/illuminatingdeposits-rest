@@ -8,10 +8,10 @@ import (
 	"time"
 
 	"github.com/pkg/errors"
-	"github.com/rsachdeva/illuminatingdeposits/platform/auth"
-	"github.com/rsachdeva/illuminatingdeposits/platform/conf"
-	"github.com/rsachdeva/illuminatingdeposits/platform/database"
-	"github.com/rsachdeva/illuminatingdeposits/platform/schema"
+	"github.com/rsachdeva/illuminatingdeposits/auth"
+	"github.com/rsachdeva/illuminatingdeposits/conf"
+	"github.com/rsachdeva/illuminatingdeposits/database"
+	"github.com/rsachdeva/illuminatingdeposits/schema"
 	"github.com/rsachdeva/illuminatingdeposits/user"
 )
 

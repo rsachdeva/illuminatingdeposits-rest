@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/pkg/errors"
-	"github.com/rsachdeva/illuminatingdeposits/platform/conf"
+	"github.com/rsachdeva/illuminatingdeposits/conf"
 )
 
 type AppConfig struct {

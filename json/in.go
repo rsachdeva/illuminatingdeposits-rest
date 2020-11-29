@@ -1,12 +1,12 @@
-package inout
+package json
 
 import (
 	"encoding/json"
 	"io/ioutil"
 )
 
-// InputJSON for an inout json file reading and creating go values from it
-func InputJSON(jsonFileName string, val interface{}) error {
+// InputFile for an inout json file reading and creating go values from it
+func InputFile(jsonFileName string, val interface{}) error {
 	data, err := ioutil.ReadFile(jsonFileName)
 	if err != nil {
 		return err

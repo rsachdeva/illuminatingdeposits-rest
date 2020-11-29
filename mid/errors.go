@@ -6,7 +6,8 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/rsachdeva/illuminatingdeposits/platform/web"
+	"github.com/rsachdeva/illuminatingdeposits/json"
+	"github.com/rsachdeva/illuminatingdeposits/web"
 	"go.opencensus.io/trace"
 )
 
@@ -39,7 +40,7 @@ func Errors(log *log.Logger) web.Middleware {
 				log.Printf("TraceID %s : \n ERROR :\n %+v  web.IsShutdown(err) is %v", v.TraceID, err, web.IsShutdown(err))
 
 				// Respond to the error.
-				if err := web.RespondError(ctx, w, err); err != nil {
+				if err := json.RespondError(ctx, w, err); err != nil {
 					return err
 				}
 

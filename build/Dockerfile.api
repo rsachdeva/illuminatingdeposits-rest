@@ -2,13 +2,7 @@ FROM golang:1.15.0-alpine AS build
 WORKDIR /illuminatingdeposits
 COPY go.mod .
 RUN go mod download
-COPY interestsvc/ ./interestsvc
-COPY invest/ ./invest
-COPY mid/ ./mid
-COPY rest/ ./rest
-COPY user/ ./user
-COPY platform/ ./platform
-COPY cmd/server ./cmd/server
+COPY . .
 WORKDIR /illuminatingdeposits/cmd/server
 RUN go build
 
@@ -16,5 +10,5 @@ FROM alpine
 RUN apk update
 RUN apk add bash
 WORKDIR /cmd
-COPY config/tls  ./config/tls
+COPY conf/tls  ./conf/tls
 COPY --from=build /illuminatingdeposits/cmd/server/server .

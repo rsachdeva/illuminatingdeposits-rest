@@ -1,4 +1,4 @@
-package inout
+package json
 
 import (
 	"encoding/json"
@@ -8,8 +8,8 @@ import (
 	"github.com/pkg/errors"
 )
 
-// OutputJSON for outputting go values as json
-func OutputJSON(w io.Writer, val interface{}) error {
+// Output for outputting go values as json
+func Output(w io.Writer, val interface{}) error {
 	jInter, err := json.MarshalIndent(val, "", "\t")
 	if err != nil {
 		return errors.Wrap(err, "invest for all banks jsoninput marshalling")

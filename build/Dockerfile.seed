@@ -4,10 +4,7 @@ FROM golang:1.15.0-alpine AS build
 WORKDIR /illuminatingdeposits
 COPY go.mod .
 RUN go mod download
-COPY invest/ ./invest
-COPY user/ ./user
-COPY platform/ ./platform
-COPY tools/dbcli ./tools/dbcli
+COPY . .
 WORKDIR /illuminatingdeposits/tools/dbcli
 RUN go build
 

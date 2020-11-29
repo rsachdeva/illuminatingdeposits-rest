@@ -4,5 +4,5 @@ My*.svg
 docker-remove.sh
 *.out
 build/Dockerfile.mycalculate
-config/tls/ca.key
-config/tls/server.csr
+conf/tls/ca.key
+conf/tls/server.csr

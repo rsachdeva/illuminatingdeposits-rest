@@ -1,5 +1,5 @@
 Package conf provides support for using environmental variables and command
-line arguments for configuration.
+line arguments for configuration. Also includes related to config -- the tls files.
 
 It is compatible with the GNU extensions to the POSIX recommendations
 for command-line options. See

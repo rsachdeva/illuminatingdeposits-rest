@@ -10,12 +10,12 @@ import (
 	"os"
 
 	"github.com/pkg/errors"
-	"github.com/rsachdeva/illuminatingdeposits/platform/conf"
+	"github.com/rsachdeva/illuminatingdeposits/conf"
 )
 
 func tlsConfig() (*tls.Config, error) {
-	certFile := "config/tls/servercrtto.pem"
-	keyFile := "config/tls/serverkeyto.pem"
+	certFile := "conf/tls/servercrtto.pem"
+	keyFile := "conf/tls/serverkeyto.pem"
 	// _, err := ioutil.ReadFile(certFile)
 	// if err != nil {
 	// 	log.Fatalf("Error in reading cert file %v", certFile)
@@ -163,7 +163,7 @@ func ConfigureAndServe() error {
 		}
 	}
 	server := NewServer(cfg, tl)
-	RegisterInterestService(server, log, db, shutdownCh)
+	RegisterRoutesHandlers(server, log, db, shutdownCh)
 
 	err = ListenAndServeWithShutdown(server, log, shutdownCh, cfg)
 	if err != nil {
