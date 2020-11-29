@@ -6,7 +6,7 @@ import (
 
 	"github.com/jmoiron/sqlx"
 	"github.com/rsachdeva/illuminatingdeposits/json"
-	"github.com/rsachdeva/illuminatingdeposits/web"
+	"github.com/rsachdeva/illuminatingdeposits/service"
 	"go.opencensus.io/trace"
 )
 
@@ -17,7 +17,7 @@ type CheckHandler struct {
 	// ADD OTHER STATE LIKE THE LOGGER IF NEEDED.
 }
 
-func RegisterCheckHandler(db *sqlx.DB, app *web.App) {
+func RegisterCheckHandler(db *sqlx.DB, app *service.App) {
 	{
 		// Register health check handler. This route is not authenticated.
 		c := CheckHandler{db: db}

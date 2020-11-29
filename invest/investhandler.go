@@ -8,7 +8,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/rsachdeva/illuminatingdeposits/debug"
 	"github.com/rsachdeva/illuminatingdeposits/json"
-	"github.com/rsachdeva/illuminatingdeposits/web"
+	"github.com/rsachdeva/illuminatingdeposits/service"
 	"go.opencensus.io/trace"
 )
 
@@ -17,7 +17,7 @@ type InvestHandler struct {
 	log *log.Logger
 }
 
-func RegisterInvestHandler(log *log.Logger, app *web.App) {
+func RegisterInvestHandler(log *log.Logger, app *service.App) {
 	{
 		i := InvestHandler{log: log}
 		app.Handle(http.MethodPost, "/v1/interests", i.Create)

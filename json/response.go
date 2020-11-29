@@ -7,14 +7,14 @@ import (
 	"net/http"
 
 	"github.com/pkg/errors"
-	"github.com/rsachdeva/illuminatingdeposits/web"
+	"github.com/rsachdeva/illuminatingdeposits/service"
 )
 
 // Respond converts a Go value to JSON and sends it to the cli.
 func Respond(ctx context.Context, w http.ResponseWriter, data interface{}, statusCode int) error {
 
 	// Set the status code for the request logger middleware.
-	v := ctx.Value(web.KeyValues).(*web.Values)
+	v := ctx.Value(service.KeyValues).(*service.Values)
 	v.StatusCode = statusCode
 
 	if statusCode == http.StatusNoContent {
@@ -43,8 +43,8 @@ func RespondError(ctx context.Context, w http.ResponseWriter, err error) error {
 
 	// If the error was of the type *web.ErrorRequest, the handler has
 	// a specific status code and error to return.
-	if webErr, ok := errors.Cause(err).(*web.ErrorRequest); ok {
-		er := web.ErrorResponse{
+	if webErr, ok := errors.Cause(err).(*service.ErrorRequest); ok {
+		er := service.ErrorResponse{
 			Error:  webErr.Err.Error(),
 			Fields: webErr.Fields,
 		}
@@ -56,7 +56,7 @@ func RespondError(ctx context.Context, w http.ResponseWriter, err error) error {
 	}
 
 	// If not, the handler sent any arbitrary error value so use 500.
-	er := web.ErrorResponse{
+	er := service.ErrorResponse{
 		Error: http.StatusText(http.StatusInternalServerError),
 	}
 	if err := Respond(ctx, w, er, http.StatusInternalServerError); err != nil {

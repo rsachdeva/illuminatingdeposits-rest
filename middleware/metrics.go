@@ -1,4 +1,4 @@
-package mid
+package middleware
 
 import (
 	"context"
@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"runtime"
 
-	"github.com/rsachdeva/illuminatingdeposits/web"
+	"github.com/rsachdeva/illuminatingdeposits/service"
 	"go.opencensus.io/trace"
 )
 
@@ -23,10 +23,10 @@ var m = struct {
 }
 
 // Metrics updates program counters.
-func Metrics() web.Middleware {
+func Metrics() service.Middleware {
 
 	// This is the actual middleware function to be executed.
-	f := func(before web.Handler) web.Handler {
+	f := func(before service.Handler) service.Handler {
 
 		// Wrap this handler around the next one provided.
 		h := func(ctx context.Context, w http.ResponseWriter, r *http.Request) error {

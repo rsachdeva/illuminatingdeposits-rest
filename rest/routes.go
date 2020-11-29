@@ -8,14 +8,14 @@ import (
 	"github.com/jmoiron/sqlx"
 	"github.com/rsachdeva/illuminatingdeposits/database"
 	"github.com/rsachdeva/illuminatingdeposits/invest"
-	"github.com/rsachdeva/illuminatingdeposits/mid"
+	"github.com/rsachdeva/illuminatingdeposits/middleware"
+	"github.com/rsachdeva/illuminatingdeposits/service"
 	"github.com/rsachdeva/illuminatingdeposits/user"
-	"github.com/rsachdeva/illuminatingdeposits/web"
 )
 
 func RegisterRoutesHandlers(server *http.Server, log *log.Logger, db *sqlx.DB, shutdownCh chan os.Signal) {
 	// Construct the web.App which holds all routes as well as common Middleware.
-	app := web.NewApp(shutdownCh, log, mid.Logger(log), mid.Errors(log), mid.Metrics(), mid.Panics(log))
+	app := service.NewApp(shutdownCh, log, middleware.Logger(log), middleware.Errors(log), middleware.Metrics(), middleware.Panics(log))
 
 	database.RegisterCheckHandler(db, app)
 
