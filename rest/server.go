@@ -11,6 +11,11 @@ import (
 
 	"github.com/pkg/errors"
 	"github.com/rsachdeva/illuminatingdeposits/conf"
+	"github.com/rsachdeva/illuminatingdeposits/database"
+	"github.com/rsachdeva/illuminatingdeposits/invest"
+	"github.com/rsachdeva/illuminatingdeposits/rest/middleware"
+	"github.com/rsachdeva/illuminatingdeposits/transport"
+	"github.com/rsachdeva/illuminatingdeposits/user"
 )
 
 func tlsConfig() (*tls.Config, error) {
@@ -163,7 +168,11 @@ func ConfigureAndServe() error {
 		}
 	}
 	server := NewServer(cfg, tl)
-	RegisterRoutesHandlers(server, log, db, shutdownCh)
+	app := transport.NewApp(shutdownCh, log, middleware.Logger(log), middleware.Errors(log), middleware.Metrics(), middleware.Panics(log))
+	server.Handler = app
+	database.RegisterCheckHandler(db, app)
+	user.RegisterUserHandler(db, app)
+	invest.RegisterInvestHandler(log, app)
 
 	err = ListenAndServeWithShutdown(server, log, shutdownCh, cfg)
 	if err != nil {
