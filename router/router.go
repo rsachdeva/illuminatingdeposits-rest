@@ -28,9 +28,6 @@ type Values struct {
 	Start      time.Time
 }
 
-// Handler is the signature used by all application interestsvc in this router.
-type Handler func(context.Context, http.ResponseWriter, *http.Request) error
-
 // ReqMux is the entrypoint into our application and what controls the context of
 // each request. Feel free to add any configuration data/logic on this type.
 type ReqMux struct {

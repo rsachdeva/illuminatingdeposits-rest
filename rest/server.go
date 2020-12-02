@@ -11,7 +11,7 @@ import (
 
 	"github.com/pkg/errors"
 	"github.com/rsachdeva/illuminatingdeposits/conf"
-	"github.com/rsachdeva/illuminatingdeposits/rest/middlewarefunc"
+	"github.com/rsachdeva/illuminatingdeposits/middlewarefunc"
 	"github.com/rsachdeva/illuminatingdeposits/router"
 )
 
