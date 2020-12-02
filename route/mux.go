@@ -1,4 +1,4 @@
-package router
+package route
 
 import (
 	"context"
@@ -28,9 +28,9 @@ type Values struct {
 	Start      time.Time
 }
 
-// ReqMux is the entrypoint into our application and what controls the context of
+// ServeMux is the entrypoint into our application and what controls the context of
 // each request. Feel free to add any configuration data/logic on this type.
-type ReqMux struct {
+type ServeMux struct {
 	log      *log.Logger
 	mux      *chi.Mux
 	mws      []Middleware
@@ -38,35 +38,35 @@ type ReqMux struct {
 	shutdown chan os.Signal
 }
 
-// NewReqMux constructs an ReqMux to handle a set of routes. Any Middleware provided
+// NewServeMux constructs an ServeMux to handle a set of routes. Any Middleware provided
 // will be ran for every request.
-func NewReqMux(shutdownCh chan os.Signal, log *log.Logger, mw ...Middleware) *ReqMux {
-	reqMux := ReqMux{
+func NewServeMux(shutdownCh chan os.Signal, log *log.Logger, mw ...Middleware) *ServeMux {
+	m := ServeMux{
 		log:      log,
 		mux:      chi.NewRouter(),
 		mws:      mw,
 		shutdown: shutdownCh,
 	}
 
-	// Create an OpenCensus HTTP Handler which wraps the router. This will start
+	// Create an OpenCensus HTTP Handler which wraps the route. This will start
 	// the initial span and annotate it with information about the request/response.
 	//
 	// This is configured to use the W3C TraceContext standard to set the remote
 	// parent if an cli request includes the appropriate headers.
 	// https://w3c.github.io/trace-context/
-	reqMux.och = &ochttp.Handler{
-		Handler:     reqMux.mux,
+	m.och = &ochttp.Handler{
+		Handler:     m.mux,
 		Propagation: &tracecontext.HTTPFormat{},
 	}
 
-	return &reqMux
+	return &m
 }
 
 // Handle associates a handler function with an HTTP Method and URL pattern.
 //
 // It converts our custom handler type to the std lib Handler type. It captures
 // errors from the handler and serves them to the cli in a uniform way.
-func (a *ReqMux) Handle(method, url string, h Handler, mw ...Middleware) {
+func (a *ServeMux) Handle(method, url string, h Handler, mw ...Middleware) {
 
 	// First wrap handler specific middlewarefunc around this handler.
 	slicemws := append(a.mws, mw...)
@@ -103,13 +103,13 @@ func (a *ReqMux) Handle(method, url string, h Handler, mw ...Middleware) {
 }
 
 // ServeHTTP implements the http.Handler interface.
-func (a *ReqMux) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+func (a *ServeMux) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	a.och.ServeHTTP(w, r)
 }
 
 // SignalShutdown is used to gracefully shutdown the app when an integrity
 // issue is identified.
-func (a *ReqMux) SignalShutdown() {
-	a.log.Println("error returned from handler indicated integrity issue, shutting down router")
+func (a *ServeMux) SignalShutdown() {
+	a.log.Println("error returned from handler indicated integrity issue, shutting down route")
 	a.shutdown <- syscall.SIGSTOP
 }

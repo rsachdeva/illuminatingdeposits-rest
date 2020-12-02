@@ -7,7 +7,7 @@ import (
 
 	"github.com/pkg/errors"
 	"github.com/rsachdeva/illuminatingdeposits/debug"
-	"github.com/rsachdeva/illuminatingdeposits/router"
+	"github.com/rsachdeva/illuminatingdeposits/route"
 	"go.opencensus.io/trace"
 )
 
@@ -24,7 +24,7 @@ func (*Service) Create(ctx context.Context, w http.ResponseWriter, r *http.Reque
 
 	debug.Dump(r)
 	var nin NewInterest
-	if err := router.Decode(r, &nin); err != nil {
+	if err := route.Decode(r, &nin); err != nil {
 		return errors.Wrap(err, "decoding new interest calculation request with banks and deposits")
 	}
 
@@ -33,5 +33,5 @@ func (*Service) Create(ctx context.Context, w http.ResponseWriter, r *http.Reque
 		return errors.Wrap(err, "creating new interest calculations")
 	}
 
-	return router.Respond(ctx, w, &in, http.StatusCreated)
+	return route.Respond(ctx, w, &in, http.StatusCreated)
 }

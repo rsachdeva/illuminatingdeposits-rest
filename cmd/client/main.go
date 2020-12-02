@@ -134,8 +134,8 @@ func main() {
 		Certificates: []tls.Certificate{cert},
 	}
 	tlsConfig.BuildNameToCertificate()
-	router := &http.Transport{TLSClientConfig: tlsConfig}
-	client := &http.Client{Transport: router}
+	route := &http.Transport{TLSClientConfig: tlsConfig}
+	client := &http.Client{Transport: route}
 
 	// Use client to make request.
 	// Ignoring response, just verifying connection accepted.
@@ -178,8 +178,8 @@ func main() {
 //
 // tlsConfig := &tls.Config{RootCAs: cp, InsecureSkipVerify: false}
 //
-// router := &http.Transport{TLSClientConfig: tlsConfig, DisableKeepAlives: true}
-// client := &http.Client{Transport: router}
+// route := &http.Transport{TLSClientConfig: tlsConfig, DisableKeepAlives: true}
+// client := &http.Client{Transport: route}
 // _, err = client.Get("https://localhost:3000/v1/health")
 // if err != nil {
 // 	log.Println("Error making request. ", err)

@@ -9,7 +9,7 @@ import (
 	"github.com/jmoiron/sqlx"
 	"github.com/pkg/errors"
 	"github.com/rsachdeva/illuminatingdeposits/auth"
-	"github.com/rsachdeva/illuminatingdeposits/router"
+	"github.com/rsachdeva/illuminatingdeposits/route"
 	"go.opencensus.io/trace"
 )
 
@@ -26,7 +26,7 @@ func (us *Service) Create(ctx context.Context, w http.ResponseWriter, r *http.Re
 	fmt.Printf("r.Header.GetGet(\"Authorization\") is %s", r.Header.Get("Authorization"))
 	if !ok {
 		err := errors.New("must provide email and password in Basic auth")
-		return router.NewRequestError(err, http.StatusUnauthorized)
+		return route.NewRequestError(err, http.StatusUnauthorized)
 	}
 
 	nu := NewUser{
@@ -41,5 +41,5 @@ func (us *Service) Create(ctx context.Context, w http.ResponseWriter, r *http.Re
 		return err
 	}
 
-	return router.Respond(ctx, w, u, http.StatusCreated)
+	return route.Respond(ctx, w, u, http.StatusCreated)
 }
