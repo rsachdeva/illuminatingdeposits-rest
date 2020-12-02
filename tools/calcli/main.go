@@ -10,7 +10,7 @@ import (
 
 	"github.com/pkg/errors"
 	"github.com/rsachdeva/illuminatingdeposits/invest"
-	"github.com/rsachdeva/illuminatingdeposits/rest/service"
+	"github.com/rsachdeva/illuminatingdeposits/rest/mux"
 	"github.com/rsachdeva/illuminatingdeposits/tools/calcli/handlers"
 )
 
@@ -44,7 +44,7 @@ func createInterest() error {
 	var ni invest.NewInterest
 
 	fmt.Println("flag.Arg(1) is", flag.Arg(1))
-	if err := service.InputFile(flag.Arg(1), &ni); err != nil {
+	if err := mux.InputFile(flag.Arg(1), &ni); err != nil {
 		return errors.Wrap(err, "parsing json file for interest")
 	}
 	executionTimes := 1

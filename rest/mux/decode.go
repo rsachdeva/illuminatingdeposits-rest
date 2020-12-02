@@ -1,4 +1,4 @@
-package service
+package mux
 
 import (
 	"encoding/json"

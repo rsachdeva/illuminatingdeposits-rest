@@ -6,7 +6,7 @@ import (
 )
 
 func Debug(log *log.Logger, cfg AppConfig) {
-	log.Println("debug service listening on", cfg.Web.Debug)
+	log.Println("debug mux listening on", cfg.Web.Debug)
 	err := http.ListenAndServe(cfg.Web.Debug, http.DefaultServeMux)
-	log.Println("debug service closed", err)
+	log.Println("debug mux closed", err)
 }

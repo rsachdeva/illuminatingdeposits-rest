@@ -11,11 +11,8 @@ import (
 
 	"github.com/pkg/errors"
 	"github.com/rsachdeva/illuminatingdeposits/conf"
-	"github.com/rsachdeva/illuminatingdeposits/database"
-	"github.com/rsachdeva/illuminatingdeposits/invest"
 	"github.com/rsachdeva/illuminatingdeposits/rest/middleware"
-	"github.com/rsachdeva/illuminatingdeposits/rest/service"
-	"github.com/rsachdeva/illuminatingdeposits/user"
+	"github.com/rsachdeva/illuminatingdeposits/rest/mux"
 )
 
 func tlsConfig() (*tls.Config, error) {
@@ -78,9 +75,6 @@ func ConfigureAndServe() error {
 		return err
 	}
 
-	// =========================================================================
-	// ReqHandler Starting
-
 	log.Printf("main : Started")
 	defer log.Println("main : Completed")
 
@@ -89,9 +83,6 @@ func ConfigureAndServe() error {
 		return errors.Wrap(err, "generating config for output")
 	}
 	log.Printf("main : Config :\n%v\n", out)
-
-	// =========================================================================
-	// Start Database
 
 	db, err := Db(cfg)
 	if err != nil {
@@ -129,29 +120,8 @@ func ConfigureAndServe() error {
 		Debug(log, cfg)
 	}()
 
-	// fmt.Println("hi there")
-	// lis, err := net.Listen("tcp", "0.0.0.0:50051")
-	// if err != nil {
-	// 	log.Fatalf("could not listen %v", err)
-	// }
-	//
-	// // since execution happens from root of project per the go.mod file
-	// tls := true
-	// var opts []grpc.ServerOption
-	// if tls {
-	// 	opts = tlsOpts(opts)
-	// }
-	// // https://golang.org/ref/spec#Passing_arguments_to_..._parameters
-	// s := grpc.NewServer(opts...)
-	// // s := grpc.NewServer()
-	// greetpb.RegisterGreetServiceServer(s, server{})
-	//
-	// if err := s.Serve(lis); err != nil {
-	// 	log.Fatalf("error is %#v", err)
-	// }
-
 	// =========================================================================
-	// Start API Service
+	// Register API Services and Start Server
 
 	// Make a channel to listen for an interrupt or terminate signal from the OS.
 	// Set up channel on which to send signal notifications.
@@ -168,11 +138,11 @@ func ConfigureAndServe() error {
 		}
 	}
 	server := NewServer(cfg, tl)
-	h := service.NewReqHandler(shutdownCh, log, middleware.Logger(log), middleware.Errors(log), middleware.Metrics(), middleware.Panics(log))
-	server.Handler = h
-	database.RegisterCheckService(db, h)
-	user.RegisterUserService(db, h)
-	invest.RegisterInvestService(log, h)
+	m := mux.NewReqMux(shutdownCh, log, middleware.Logger(log), middleware.Errors(log), middleware.Metrics(), middleware.Panics(log))
+	server.Handler = m
+	registerCheckService(db, m)
+	registerUserService(db, m)
+	registerInvestService(log, m)
 
 	err = ListenAndServeWithShutdown(server, log, shutdownCh, cfg)
 	if err != nil {

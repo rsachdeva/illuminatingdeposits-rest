@@ -44,7 +44,7 @@ func Open(cfg Config) (*sqlx.DB, error) {
 	}
 
 	log.Println("u.String() is ", u.String())
-	// postgres://postgres:postgres@db/postgres?sslmode=disable&timezone=utc when connecting (for debugging)
+	// postgres://postgres:postgres@Db/postgres?sslmode=disable&timezone=utc when connecting (for debugging)
 	return sqlx.Open("postgres", u.String())
 }
 
@@ -54,7 +54,7 @@ func StatusCheck(ctx context.Context, db *sqlx.DB) error {
 	ctx, span := trace.StartSpan(ctx, "platform.DB.StatusCheck")
 	defer span.End()
 
-	// Run a simple query to determine connectivity. The db has a "Ping" method
+	// Run a simple query to determine connectivity. The Db has a "Ping" method
 	// but it can false-positive when it was previously able to talk to the
 	// database but the database has since gone away. Running this query forces a
 	// round trip to the database.

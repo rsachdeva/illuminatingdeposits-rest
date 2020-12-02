@@ -9,27 +9,16 @@ import (
 	"github.com/jmoiron/sqlx"
 	"github.com/pkg/errors"
 	"github.com/rsachdeva/illuminatingdeposits/auth"
-	"github.com/rsachdeva/illuminatingdeposits/rest/service"
+	"github.com/rsachdeva/illuminatingdeposits/rest/mux"
 	"go.opencensus.io/trace"
 )
 
 // Users holds interestsvc for dealing with user.
-type UsersHandler struct {
-	db *sqlx.DB
+type Service struct {
+	Db *sqlx.DB
 }
 
-func RegisterUserService(db *sqlx.DB, h *service.ReqHandler) {
-	{
-		// Register user interestsvc.
-		u := UsersHandler{db: db}
-
-		// The route can't be authenticated because we need this route to
-		// create the user in the first place.
-		h.Handle(http.MethodPost, "/v1/users", u.Create)
-	}
-}
-
-func (us *UsersHandler) Create(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
+func (us *Service) Create(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
 	ctx, span := trace.StartSpan(ctx, "interestsvc.Users.Create")
 	defer span.End()
 
@@ -37,7 +26,7 @@ func (us *UsersHandler) Create(ctx context.Context, w http.ResponseWriter, r *ht
 	fmt.Printf("r.Header.GetGet(\"Authorization\") is %s", r.Header.Get("Authorization"))
 	if !ok {
 		err := errors.New("must provide email and password in Basic auth")
-		return service.NewRequestError(err, http.StatusUnauthorized)
+		return mux.NewRequestError(err, http.StatusUnauthorized)
 	}
 
 	nu := NewUser{
@@ -47,10 +36,10 @@ func (us *UsersHandler) Create(ctx context.Context, w http.ResponseWriter, r *ht
 		Roles:           []string{auth.RoleUser},
 	}
 
-	u, err := Create(ctx, us.db, nu, time.Now())
+	u, err := Create(ctx, us.Db, nu, time.Now())
 	if err != nil {
 		return err
 	}
 
-	return service.Respond(ctx, w, u, http.StatusCreated)
+	return mux.Respond(ctx, w, u, http.StatusCreated)
 }

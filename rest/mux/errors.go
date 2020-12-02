@@ -1,4 +1,4 @@
-package service
+package mux
 
 import (
 	"fmt"
@@ -39,7 +39,7 @@ func (err *ErrorRequest) Error() string {
 	return err.Err.Error()
 }
 
-// shutdown is a type used to help with the graceful termination of the service.
+// shutdown is a type used to help with the graceful termination of the mux.
 type shutdown struct {
 	Message string
 }

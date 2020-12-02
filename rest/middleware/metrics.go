@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"runtime"
 
-	"github.com/rsachdeva/illuminatingdeposits/rest/service"
+	"github.com/rsachdeva/illuminatingdeposits/rest/mux"
 	"go.opencensus.io/trace"
 )
 
@@ -23,10 +23,10 @@ var m = struct {
 }
 
 // Metrics updates program counters.
-func Metrics() service.Middleware {
+func Metrics() mux.Middleware {
 
 	// This is the actual middleware function to be executed.
-	f := func(before service.Handler) service.Handler {
+	f := func(before mux.Handler) mux.Handler {
 
 		// Wrap this handler around the next one provided.
 		h := func(ctx context.Context, w http.ResponseWriter, r *http.Request) error {

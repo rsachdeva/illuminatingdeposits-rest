@@ -1,4 +1,4 @@
-package service
+package mux
 
 import (
 	"context"
@@ -28,12 +28,12 @@ type Values struct {
 	Start      time.Time
 }
 
-// Handler is the signature used by all application interestsvc in this service.
+// Handler is the signature used by all application interestsvc in this mux.
 type Handler func(context.Context, http.ResponseWriter, *http.Request) error
 
-// ReqHandler is the entrypoint into our application and what controls the context of
+// ReqMux is the entrypoint into our application and what controls the context of
 // each request. Feel free to add any configuration data/logic on this type.
-type ReqHandler struct {
+type ReqMux struct {
 	log      *log.Logger
 	mux      *chi.Mux
 	mws      []Middleware
@@ -41,10 +41,10 @@ type ReqHandler struct {
 	shutdown chan os.Signal
 }
 
-// NewReqHandler constructs an ReqHandler to handle a set of routes. Any Middleware provided
+// NewReqMux constructs an ReqMux to handle a set of routes. Any Middleware provided
 // will be ran for every request.
-func NewReqHandler(shutdownCh chan os.Signal, log *log.Logger, mw ...Middleware) *ReqHandler {
-	app := ReqHandler{
+func NewReqMux(shutdownCh chan os.Signal, log *log.Logger, mw ...Middleware) *ReqMux {
+	app := ReqMux{
 		log:      log,
 		mux:      chi.NewRouter(),
 		mws:      mw,
@@ -69,7 +69,7 @@ func NewReqHandler(shutdownCh chan os.Signal, log *log.Logger, mw ...Middleware)
 //
 // It converts our custom handler type to the std lib Handler type. It captures
 // errors from the handler and serves them to the cli in a uniform way.
-func (a *ReqHandler) Handle(method, url string, h Handler, mw ...Middleware) {
+func (a *ReqMux) Handle(method, url string, h Handler, mw ...Middleware) {
 
 	// First wrap handler specific middleware around this handler.
 	slicemws := append(a.mws, mw...)
@@ -106,13 +106,13 @@ func (a *ReqHandler) Handle(method, url string, h Handler, mw ...Middleware) {
 }
 
 // ServeHTTP implements the http.Handler interface.
-func (a *ReqHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+func (a *ReqMux) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	a.och.ServeHTTP(w, r)
 }
 
 // SignalShutdown is used to gracefully shutdown the app when an integrity
 // issue is identified.
-func (a *ReqHandler) SignalShutdown() {
-	a.log.Println("error returned from handler indicated integrity issue, shutting down service")
+func (a *ReqMux) SignalShutdown() {
+	a.log.Println("error returned from handler indicated integrity issue, shutting down mux")
 	a.shutdown <- syscall.SIGSTOP
 }
