@@ -1,4 +1,4 @@
-package middleware
+package middlewarefunc
 
 import (
 	"context"
@@ -15,7 +15,7 @@ import (
 // Unexpected errors (status >= 500) are logged.
 func Errors(log *log.Logger) mux.Middleware {
 
-	// This is the actual middleware function to be executed.
+	// This is the actual middlewarefunc function to be executed.
 	f := func(before mux.Handler) mux.Handler {
 
 		h := func(ctx context.Context, w http.ResponseWriter, r *http.Request) error {

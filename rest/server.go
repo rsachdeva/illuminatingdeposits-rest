@@ -11,7 +11,7 @@ import (
 
 	"github.com/pkg/errors"
 	"github.com/rsachdeva/illuminatingdeposits/conf"
-	"github.com/rsachdeva/illuminatingdeposits/rest/middleware"
+	"github.com/rsachdeva/illuminatingdeposits/rest/middlewarefunc"
 	"github.com/rsachdeva/illuminatingdeposits/rest/mux"
 )
 
@@ -138,7 +138,11 @@ func ConfigureAndServe() error {
 		}
 	}
 	server := NewServer(cfg, tl)
-	m := mux.NewReqMux(shutdownCh, log, middleware.Logger(log), middleware.Errors(log), middleware.Metrics(), middleware.Panics(log))
+	m := mux.NewReqMux(shutdownCh, log,
+		middlewarefunc.Logger(log),
+		middlewarefunc.Errors(log),
+		middlewarefunc.Metrics(),
+		middlewarefunc.Panics(log))
 	server.Handler = m
 	registerCheckService(db, m)
 	registerUserService(db, m)

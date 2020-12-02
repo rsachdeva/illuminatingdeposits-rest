@@ -44,7 +44,7 @@ type ReqMux struct {
 // NewReqMux constructs an ReqMux to handle a set of routes. Any Middleware provided
 // will be ran for every request.
 func NewReqMux(shutdownCh chan os.Signal, log *log.Logger, mw ...Middleware) *ReqMux {
-	app := ReqMux{
+	reqMux := ReqMux{
 		log:      log,
 		mux:      chi.NewRouter(),
 		mws:      mw,
@@ -57,12 +57,12 @@ func NewReqMux(shutdownCh chan os.Signal, log *log.Logger, mw ...Middleware) *Re
 	// This is configured to use the W3C TraceContext standard to set the remote
 	// parent if an cli request includes the appropriate headers.
 	// https://w3c.github.io/trace-context/
-	app.och = &ochttp.Handler{
-		Handler:     app.mux,
+	reqMux.och = &ochttp.Handler{
+		Handler:     reqMux.mux,
 		Propagation: &tracecontext.HTTPFormat{},
 	}
 
-	return &app
+	return &reqMux
 }
 
 // Handle associates a handler function with an HTTP Method and URL pattern.
@@ -71,12 +71,12 @@ func NewReqMux(shutdownCh chan os.Signal, log *log.Logger, mw ...Middleware) *Re
 // errors from the handler and serves them to the cli in a uniform way.
 func (a *ReqMux) Handle(method, url string, h Handler, mw ...Middleware) {
 
-	// First wrap handler specific middleware around this handler.
+	// First wrap handler specific middlewarefunc around this handler.
 	slicemws := append(a.mws, mw...)
 	fmt.Println("slicemws is", slicemws)
 	h = wrapMiddleware(slicemws, h)
 
-	// Add the application's general middleware to the handler chain.
+	// Add the application's general middlewarefunc to the handler chain.
 	// h = wrapMiddleware(a.mws, h)
 
 	// Create a function that conforms to the std lib definition of a handler.

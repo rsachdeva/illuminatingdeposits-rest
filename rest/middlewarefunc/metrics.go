@@ -1,4 +1,4 @@
-package middleware
+package middlewarefunc
 
 import (
 	"context"
@@ -25,7 +25,7 @@ var m = struct {
 // Metrics updates program counters.
 func Metrics() mux.Middleware {
 
-	// This is the actual middleware function to be executed.
+	// This is the actual middlewarefunc function to be executed.
 	f := func(before mux.Handler) mux.Handler {
 
 		// Wrap this handler around the next one provided.

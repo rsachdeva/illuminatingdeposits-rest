@@ -1,4 +1,4 @@
-package middleware
+package middlewarefunc
 
 import (
 	"context"
@@ -16,7 +16,7 @@ import (
 // reported in Metrics and handled in Errors.
 func Panics(log *log.Logger) mux.Middleware {
 
-	// This is the actual middleware function to be executed.
+	// This is the actual middlewarefunc function to be executed.
 	f := func(after mux.Handler) mux.Handler {
 
 		h := func(ctx context.Context, w http.ResponseWriter, r *http.Request) (err error) {

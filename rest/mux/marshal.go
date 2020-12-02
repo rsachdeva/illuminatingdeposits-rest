@@ -12,7 +12,7 @@ import (
 // Respond converts a Go value to JSON and sends it to the cli.
 func Respond(ctx context.Context, w http.ResponseWriter, data interface{}, statusCode int) error {
 
-	// Set the status code for the request logger middleware.
+	// Set the status code for the request logger middlewarefunc.
 	v := ctx.Value(KeyValues).(*Values)
 	v.StatusCode = statusCode
 

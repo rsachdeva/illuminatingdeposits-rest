@@ -1,4 +1,4 @@
-package middleware
+package middlewarefunc
 
 import (
 	"context"
@@ -15,10 +15,10 @@ import (
 // format: TraceID : (200) GET /foo -> IP ADDR (latency)
 func Logger(log *log.Logger) mux.Middleware {
 
-	// This is the actual middleware function to be executed.
+	// This is the actual middlewarefunc function to be executed.
 	f := func(before mux.Handler) mux.Handler {
 
-		// Create the handler that will be attached in the middleware chain.
+		// Create the handler that will be attached in the middlewarefunc chain.
 		h := func(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
 			fmt.Printf("Entering Logger before handler is %T\n", before)
 			defer fmt.Printf("Exiting Logger before handler is %T\n", before)
