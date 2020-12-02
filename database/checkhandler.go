@@ -5,7 +5,7 @@ import (
 	"net/http"
 
 	"github.com/jmoiron/sqlx"
-	"github.com/rsachdeva/illuminatingdeposits/service"
+	"github.com/rsachdeva/illuminatingdeposits/rest/service"
 	"go.opencensus.io/trace"
 )
 

@@ -14,7 +14,7 @@ import (
 	"github.com/rsachdeva/illuminatingdeposits/database"
 	"github.com/rsachdeva/illuminatingdeposits/invest"
 	"github.com/rsachdeva/illuminatingdeposits/rest/middleware"
-	"github.com/rsachdeva/illuminatingdeposits/service"
+	"github.com/rsachdeva/illuminatingdeposits/rest/service"
 	"github.com/rsachdeva/illuminatingdeposits/user"
 )
 
