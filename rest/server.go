@@ -14,7 +14,7 @@ import (
 	"github.com/rsachdeva/illuminatingdeposits/database"
 	"github.com/rsachdeva/illuminatingdeposits/invest"
 	"github.com/rsachdeva/illuminatingdeposits/rest/middleware"
-	"github.com/rsachdeva/illuminatingdeposits/transport"
+	"github.com/rsachdeva/illuminatingdeposits/service"
 	"github.com/rsachdeva/illuminatingdeposits/user"
 )
 
@@ -79,7 +79,7 @@ func ConfigureAndServe() error {
 	}
 
 	// =========================================================================
-	// App Starting
+	// ReqHandler Starting
 
 	log.Printf("main : Started")
 	defer log.Println("main : Completed")
@@ -168,11 +168,11 @@ func ConfigureAndServe() error {
 		}
 	}
 	server := NewServer(cfg, tl)
-	app := transport.NewApp(shutdownCh, log, middleware.Logger(log), middleware.Errors(log), middleware.Metrics(), middleware.Panics(log))
-	server.Handler = app
-	database.RegisterCheckHandler(db, app)
-	user.RegisterUserHandler(db, app)
-	invest.RegisterInvestHandler(log, app)
+	h := service.NewReqHandler(shutdownCh, log, middleware.Logger(log), middleware.Errors(log), middleware.Metrics(), middleware.Panics(log))
+	server.Handler = h
+	database.RegisterCheckService(db, h)
+	user.RegisterUserService(db, h)
+	invest.RegisterInvestService(log, h)
 
 	err = ListenAndServeWithShutdown(server, log, shutdownCh, cfg)
 	if err != nil {

@@ -1,4 +1,4 @@
-package transport
+package service
 
 import (
 	"fmt"

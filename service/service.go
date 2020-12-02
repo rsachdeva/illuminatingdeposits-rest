@@ -1,4 +1,4 @@
-package transport
+package service
 
 import (
 	"context"
@@ -31,9 +31,9 @@ type Values struct {
 // Handler is the signature used by all application interestsvc in this service.
 type Handler func(context.Context, http.ResponseWriter, *http.Request) error
 
-// App is the entrypoint into our application and what controls the context of
+// ReqHandler is the entrypoint into our application and what controls the context of
 // each request. Feel free to add any configuration data/logic on this type.
-type App struct {
+type ReqHandler struct {
 	log      *log.Logger
 	mux      *chi.Mux
 	mws      []Middleware
@@ -41,10 +41,10 @@ type App struct {
 	shutdown chan os.Signal
 }
 
-// NewApp constructs an App to handle a set of routes. Any Middleware provided
+// NewReqHandler constructs an ReqHandler to handle a set of routes. Any Middleware provided
 // will be ran for every request.
-func NewApp(shutdownCh chan os.Signal, log *log.Logger, mw ...Middleware) *App {
-	app := App{
+func NewReqHandler(shutdownCh chan os.Signal, log *log.Logger, mw ...Middleware) *ReqHandler {
+	app := ReqHandler{
 		log:      log,
 		mux:      chi.NewRouter(),
 		mws:      mw,
@@ -69,7 +69,7 @@ func NewApp(shutdownCh chan os.Signal, log *log.Logger, mw ...Middleware) *App {
 //
 // It converts our custom handler type to the std lib Handler type. It captures
 // errors from the handler and serves them to the cli in a uniform way.
-func (a *App) Handle(method, url string, h Handler, mw ...Middleware) {
+func (a *ReqHandler) Handle(method, url string, h Handler, mw ...Middleware) {
 
 	// First wrap handler specific middleware around this handler.
 	slicemws := append(a.mws, mw...)
@@ -106,13 +106,13 @@ func (a *App) Handle(method, url string, h Handler, mw ...Middleware) {
 }
 
 // ServeHTTP implements the http.Handler interface.
-func (a *App) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+func (a *ReqHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	a.och.ServeHTTP(w, r)
 }
 
 // SignalShutdown is used to gracefully shutdown the app when an integrity
 // issue is identified.
-func (a *App) SignalShutdown() {
+func (a *ReqHandler) SignalShutdown() {
 	a.log.Println("error returned from handler indicated integrity issue, shutting down service")
 	a.shutdown <- syscall.SIGSTOP
 }

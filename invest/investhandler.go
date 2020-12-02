@@ -7,8 +7,7 @@ import (
 
 	"github.com/pkg/errors"
 	"github.com/rsachdeva/illuminatingdeposits/debug"
-	"github.com/rsachdeva/illuminatingdeposits/json"
-	"github.com/rsachdeva/illuminatingdeposits/transport"
+	"github.com/rsachdeva/illuminatingdeposits/service"
 	"go.opencensus.io/trace"
 )
 
@@ -17,10 +16,10 @@ type InvestHandler struct {
 	log *log.Logger
 }
 
-func RegisterInvestHandler(log *log.Logger, app *transport.App) {
+func RegisterInvestService(log *log.Logger, h *service.ReqHandler) {
 	{
 		i := InvestHandler{log: log}
-		app.Handle(http.MethodPost, "/v1/interests", i.Create)
+		h.Handle(http.MethodPost, "/v1/interests", i.Create)
 	}
 }
 
@@ -32,7 +31,7 @@ func (*InvestHandler) Create(ctx context.Context, w http.ResponseWriter, r *http
 
 	debug.Dump(r)
 	var nin NewInterest
-	if err := json.Decode(r, &nin); err != nil {
+	if err := service.Decode(r, &nin); err != nil {
 		return errors.Wrap(err, "decoding new interest calculation request with banks and deposits")
 	}
 
@@ -41,5 +40,5 @@ func (*InvestHandler) Create(ctx context.Context, w http.ResponseWriter, r *http
 		return errors.Wrap(err, "creating new interest calculations")
 	}
 
-	return json.Respond(ctx, w, &in, http.StatusCreated)
+	return service.Respond(ctx, w, &in, http.StatusCreated)
 }

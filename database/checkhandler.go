@@ -5,8 +5,7 @@ import (
 	"net/http"
 
 	"github.com/jmoiron/sqlx"
-	"github.com/rsachdeva/illuminatingdeposits/json"
-	"github.com/rsachdeva/illuminatingdeposits/transport"
+	"github.com/rsachdeva/illuminatingdeposits/service"
 	"go.opencensus.io/trace"
 )
 
@@ -17,11 +16,11 @@ type CheckHandler struct {
 	// ADD OTHER STATE LIKE THE LOGGER IF NEEDED.
 }
 
-func RegisterCheckHandler(db *sqlx.DB, app *transport.App) {
+func RegisterCheckService(db *sqlx.DB, h *service.ReqHandler) {
 	{
 		// Register health check handler. This route is not authenticated.
 		c := CheckHandler{db: db}
-		app.Handle(http.MethodGet, "/v1/health", c.Health)
+		h.Handle(http.MethodGet, "/v1/health", c.Health)
 	}
 }
 
@@ -41,9 +40,9 @@ func (c *CheckHandler) Health(ctx context.Context, w http.ResponseWriter, _ *htt
 		// status. Do not respond by just returning an error because further up in
 		// the call stack will interpret that as an unhandled error.
 		health.Status = "db not ready"
-		return json.Respond(ctx, w, health, http.StatusInternalServerError)
+		return service.Respond(ctx, w, health, http.StatusInternalServerError)
 	}
 
 	health.Status = "ok"
-	return json.Respond(ctx, w, health, http.StatusOK)
+	return service.Respond(ctx, w, health, http.StatusOK)
 }

@@ -1,4 +1,4 @@
-package transport
+package service
 
 // Middleware is a function designed to run some code before and/or after
 // another Handler. It is designed to remove boilerplate or other concerns not
@@ -18,7 +18,7 @@ func wrapMiddleware(mws []Middleware, handler Handler) Handler {
 		if mw != nil {
 			// last middle ware wraps first
 			// so in this list
-			// 	app := web.NewApp(log, mid.Errors(log), mid.Metrics())
+			// 	app := web.NewReqHandler(log, mid.Errors(log), mid.Metrics())
 			// the last middleware mid.Metrics h is wrapped initially
 			// and then mid.Errors h is wrapped
 			handler = mw(handler)

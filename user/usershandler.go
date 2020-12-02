@@ -9,8 +9,7 @@ import (
 	"github.com/jmoiron/sqlx"
 	"github.com/pkg/errors"
 	"github.com/rsachdeva/illuminatingdeposits/auth"
-	"github.com/rsachdeva/illuminatingdeposits/json"
-	"github.com/rsachdeva/illuminatingdeposits/transport"
+	"github.com/rsachdeva/illuminatingdeposits/service"
 	"go.opencensus.io/trace"
 )
 
@@ -19,14 +18,14 @@ type UsersHandler struct {
 	db *sqlx.DB
 }
 
-func RegisterUserHandler(db *sqlx.DB, app *transport.App) {
+func RegisterUserService(db *sqlx.DB, h *service.ReqHandler) {
 	{
 		// Register user interestsvc.
 		u := UsersHandler{db: db}
 
 		// The route can't be authenticated because we need this route to
 		// create the user in the first place.
-		app.Handle(http.MethodPost, "/v1/users", u.Create)
+		h.Handle(http.MethodPost, "/v1/users", u.Create)
 	}
 }
 
@@ -38,7 +37,7 @@ func (us *UsersHandler) Create(ctx context.Context, w http.ResponseWriter, r *ht
 	fmt.Printf("r.Header.GetGet(\"Authorization\") is %s", r.Header.Get("Authorization"))
 	if !ok {
 		err := errors.New("must provide email and password in Basic auth")
-		return transport.NewRequestError(err, http.StatusUnauthorized)
+		return service.NewRequestError(err, http.StatusUnauthorized)
 	}
 
 	nu := NewUser{
@@ -53,5 +52,5 @@ func (us *UsersHandler) Create(ctx context.Context, w http.ResponseWriter, r *ht
 		return err
 	}
 
-	return json.Respond(ctx, w, u, http.StatusCreated)
+	return service.Respond(ctx, w, u, http.StatusCreated)
 }
