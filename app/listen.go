@@ -1,4 +1,4 @@
-package rest
+package app
 
 import (
 	"context"
@@ -17,7 +17,7 @@ func ListenAndServeWithShutdown(server *http.Server, log *log.Logger, shutdownCh
 	// buffered channel so the goroutine can exit if we don't collect this error.
 	serverErrorsCh := make(chan error, 1)
 
-	// Start the route listening for requests.
+	// Start the responder listening for requests.
 	go func() {
 		log.Printf("main : Register listening on %s", server.Addr)
 		// send signal to serverErrorCh

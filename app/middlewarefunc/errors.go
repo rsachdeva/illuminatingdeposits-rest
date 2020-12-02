@@ -6,17 +6,17 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/rsachdeva/illuminatingdeposits/route"
+	"github.com/rsachdeva/illuminatingdeposits/responder"
 	"go.opencensus.io/trace"
 )
 
 // Errors handles errors coming out of the call chain. It detects normal
 // application errors which are used to respond to the cli in a uniform way.
 // Unexpected errors (status >= 500) are logged.
-func Errors(log *log.Logger) route.Middleware {
+func Errors(log *log.Logger) responder.Middleware {
 
 	// This is the actual middlewarefunc function to be executed.
-	f := func(before route.Handler) route.Handler {
+	f := func(before responder.Handler) responder.Handler {
 
 		h := func(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
 			fmt.Printf("\tEntering Errors before handler is %T\n", before)
@@ -25,27 +25,27 @@ func Errors(log *log.Logger) route.Middleware {
 			ctx, span := trace.StartSpan(ctx, "internal.mid.Errors")
 			defer span.End()
 
-			// If the context is missing this value, request the route
+			// If the context is missing this value, request the responder
 			// to be shutdown gracefully.
-			v, ok := ctx.Value(route.KeyValues).(*route.Values)
+			v, ok := ctx.Value(responder.KeyValues).(*responder.Values)
 			if !ok {
-				return route.NewShutdownError("in error mid web value missing from context")
+				return responder.NewShutdownError("in error mid web value missing from context")
 			}
 
 			// Run the handler chain and catch any propagated error.
 			if err := before(ctx, w, r); err != nil {
 
 				// Log the error.
-				log.Printf("TraceID %s : \n ERROR :\n %+v  web.IsShutdown(err) is %v", v.TraceID, err, route.IsShutdown(err))
+				log.Printf("TraceID %s : \n ERROR :\n %+v  web.IsShutdown(err) is %v", v.TraceID, err, responder.IsShutdown(err))
 
 				// Respond to the error.
-				if err := route.RespondError(ctx, w, err); err != nil {
+				if err := responder.RespondError(ctx, w, err); err != nil {
 					return err
 				}
 
 				// If we receive the shutdown err we need to return it
-				// back to the base handler to shutdown the route.
-				if ok := route.IsShutdown(err); ok {
+				// back to the base handler to shutdown the responder.
+				if ok := responder.IsShutdown(err); ok {
 					return err
 				}
 			}

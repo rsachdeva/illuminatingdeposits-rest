@@ -1,4 +1,4 @@
-package route
+package responder
 
 import (
 	"fmt"
@@ -39,7 +39,7 @@ func (err *ErrorRequest) Error() string {
 	return err.Err.Error()
 }
 
-// shutdown is a type used to help with the graceful termination of the route.
+// shutdown is a type used to help with the graceful termination of the responder.
 type shutdown struct {
 	Message string
 }

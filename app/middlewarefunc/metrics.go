@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"runtime"
 
-	"github.com/rsachdeva/illuminatingdeposits/route"
+	"github.com/rsachdeva/illuminatingdeposits/responder"
 	"go.opencensus.io/trace"
 )
 
@@ -23,10 +23,10 @@ var m = struct {
 }
 
 // Metrics updates program counters.
-func Metrics() route.Middleware {
+func Metrics() responder.Middleware {
 
 	// This is the actual middlewarefunc function to be executed.
-	f := func(before route.Handler) route.Handler {
+	f := func(before responder.Handler) responder.Handler {
 
 		// Wrap this handler around the next one provided.
 		h := func(ctx context.Context, w http.ResponseWriter, r *http.Request) error {

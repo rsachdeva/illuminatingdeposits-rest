@@ -1,12 +1,12 @@
-package rest
+package app
 
 import (
 	"github.com/jmoiron/sqlx"
-	"github.com/rsachdeva/illuminatingdeposits/database"
+	"github.com/rsachdeva/illuminatingdeposits/dbconn"
 )
 
 func Db(cfg AppConfig) (*sqlx.DB, error) {
-	db, err := database.Open(database.Config{
+	db, err := dbconn.Open(dbconn.Config{
 		User:       cfg.DB.User,
 		Password:   cfg.DB.Password,
 		Host:       cfg.DB.Host,

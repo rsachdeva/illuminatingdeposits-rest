@@ -8,16 +8,16 @@ import (
 	"runtime/debug"
 
 	"github.com/pkg/errors"
-	"github.com/rsachdeva/illuminatingdeposits/route"
+	"github.com/rsachdeva/illuminatingdeposits/responder"
 	"go.opencensus.io/trace"
 )
 
 // Panics recovers from panics and converts the panic to an error so it is
 // reported in Metrics and handled in Errors.
-func Panics(log *log.Logger) route.Middleware {
+func Panics(log *log.Logger) responder.Middleware {
 
 	// This is the actual middlewarefunc function to be executed.
-	f := func(after route.Handler) route.Handler {
+	f := func(after responder.Handler) responder.Handler {
 
 		h := func(ctx context.Context, w http.ResponseWriter, r *http.Request) (err error) {
 			fmt.Printf("\t\t\t\t\tEntering Panics after handler is %T\n", after)
@@ -26,11 +26,11 @@ func Panics(log *log.Logger) route.Middleware {
 			ctx, span := trace.StartSpan(ctx, "internal.mid.Panics")
 			defer span.End()
 
-			// If the context is missing this value, request the route
+			// If the context is missing this value, request the responder
 			// to be shutdown gracefully.
-			v, ok := ctx.Value(route.KeyValues).(*route.Values)
+			v, ok := ctx.Value(responder.KeyValues).(*responder.Values)
 			if !ok {
-				return route.NewShutdownError("in panic mid web value missing from context")
+				return responder.NewShutdownError("in panic mid web value missing from context")
 			}
 
 			// Defer a function to recover from a panic and set the err return

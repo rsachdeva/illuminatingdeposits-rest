@@ -1,4 +1,4 @@
-package route
+package responder
 
 import (
 	"context"
@@ -48,7 +48,7 @@ func NewServeMux(shutdownCh chan os.Signal, log *log.Logger, mw ...Middleware) *
 		shutdown: shutdownCh,
 	}
 
-	// Create an OpenCensus HTTP Handler which wraps the route. This will start
+	// Create an OpenCensus HTTP Handler which wraps the responder. This will start
 	// the initial span and annotate it with information about the request/response.
 	//
 	// This is configured to use the W3C TraceContext standard to set the remote
@@ -77,7 +77,7 @@ func (a *ServeMux) Handle(method, url string, h Handler, mw ...Middleware) {
 	// h = wrapMiddleware(a.mws, h)
 
 	// Create a function that conforms to the std lib definition of a handler.
-	// This is the first thing that will be executed when this route is called.
+	// This is the first thing that will be executed when this responder is called.
 	fn := func(w http.ResponseWriter, r *http.Request) {
 		ctx, span := trace.StartSpan(r.Context(), "internal.platform.web")
 		defer span.End()
@@ -110,6 +110,6 @@ func (a *ServeMux) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 // SignalShutdown is used to gracefully shutdown the app when an integrity
 // issue is identified.
 func (a *ServeMux) SignalShutdown() {
-	a.log.Println("error returned from handler indicated integrity issue, shutting down route")
+	a.log.Println("error returned from handler indicated integrity issue, shutting down responder")
 	a.shutdown <- syscall.SIGSTOP
 }

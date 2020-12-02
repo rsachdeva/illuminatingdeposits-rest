@@ -6,11 +6,32 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
+	"github.com/lib/pq"
 	"github.com/pkg/errors"
 	"golang.org/x/crypto/bcrypt"
 )
 
-// Create inserts a new user into the database.
+// User represents someone with access to our system.
+type User struct {
+	ID           string         `Db:"user_id" json:"id"`
+	Name         string         `Db:"name" json:"name"`
+	Email        string         `Db:"email" json:"email"`
+	Roles        pq.StringArray `Db:"roles" json:"roles"`
+	PasswordHash []byte         `Db:"password_hash" json:"-"`
+	DateCreated  time.Time      `Db:"date_created" json:"date_created"`
+	DateUpdated  time.Time      `Db:"date_updated" json:"date_updated"`
+}
+
+// NewUser contains information needed to create a new User.
+type NewUser struct {
+	Name            string   `json:"name" validate:"required"`
+	Email           string   `json:"email" validate:"required"`
+	Roles           []string `json:"roles" validate:"required"`
+	Password        string   `json:"password" validate:"required"`
+	PasswordConfirm string   `json:"password_confirm" validate:"eqfield=Password"`
+}
+
+// Create inserts a new user into the dbconn.
 func Create(ctx context.Context, db *sqlx.DB, n NewUser, now time.Time) (*User, error) {
 
 	hash, err := bcrypt.GenerateFromPassword([]byte(n.Password), bcrypt.DefaultCost)

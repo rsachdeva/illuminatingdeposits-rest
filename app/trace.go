@@ -1,4 +1,4 @@
-package rest
+package app
 
 import (
 	zipkin2 "contrib.go.opencensus.io/exporter/zipkin"

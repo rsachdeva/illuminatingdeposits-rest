@@ -1,4 +1,4 @@
-package rest
+package app
 
 import (
 	"crypto/tls"
@@ -10,9 +10,9 @@ import (
 	"os"
 
 	"github.com/pkg/errors"
+	"github.com/rsachdeva/illuminatingdeposits/app/middlewarefunc"
 	"github.com/rsachdeva/illuminatingdeposits/conf"
-	"github.com/rsachdeva/illuminatingdeposits/middlewarefunc"
-	"github.com/rsachdeva/illuminatingdeposits/route"
+	"github.com/rsachdeva/illuminatingdeposits/responder"
 )
 
 func tlsConfig() (*tls.Config, error) {
@@ -112,8 +112,8 @@ func ConfigureAndServe() error {
 	// =========================================================================
 	// Start Debug Service
 	//
-	// /debug/pprof - Added to the default route by importing the net/http/pprof package.
-	// /debug/vars - Added to the default route by importing the expvar package.
+	// /debug/pprof - Added to the default responder by importing the net/http/pprof package.
+	// /debug/vars - Added to the default responder by importing the expvar package.
 	//
 	// Not concerned with shutting this down when the application is shutdownCh.
 	go func() {
@@ -137,18 +137,18 @@ func ConfigureAndServe() error {
 			return err
 		}
 	}
-	server := NewServer(cfg, tl)
-	m := route.NewServeMux(shutdownCh, log,
+	s := NewServer(cfg, tl)
+	m := responder.NewServeMux(shutdownCh, log,
 		middlewarefunc.Logger(log),
 		middlewarefunc.Errors(log),
 		middlewarefunc.Metrics(),
 		middlewarefunc.Panics(log))
-	server.Handler = m
-	registerCheckService(db, m)
+	s.Handler = m
+	registerDbHealthService(db, m)
 	registerUserService(db, m)
 	registerInvestService(log, m)
 
-	err = ListenAndServeWithShutdown(server, log, shutdownCh, cfg)
+	err = ListenAndServeWithShutdown(s, log, shutdownCh, cfg)
 	if err != nil {
 		return err
 	}

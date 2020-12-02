@@ -1,4 +1,4 @@
-package route
+package responder
 
 import (
 	"context"

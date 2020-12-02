@@ -10,8 +10,8 @@ import (
 	"github.com/pkg/errors"
 	"github.com/rsachdeva/illuminatingdeposits/auth"
 	"github.com/rsachdeva/illuminatingdeposits/conf"
-	"github.com/rsachdeva/illuminatingdeposits/database"
-	"github.com/rsachdeva/illuminatingdeposits/schema"
+	"github.com/rsachdeva/illuminatingdeposits/dbconn"
+	"github.com/rsachdeva/illuminatingdeposits/tools/dbcli/schema"
 	"github.com/rsachdeva/illuminatingdeposits/user"
 )
 
@@ -52,7 +52,7 @@ func run() error {
 	}
 
 	// This is used for multiple commands below.
-	dbConfig := database.Config{
+	dbConfig := dbconn.Config{
 		User:       cfg.DB.User,
 		Password:   cfg.DB.Password,
 		Host:       cfg.DB.Host,
@@ -78,8 +78,8 @@ func run() error {
 	return nil
 }
 
-func createAdmin(cfg database.Config, email, password string) error {
-	db, err := database.Open(cfg)
+func createAdmin(cfg dbconn.Config, email, password string) error {
+	db, err := dbconn.Open(cfg)
 	if err != nil {
 		return err
 	}
@@ -120,8 +120,8 @@ func createAdmin(cfg database.Config, email, password string) error {
 	return nil
 }
 
-func migrate(cfg database.Config) error {
-	db, err := database.Open(cfg)
+func migrate(cfg dbconn.Config) error {
+	db, err := dbconn.Open(cfg)
 	if err != nil {
 		return err
 	}
@@ -135,8 +135,8 @@ func migrate(cfg database.Config) error {
 	return nil
 }
 
-func seed(cfg database.Config) error {
-	db, err := database.Open(cfg)
+func seed(cfg dbconn.Config) error {
+	db, err := dbconn.Open(cfg)
 	if err != nil {
 		return err
 	}

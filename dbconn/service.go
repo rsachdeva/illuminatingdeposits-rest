@@ -1,11 +1,11 @@
-package database
+package dbconn
 
 import (
 	"context"
 	"net/http"
 
 	"github.com/jmoiron/sqlx"
-	"github.com/rsachdeva/illuminatingdeposits/route"
+	"github.com/rsachdeva/illuminatingdeposits/responder"
 	"go.opencensus.io/trace"
 )
 
@@ -16,25 +16,25 @@ type Service struct {
 	// ADD OTHER STATE LIKE THE LOGGER IF NEEDED.
 }
 
-// Health validates the route is healthy and ready to accept requests.
+// Health validates the responder is healthy and ready to accept requests.
 func (c *Service) Health(ctx context.Context, w http.ResponseWriter, _ *http.Request) error {
-	ctx, span := trace.StartSpan(ctx, "database.Service.Health")
+	ctx, span := trace.StartSpan(ctx, "dbconn.Service.Health")
 	defer span.End()
 
 	var health struct {
 		Status string `json:"status"`
 	}
 
-	// Service if the database is ready.
+	// Service if the dbconn is ready.
 	if err := StatusCheck(ctx, c.Db); err != nil {
 
-		// If the database is not ready we will tell the cli and use a 500
+		// If the dbconn is not ready we will tell the cli and use a 500
 		// status. Do not respond by just returning an error because further up in
 		// the call stack will interpret that as an unhandled error.
 		health.Status = "Db not ready"
-		return route.Respond(ctx, w, health, http.StatusInternalServerError)
+		return responder.Respond(ctx, w, health, http.StatusInternalServerError)
 	}
 
 	health.Status = "ok"
-	return route.Respond(ctx, w, health, http.StatusOK)
+	return responder.Respond(ctx, w, health, http.StatusOK)
 }

@@ -13,7 +13,7 @@ import (
 // harder to read for some cases compared to using .sql files. You may also
 // consider a combined approach using a tool like packr or go-bindata.
 //
-// Note that database servers besides PostgreSQL may not support running
+// Note that dbconn servers besides PostgreSQL may not support running
 // multiple queries as part of the same execution so this single large constant
 // may need to be broken up.
 

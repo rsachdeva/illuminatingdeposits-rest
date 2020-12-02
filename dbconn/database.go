@@ -1,4 +1,4 @@
-package database
+package dbconn
 
 import (
 	"context"
@@ -6,11 +6,11 @@ import (
 	"net/url"
 
 	"github.com/jmoiron/sqlx"
-	_ "github.com/lib/pq" // The database driver in use.
+	_ "github.com/lib/pq" // The dbconn driver in use.
 	"go.opencensus.io/trace"
 )
 
-// Config is the required properties to use the database.
+// Config is the required properties to use the dbconn.
 type Config struct {
 	User       string
 	Password   string
@@ -19,7 +19,7 @@ type Config struct {
 	DisableTLS bool
 }
 
-// Open knows how to open a database connection based on the configuration.
+// Open knows how to open a dbconn connection based on the configuration.
 func Open(cfg Config) (*sqlx.DB, error) {
 
 	// Define SSL mode.
@@ -48,7 +48,7 @@ func Open(cfg Config) (*sqlx.DB, error) {
 	return sqlx.Open("postgres", u.String())
 }
 
-// StatusCheck returns nil if it can successfully talk to the database. It
+// StatusCheck returns nil if it can successfully talk to the dbconn. It
 // returns a non-nil error otherwise.
 func StatusCheck(ctx context.Context, db *sqlx.DB) error {
 	ctx, span := trace.StartSpan(ctx, "platform.DB.StatusCheck")
@@ -56,8 +56,8 @@ func StatusCheck(ctx context.Context, db *sqlx.DB) error {
 
 	// Run a simple query to determine connectivity. The Db has a "Ping" method
 	// but it can false-positive when it was previously able to talk to the
-	// database but the database has since gone away. Running this query forces a
-	// round trip to the database.
+	// dbconn but the dbconn has since gone away. Running this query forces a
+	// round trip to the dbconn.
 	const q = `SELECT true`
 	var tmp bool
 	return db.QueryRowContext(ctx, q).Scan(&tmp)
