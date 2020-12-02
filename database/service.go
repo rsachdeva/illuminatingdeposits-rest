@@ -5,7 +5,7 @@ import (
 	"net/http"
 
 	"github.com/jmoiron/sqlx"
-	"github.com/rsachdeva/illuminatingdeposits/rest/mux"
+	"github.com/rsachdeva/illuminatingdeposits/router"
 	"go.opencensus.io/trace"
 )
 
@@ -16,7 +16,7 @@ type Service struct {
 	// ADD OTHER STATE LIKE THE LOGGER IF NEEDED.
 }
 
-// Health validates the mux is healthy and ready to accept requests.
+// Health validates the router is healthy and ready to accept requests.
 func (c *Service) Health(ctx context.Context, w http.ResponseWriter, _ *http.Request) error {
 	ctx, span := trace.StartSpan(ctx, "database.Service.Health")
 	defer span.End()
@@ -32,9 +32,9 @@ func (c *Service) Health(ctx context.Context, w http.ResponseWriter, _ *http.Req
 		// status. Do not respond by just returning an error because further up in
 		// the call stack will interpret that as an unhandled error.
 		health.Status = "Db not ready"
-		return mux.Respond(ctx, w, health, http.StatusInternalServerError)
+		return router.Respond(ctx, w, health, http.StatusInternalServerError)
 	}
 
 	health.Status = "ok"
-	return mux.Respond(ctx, w, health, http.StatusOK)
+	return router.Respond(ctx, w, health, http.StatusOK)
 }

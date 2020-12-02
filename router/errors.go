@@ -1,4 +1,4 @@
-package mux
+package router
 
 import (
 	"fmt"
@@ -39,7 +39,7 @@ func (err *ErrorRequest) Error() string {
 	return err.Err.Error()
 }
 
-// shutdown is a type used to help with the graceful termination of the mux.
+// shutdown is a type used to help with the graceful termination of the router.
 type shutdown struct {
 	Message string
 }

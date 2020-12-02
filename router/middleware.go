@@ -1,4 +1,4 @@
-package mux
+package router
 
 // Middleware is a function designed to run some code before and/or after
 // another Handler. It is designed to remove boilerplate or other concerns not

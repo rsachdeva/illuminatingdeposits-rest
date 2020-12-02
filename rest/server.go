@@ -12,7 +12,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/rsachdeva/illuminatingdeposits/conf"
 	"github.com/rsachdeva/illuminatingdeposits/rest/middlewarefunc"
-	"github.com/rsachdeva/illuminatingdeposits/rest/mux"
+	"github.com/rsachdeva/illuminatingdeposits/router"
 )
 
 func tlsConfig() (*tls.Config, error) {
@@ -112,8 +112,8 @@ func ConfigureAndServe() error {
 	// =========================================================================
 	// Start Debug Service
 	//
-	// /debug/pprof - Added to the default mux by importing the net/http/pprof package.
-	// /debug/vars - Added to the default mux by importing the expvar package.
+	// /debug/pprof - Added to the default router by importing the net/http/pprof package.
+	// /debug/vars - Added to the default router by importing the expvar package.
 	//
 	// Not concerned with shutting this down when the application is shutdownCh.
 	go func() {
@@ -138,7 +138,7 @@ func ConfigureAndServe() error {
 		}
 	}
 	server := NewServer(cfg, tl)
-	m := mux.NewReqMux(shutdownCh, log,
+	m := router.NewReqMux(shutdownCh, log,
 		middlewarefunc.Logger(log),
 		middlewarefunc.Errors(log),
 		middlewarefunc.Metrics(),

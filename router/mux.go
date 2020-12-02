@@ -1,4 +1,4 @@
-package mux
+package router
 
 import (
 	"context"
@@ -28,7 +28,7 @@ type Values struct {
 	Start      time.Time
 }
 
-// Handler is the signature used by all application interestsvc in this mux.
+// Handler is the signature used by all application interestsvc in this router.
 type Handler func(context.Context, http.ResponseWriter, *http.Request) error
 
 // ReqMux is the entrypoint into our application and what controls the context of
@@ -113,6 +113,6 @@ func (a *ReqMux) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 // SignalShutdown is used to gracefully shutdown the app when an integrity
 // issue is identified.
 func (a *ReqMux) SignalShutdown() {
-	a.log.Println("error returned from handler indicated integrity issue, shutting down mux")
+	a.log.Println("error returned from handler indicated integrity issue, shutting down router")
 	a.shutdown <- syscall.SIGSTOP
 }

@@ -1,4 +1,4 @@
-package mux
+package router
 
 import (
 	"context"
