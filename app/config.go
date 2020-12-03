@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/pkg/errors"
-	"github.com/rsachdeva/illuminatingdeposits/conf"
+	"github.com/rsachdeva/illuminatingdeposits-rest/conf"
 )
 
 type AppConfig struct {
@@ -28,7 +28,7 @@ type AppConfig struct {
 	}
 	Trace struct {
 		URL         string  `conf:"default:http://zipkin:9411/api/v2/spans"`
-		Service     string  `conf:"default:illuminatingdeposits"`
+		Service     string  `conf:"default:illuminatingdeposits-rest"`
 		Probability float64 `conf:"default:1"`
 	}
 }

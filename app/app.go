@@ -10,33 +10,16 @@ import (
 	"os"
 
 	"github.com/pkg/errors"
-	"github.com/rsachdeva/illuminatingdeposits/app/middlewarefunc"
-	"github.com/rsachdeva/illuminatingdeposits/conf"
-	"github.com/rsachdeva/illuminatingdeposits/responder"
+	"github.com/rsachdeva/illuminatingdeposits-rest/app/middlewarefunc"
+	"github.com/rsachdeva/illuminatingdeposits-rest/conf"
+	"github.com/rsachdeva/illuminatingdeposits-rest/responder"
 )
 
 func tlsConfig() (*tls.Config, error) {
 	certFile := "conf/tls/servercrtto.pem"
 	keyFile := "conf/tls/serverkeyto.pem"
-	// _, err := ioutil.ReadFile(certFile)
-	// if err != nil {
-	// 	log.Fatalf("Error in reading cert file %v", certFile)
-	// }
-	// _, err = ioutil.ReadFile(keyFile)
-	// if err != nil {
-	// 	log.Fatalf("Error in reading key file %v", keyFile)
-	// }
-	// fmt.Println("Ok to load cert and key files")
 	cert, err := tls.LoadX509KeyPair(certFile, keyFile)
 	if err != nil {
-		// https://github.com/stellar/go/issues/64 shutting down, error: LoadX509KeyPair error: tls: failed to parse private key
-		// From https://github.com/pulumi/pulumi-kafka/issues/15
-		// // that redirected to https://golang.org/pkg/crypto/tls/#LoadX509KeyPair
-		// LoadX509KeyPair reads and parses a public/private key pair from a pair of files. The files must contain PEM encoded data.
-		// so we need PEM files jmd
-		// Next error private key does not match public key
-		// Based on https://stackoverflow.com/questions/991758/how-to-get-pem-file-from-key-and-crt-files JMD
-		// 2020/11/03 16:16:51 shutting down, error: LoadX509KeyPair error: tls: failed to find certificate PEM data in certificate input, but did find a private key; PEM inputs may have been switched
 		return nil, errors.Wrap(err, "LoadX509KeyPair error")
 	}
 	fmt.Println("No errors with LoadX509KeyPair")

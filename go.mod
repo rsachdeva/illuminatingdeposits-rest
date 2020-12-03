@@ -1,4 +1,4 @@
-module github.com/rsachdeva/illuminatingdeposits
+module github.com/rsachdeva/illuminatingdeposits-rest
 
 go 1.15
 

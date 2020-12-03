@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"runtime"
 
-	"github.com/rsachdeva/illuminatingdeposits/responder"
+	"github.com/rsachdeva/illuminatingdeposits-rest/responder"
 	"go.opencensus.io/trace"
 )
 

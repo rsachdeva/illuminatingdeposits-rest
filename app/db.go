@@ -2,7 +2,7 @@ package app
 
 import (
 	"github.com/jmoiron/sqlx"
-	"github.com/rsachdeva/illuminatingdeposits/dbconn"
+	"github.com/rsachdeva/illuminatingdeposits-rest/dbconn"
 )
 
 func Db(cfg AppConfig) (*sqlx.DB, error) {

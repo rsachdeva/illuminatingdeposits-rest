@@ -60,11 +60,15 @@ See tools/resteditor/HealthCRUD.http for request examples and sample response.
 Use dev env for localhost:3000  
 Or go to cmd/client/main.go  
 And uncomment any desired function request starting with "withoutTls..."
+Make sure to make email unique to avoid error
+See Base64EncodedString call line in the file
 
 ####TLS Client: 
 Go to cmd/client/main.go  
 And uncomment any desired function request starting with "tls..."
 run cmd/client
+Make sure to make email unique to avoid error
+See Base64EncodedString call line in the file
 
 # Push Images to Docker Hub
 

@@ -5,10 +5,10 @@ import (
 	"net/http"
 
 	"github.com/jmoiron/sqlx"
-	"github.com/rsachdeva/illuminatingdeposits/dbconn"
-	"github.com/rsachdeva/illuminatingdeposits/invest"
-	"github.com/rsachdeva/illuminatingdeposits/responder"
-	"github.com/rsachdeva/illuminatingdeposits/user"
+	"github.com/rsachdeva/illuminatingdeposits-rest/dbconn"
+	"github.com/rsachdeva/illuminatingdeposits-rest/invest"
+	"github.com/rsachdeva/illuminatingdeposits-rest/responder"
+	"github.com/rsachdeva/illuminatingdeposits-rest/user"
 )
 
 func registerDbHealthService(db *sqlx.DB, m *responder.ServeMux) {

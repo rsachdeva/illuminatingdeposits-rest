@@ -8,11 +8,11 @@ import (
 	"time"
 
 	"github.com/pkg/errors"
-	"github.com/rsachdeva/illuminatingdeposits/auth"
-	"github.com/rsachdeva/illuminatingdeposits/conf"
-	"github.com/rsachdeva/illuminatingdeposits/dbconn"
-	"github.com/rsachdeva/illuminatingdeposits/tools/dbcli/schema"
-	"github.com/rsachdeva/illuminatingdeposits/user"
+	"github.com/rsachdeva/illuminatingdeposits-rest/auth"
+	"github.com/rsachdeva/illuminatingdeposits-rest/conf"
+	"github.com/rsachdeva/illuminatingdeposits-rest/dbconn"
+	"github.com/rsachdeva/illuminatingdeposits-rest/tools/dbcli/schema"
+	"github.com/rsachdeva/illuminatingdeposits-rest/user"
 )
 
 func main() {
