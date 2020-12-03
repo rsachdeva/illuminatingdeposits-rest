@@ -3,10 +3,12 @@ package main
 import (
 	"crypto/tls"
 	"crypto/x509"
+	"encoding/base64"
 	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
+	"strings"
 )
 
 // import (
@@ -185,19 +187,9 @@ func main() {
 // 	log.Println("Error making request. ", err)
 // }
 
+// tls client
 // https://stackoverflow.com/questions/38822764/how-to-send-a-https-request-with-a-certificate-golang
-
-func nonTlsGetRequestHealth() {
-	resp, err := http.Get("http://localhost:3000/v1/health")
-	if err != nil {
-		log.Fatalf("err in get is %v", err)
-	}
-	defer resp.Body.Close()
-	body, err := ioutil.ReadAll(resp.Body)
-	fmt.Println("body is ", string(body))
-}
-
-func tlsGetRequestHealth() {
+func tlsClient() (error, *http.Client) {
 	caCert, err := ioutil.ReadFile("conf/tls/cacrtto.pem")
 	if err != nil {
 		log.Fatal(err)
@@ -213,20 +205,296 @@ func tlsGetRequestHealth() {
 			},
 		},
 	}
+	return nil, client
+}
 
-	// resp, err := client.Get("https://secure.domain.com")
-	// if err != nil {
-	// 	panic(err)
-	// }
+// base64 encoded string
+func Base64EncodedString(username, password string) string {
+	auth := username + ":" + password
+	return base64.StdEncoding.EncodeToString([]byte(auth))
+}
+
+// health
+func withoutTlsGetRequestHealth() {
+	resp, err := http.Get("http://localhost:3000/v1/health")
+	if err != nil {
+		log.Fatalf("err in Get %v", err)
+	}
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		log.Fatalf("err reading response %v", err)
+	}
+	fmt.Println("body is ", string(body))
+}
+
+func tlsGetRequestHealth() {
+	err, client := tlsClient()
+	if err != nil {
+		log.Fatalf("tls client err is %v", err)
+	}
 	resp, err := client.Get("https://localhost:3000/v1/health")
 	if err != nil {
 		log.Fatalf("err in get is %v", err)
 	}
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		log.Fatalf("err reading response %v", err)
+	}
 	fmt.Println("body is ", string(body))
 }
 
+// create user
+func withoutTlsPostRequestCreateUser() {
+	client := &http.Client{}
+	url := "http://localhost:3000/v1/users"
+	method := "POST"
+	req, err := http.NewRequest(method, url, nil)
+
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	e := Base64EncodedString("someone-e@drinnovations.us", "jmdjmd")
+	fmt.Println("encoded string is %s", e)
+	authHeader := fmt.Sprintf("Basic %s", e)
+	req.Header.Add("Authorization", authHeader)
+
+	res, err := client.Do(req)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	defer res.Body.Close()
+
+	body, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	fmt.Println(string(body))
+}
+
+func tlsPostRequestCreateUser() {
+	err, client := tlsClient()
+	if err != nil {
+		log.Fatalf("tls client err is %v", err)
+	}
+	url := "https://localhost:3000/v1/users"
+	method := "POST"
+	req, err := http.NewRequest(method, url, nil)
+
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	e := Base64EncodedString("someone-dtlsjmd@drinnovations.us", "jmdjmd")
+	fmt.Println("encoded string is %s", e)
+	authHeader := fmt.Sprintf("Basic %s", e)
+	req.Header.Add("Authorization", authHeader)
+
+	res, err := client.Do(req)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	defer res.Body.Close()
+
+	body, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	fmt.Println(string(body))
+}
+
+// invest
+func withoutTlsPostRequestCreateInvest() {
+	client := &http.Client{}
+	url := "http://localhost:3000/v1/interests"
+	method := "POST"
+	payload := strings.NewReader(`{
+		  "banks": [
+			{
+			  "name": "HAPPIEST",
+			  "deposits": [
+				{
+				  "account": "1234",
+				  "annualType": "Checking",
+				  "annualRate%": 0,
+				  "years": 1,
+				  "amount": 1
+				},
+				{
+				  "account": "1256",
+				  "annualType": "CD",
+				  "annualRate%": 24,
+				  "years": 2,
+				  "amount": 10700
+				},
+				{
+				  "account": "1111",
+				  "annualType": "CD",
+				  "annualRate%": 1.01,
+				  "years": 10,
+				  "amount": 27000
+				}
+			  ]
+			},
+			{
+			  "name": "NICE",
+			  "deposits": [
+				{
+				  "account": "1234",
+				  "annualType": "Brokered CD",
+				  "annualRate%": 2.4,
+				  "years": 7,
+				  "amount": 10990
+				}
+			  ]
+			},
+			{
+			  "name": "ANGRY",
+			  "deposits": [
+				{
+				  "account": "1234",
+				  "annualType": "Brokered CD",
+				  "annualRate%": 5,
+				  "years": 7,
+				  "amount": 10990
+				},
+				{
+				  "account": "9898",
+				  "annualType": "CD",
+				  "annualRate%": 2.22,
+				  "years": 1,
+				  "amount": 5500
+				}
+			  ]
+			}
+		  ]
+		}`)
+	req, err := http.NewRequest(method, url, payload)
+
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	req.Header.Add("Content-Type", "application/json")
+
+	res, err := client.Do(req)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	defer res.Body.Close()
+
+	body, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	fmt.Println(string(body))
+}
+
+func tlsPostRequestCreateInvest() {
+	err, client := tlsClient()
+	if err != nil {
+		log.Fatalf("tls client err is %v", err)
+	}
+
+	url := "https://localhost:3000/v1/interests"
+	method := "POST"
+	payload := strings.NewReader(`{
+		  "banks": [
+			{
+			  "name": "HAPPIEST",
+			  "deposits": [
+				{
+				  "account": "1234",
+				  "annualType": "Checking",
+				  "annualRate%": 0,
+				  "years": 1,
+				  "amount": 1
+				},
+				{
+				  "account": "1256",
+				  "annualType": "CD",
+				  "annualRate%": 24,
+				  "years": 2,
+				  "amount": 10700
+				},
+				{
+				  "account": "1111",
+				  "annualType": "CD",
+				  "annualRate%": 1.01,
+				  "years": 10,
+				  "amount": 27000
+				}
+			  ]
+			},
+			{
+			  "name": "NICE",
+			  "deposits": [
+				{
+				  "account": "1234",
+				  "annualType": "Brokered CD",
+				  "annualRate%": 2.4,
+				  "years": 7,
+				  "amount": 10990
+				}
+			  ]
+			},
+			{
+			  "name": "ANGRY",
+			  "deposits": [
+				{
+				  "account": "1234",
+				  "annualType": "Brokered CD",
+				  "annualRate%": 5,
+				  "years": 7,
+				  "amount": 10990
+				},
+				{
+				  "account": "9898",
+				  "annualType": "CD",
+				  "annualRate%": 2.22,
+				  "years": 1,
+				  "amount": 5500
+				}
+			  ]
+			}
+		  ]
+		}`)
+	req, err := http.NewRequest(method, url, payload)
+
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	req.Header.Add("Content-Type", "application/json")
+
+	res, err := client.Do(req)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	defer res.Body.Close()
+
+	body, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	fmt.Println(string(body))
+}
+
 func main() {
-	tlsGetRequestHealth()
+	// withoutTlsGetRequestHealth()
+	//tlsGetRequestHealth()
+	//withoutTlsPostRequestCreateUser()
+	// tlsPostRequestCreateUser()
+	// withoutTlsPostRequestCreateInvest()
+	tlsPostRequestCreateInvest()
 }

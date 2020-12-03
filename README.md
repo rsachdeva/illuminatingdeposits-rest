@@ -9,7 +9,15 @@
 # REST API using JSON for Messages
 # Docker Compose Deployment
  
-### To start all services:
+### To start all services without TLS:
+Make sure DEPOSITS_WEB_SERVICE_SERVER_TLS=false in docker-compose.api.yml
+And execute:
+export COMPOSE_IGNORE_ORPHANS=True && \
+docker-compose -f ./deploy/compose/docker-compose.api.yml up --build
+ 
+### To start all services with TLS:
+Make sure DEPOSITS_WEB_SERVICE_SERVER_TLS=true in docker-compose.api.yml
+And execute:
 export COMPOSE_IGNORE_ORPHANS=True && \
 docker-compose -f ./deploy/compose/docker-compose.api.yml up --build
 
@@ -46,9 +54,17 @@ docker build -f ./build/Dockerfile.calculate -t illumcalculate  . && \
 docker run illumcalculate
 
 ### Interest Service REST HTTP Methods Invoked:
-with tls: run cmd/client
-without tls: See tools/resteditor/HealthCRUD.http for request examples and sample response.
-Use dev env for localhost:3000
+
+####Without TLS Client: 
+See tools/resteditor/HealthCRUD.http for request examples and sample response.
+Use dev env for localhost:3000  
+Or go to cmd/client/main.go  
+And uncomment any desired function request starting with "withoutTls..."
+
+####TLS Client: 
+Go to cmd/client/main.go  
+And uncomment any desired function request starting with "tls..."
+run cmd/client
 
 # Push Images to Docker Hub
 
