@@ -15,20 +15,6 @@ import (
 	"github.com/rsachdeva/illuminatingdeposits-rest/responder"
 )
 
-func tlsConfig() (*tls.Config, error) {
-	certFile := "conf/tls/servercrtto.pem"
-	keyFile := "conf/tls/serverkeyto.pem"
-	cert, err := tls.LoadX509KeyPair(certFile, keyFile)
-	if err != nil {
-		return nil, errors.Wrap(err, "LoadX509KeyPair error")
-	}
-	fmt.Println("No errors with LoadX509KeyPair")
-	tl := tls.Config{
-		Certificates: []tls.Certificate{cert},
-	}
-	return &tl, nil
-}
-
 func NewServer(cfg AppConfig, tl *tls.Config) *http.Server {
 	server := http.Server{
 		Addr:         cfg.Web.Address,
@@ -40,6 +26,8 @@ func NewServer(cfg AppConfig, tl *tls.Config) *http.Server {
 	}
 	fmt.Println("DEPOSITS_WEB_SERVICE_SERVER_TLS is ", cfg.Web.ServiceServerTLS)
 	fmt.Println("server.TLSConfig is ", server.TLSConfig)
+	fmt.Println("DEPOSITS_DB_HOST is ", cfg.DB.Host)
+	fmt.Println("DEPOSITS_TRACE_URL is", cfg.Trace.URL)
 	return &server
 }
 
@@ -103,6 +91,14 @@ func ConfigureAndServe() error {
 		Debug(log, cfg)
 	}()
 
+	var tl *tls.Config
+	if cfg.Web.ServiceServerTLS {
+		tl, err = tlsConfig()
+		if err != nil {
+			return err
+		}
+	}
+	s := NewServer(cfg, tl)
 	// =========================================================================
 	// Register API Services and Start Server
 
@@ -113,14 +109,6 @@ func ConfigureAndServe() error {
 	// https://golang.org/pkg/os/signal/#Notify
 	shutdownCh := make(chan os.Signal, 1)
 
-	var tl *tls.Config
-	if cfg.Web.ServiceServerTLS {
-		tl, err = tlsConfig()
-		if err != nil {
-			return err
-		}
-	}
-	s := NewServer(cfg, tl)
 	m := responder.NewServeMux(shutdownCh, log,
 		middlewarefunc.Logger(log),
 		middlewarefunc.Errors(log),

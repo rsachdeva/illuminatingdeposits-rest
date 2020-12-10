@@ -1,6 +1,7 @@
 package app
 
 import (
+	"crypto/tls"
 	"fmt"
 	"log"
 	"os"
@@ -47,4 +48,18 @@ func ParsedConfig(cfg AppConfig) (AppConfig, error) {
 	}
 	log.Printf("AppConfig is %v", cfg)
 	return cfg, nil
+}
+
+func tlsConfig() (*tls.Config, error) {
+	certFile := "conf/tls/servercrtto.pem"
+	keyFile := "conf/tls/serverkeyto.pem"
+	cert, err := tls.LoadX509KeyPair(certFile, keyFile)
+	if err != nil {
+		return nil, errors.Wrap(err, "LoadX509KeyPair error")
+	}
+	fmt.Println("No errors with LoadX509KeyPair")
+	tl := tls.Config{
+		Certificates: []tls.Certificate{cert},
+	}
+	return &tl, nil
 }

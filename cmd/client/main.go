@@ -116,7 +116,7 @@ func tlsPostRequestCreateUser() {
 		fmt.Println(err)
 		return
 	}
-	e := Base64EncodedString("someone-htlsjmd@drinnovations.us", "jmdjmd")
+	e := Base64EncodedString("someone-xjmd@drinnovations.us", "jmdjmd")
 	fmt.Printf("encoded string is %s\n", e)
 	authHeader := fmt.Sprintf("Basic %s", e)
 	req.Header.Add("Authorization", authHeader)
