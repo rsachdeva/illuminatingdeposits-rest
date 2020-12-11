@@ -19,7 +19,7 @@ func (ih Interest) Create(w io.Writer, nibs interestvalue.NewInterest, execution
 	var ibs interestvalue.Interest
 	var err error
 	for j := 0; j < executionTimes; j++ {
-		ibs, err = nibs.ComputeDelta()
+		ibs, err = nibs.CalculateDelta()
 	}
 	if err != nil {
 		return errors.Wrap(err, "create calculating for interestcal.NewInterest")

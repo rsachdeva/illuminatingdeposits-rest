@@ -17,7 +17,7 @@ type env struct {
 func newSourceEnv(namespace string) *env {
 	m := make(map[string]string)
 
-	// Create the uppercase version to meet the standard {NAMESPACE_} format.
+	// ListCalculations the uppercase version to meet the standard {NAMESPACE_} format.
 	uspace := fmt.Sprintf("%s_", strings.ToUpper(namespace))
 
 	// Loop and match each variable using the uppercase namespace.

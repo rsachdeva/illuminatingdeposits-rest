@@ -21,7 +21,7 @@ type Service struct {
 }
 
 func (us *Service) Create(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
-	ctx, span := trace.StartSpan(ctx, "interestsvc.Users.AddUser")
+	ctx, span := trace.StartSpan(ctx, "usermgmt.Service.ListCalculations")
 	defer span.End()
 
 	email, pass, ok := r.BasicAuth()

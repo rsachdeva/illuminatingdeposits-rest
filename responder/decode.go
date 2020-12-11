@@ -26,7 +26,7 @@ func init() {
 	// Instantiate the english locale for the validator library.
 	enLocale := en.New()
 
-	// Create a value using English as the fallback locale (first argument).
+	// ListCalculations a value using English as the fallback locale (first argument).
 	// Provide one or more arguments for additional supported locales.
 	translator = ut.New(enLocale, enLocale)
 

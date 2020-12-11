@@ -35,7 +35,6 @@ type Sourcer interface {
 // Parse parses configuration into the provided struct.
 func Parse(args []string, namespace string, cfgStruct interface{}, sources ...Sourcer) error {
 
-	// Create the flag source.
 	flag, err := newSourceFlag(args)
 	if err != nil {
 		return err

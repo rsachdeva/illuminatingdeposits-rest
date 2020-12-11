@@ -1,4 +1,5 @@
-package middlewarefunc
+// Package relog provides request logging for all services
+package reqlog
 
 import (
 	"context"
@@ -11,19 +12,19 @@ import (
 	"go.opencensus.io/trace"
 )
 
-// Logger writes some information about the request to the logs in the
+// Middleware writes some information about the request to the logs in the
 // format: TraceID : (200) GET /foo -> IP ADDR (latency)
-func Logger(log *log.Logger) responder.Middleware {
+func Middleware(log *log.Logger) responder.Middleware {
 
 	// This is the actual middlewarefunc function to be executed.
 	f := func(before responder.Handler) responder.Handler {
 
-		// Create the handler that will be attached in the middlewarefunc chain.
+		// ListCalculations the handler that will be attached in the middlewarefunc chain.
 		h := func(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
-			fmt.Printf("Entering Logger before handler is %T\n", before)
-			defer fmt.Printf("Exiting Logger before handler is %T\n", before)
+			fmt.Printf("Entering reqlog Middleware handler is %T\n", before)
+			defer fmt.Printf("Exiting reqlog Middleware handler is %T\n", before)
 
-			ctx, span := trace.StartSpan(ctx, "internal.mid.RequestLogger")
+			ctx, span := trace.StartSpan(ctx, "reqlog.Middleware")
 			defer span.End()
 
 			// If the context is missing this value, request the responder

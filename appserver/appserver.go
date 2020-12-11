@@ -12,11 +12,13 @@ import (
 	"os"
 
 	"github.com/pkg/errors"
-	"github.com/rsachdeva/illuminatingdeposits-rest/appserver/middlewarefunc"
 	"github.com/rsachdeva/illuminatingdeposits-rest/conf"
 	"github.com/rsachdeva/illuminatingdeposits-rest/errconv"
 	"github.com/rsachdeva/illuminatingdeposits-rest/interestcal"
+	"github.com/rsachdeva/illuminatingdeposits-rest/metriccnt"
 	"github.com/rsachdeva/illuminatingdeposits-rest/postgreshealth"
+	"github.com/rsachdeva/illuminatingdeposits-rest/recoverpanic"
+	"github.com/rsachdeva/illuminatingdeposits-rest/reqlog"
 	"github.com/rsachdeva/illuminatingdeposits-rest/responder"
 	"github.com/rsachdeva/illuminatingdeposits-rest/usermgmt"
 )
@@ -116,10 +118,10 @@ func ConfigureAndServe() error {
 	shutdownCh := make(chan os.Signal, 1)
 
 	m := responder.NewServeMux(shutdownCh, log,
-		middlewarefunc.Logger(log),
+		reqlog.Middleware(log),
 		errconv.Middleware(log),
-		middlewarefunc.Metrics(),
-		middlewarefunc.Panics(log))
+		metriccnt.Middleware(),
+		recoverpanic.Middleware(log))
 	s.Handler = m
 	postgreshealth.RegisterSvc(db, m)
 	usermgmt.RegisterSvc(db, m)

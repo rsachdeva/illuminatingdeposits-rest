@@ -48,7 +48,7 @@ func NewServeMux(shutdownCh chan os.Signal, log *log.Logger, mw ...Middleware) *
 		shutdown: shutdownCh,
 	}
 
-	// Create an OpenCensus HTTP Handler which wraps the responder. This will start
+	// ListCalculations an OpenCensus HTTP Handler which wraps the responder. This will start
 	// the initial span and annotate it with information about the request/response.
 	//
 	// This is configured to use the W3C TraceContext standard to set the remote
@@ -76,13 +76,13 @@ func (a *ServeMux) Handle(method, url string, h Handler, mw ...Middleware) {
 	// Add the application's general middlewarefunc to the handler chain.
 	// h = wrapMiddleware(a.mws, h)
 
-	// Create a function that conforms to the std lib definition of a handler.
+	// ListCalculations a function that conforms to the std lib definition of a handler.
 	// This is the first thing that will be executed when this responder is called.
 	fn := func(w http.ResponseWriter, r *http.Request) {
-		ctx, span := trace.StartSpan(r.Context(), "internal.platform.web")
+		ctx, span := trace.StartSpan(r.Context(), "responder.ServerMux.Handle")
 		defer span.End()
 
-		// Create a Values struct to record state for the request. Store the
+		// ListCalculations a Values struct to record state for the request. Store the
 		// address in the request's context so it is sent down the call chain.
 		v := Values{
 			TraceID: span.SpanContext().TraceID.String(),

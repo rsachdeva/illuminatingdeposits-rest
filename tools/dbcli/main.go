@@ -23,34 +23,53 @@ func main() {
 
 }
 
-func run() error {
-	var err error
-
-	//DEPOSITS_DB_DISABLE_TLS=true for local testing with db
-	//DEPOSITS_DB_HOST=192.168.254.33
-	var cfg struct {
-		DB struct {
-			User       string `conf:"default:postgres"`
-			Password   string `conf:"default:postgres,noprint"`
-			Host       string `conf:"default:db"`
-			Name       string `conf:"default:postgres"`
-			DisableTLS bool   `conf:"default:false"`
-		}
-		Args conf.Args
+//DEPOSITS_DB_DISABLE_TLS=true for local testing with db
+//DEPOSITS_DB_HOST=192.168.254.33
+type AppConfig struct {
+	DB struct {
+		User       string `conf:"default:postgres"`
+		Password   string `conf:"default:postgres,noprint"`
+		Host       string `conf:"default:db"`
+		Name       string `conf:"default:postgres"`
+		DisableTLS bool   `conf:"default:true"`
 	}
+	Args conf.Args
+}
 
+
+func ParsedConfig(cfg AppConfig) (AppConfig, error) {
 	if err := conf.Parse(os.Args[1:], "DEPOSITS", &cfg); err != nil {
 		if err == conf.ErrHelpWanted {
 			usage, err := conf.Usage("DEPOSITS", &cfg)
 			if err != nil {
-				return errors.Wrap(err, "generating usage")
+				return AppConfig{}, errors.Wrap(err, "generating config usage")
 			}
 			fmt.Println(usage)
-			return nil
+			return AppConfig{}, nil
 		}
-		return errors.Wrap(err, "error: parsing config")
+		return AppConfig{}, errors.Wrap(err, "parsing config")
 	}
+	log.Printf("AppConfig is %v", cfg)
+	return cfg, nil
+}
 
+func run() error {
+	var err error
+
+	cfg, err := ParsedConfig(AppConfig{})
+	if err != nil {
+		return err
+	}
+	out, err := conf.String(&cfg)
+	if err != nil {
+		return errors.Wrap(err, "generating config for output")
+	}
+	log.Printf("main : Config :\n%v\n", out)
+
+	log.Printf("cfg is %v", cfg)
+
+	fmt.Println("cli cfg.DB.Host is", cfg.DB.Host)
+	fmt.Println("cfg.Args is", cfg.Args)
 	// This is used for multiple commands below.
 	dbConfig := postgresconn.Config{
 		User:       cfg.DB.User,

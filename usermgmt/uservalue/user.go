@@ -34,7 +34,6 @@ type NewUser struct {
 }
 
 func AddUser(ctx context.Context, db *sqlx.DB, n NewUser, now time.Time) (*User, error) {
-
 	hash, err := bcrypt.GenerateFromPassword([]byte(n.Password), bcrypt.DefaultCost)
 	if err != nil {
 		return nil, errors.Wrap(err, "generating password hash")

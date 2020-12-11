@@ -1,4 +1,5 @@
-package middlewarefunc
+// Package errconv provides counter for metrics for all services
+package metriccnt
 
 import (
 	"context"
@@ -23,17 +24,17 @@ var m = struct {
 }
 
 // Metrics updates program counters.
-func Metrics() responder.Middleware {
+func Middleware() responder.Middleware {
 
 	// This is the actual middlewarefunc function to be executed.
 	f := func(before responder.Handler) responder.Handler {
 
 		// Wrap this handler around the next one provided.
 		h := func(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
-			fmt.Printf("\t\tEntering Metrics before handler is %T\n", before)
-			defer fmt.Printf("\t\tExiting Metrics before handler is %T\n", before)
+			fmt.Printf("\t\tEntering metricscnt Middleware handler is %T\n", before)
+			defer fmt.Printf("\t\tExiting metricscnt Middleware handler is %T\n", before)
 
-			ctx, span := trace.StartSpan(ctx, "internal.mid.Metrics")
+			ctx, span := trace.StartSpan(ctx, "metriccnt.Middleware")
 			defer span.End()
 
 			err := before(ctx, w, r)

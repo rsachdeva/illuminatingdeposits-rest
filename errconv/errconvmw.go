@@ -1,4 +1,4 @@
-// Package errconv provides conversion for errors
+// Package errconv provides conversion for error response for all services
 package errconv
 
 import (
@@ -20,10 +20,10 @@ func Middleware(log *log.Logger) responder.Middleware {
 	f := func(before responder.Handler) responder.Handler {
 
 		h := func(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
-			fmt.Printf("\tEntering Middleware before handler is %T\n", before)
-			defer fmt.Printf("\tExiting Middleware before handler is %T\n", before)
+			fmt.Printf("\tEntering errconv middleware handler is %T\n", before)
+			defer fmt.Printf("\tExiting errconv middleware handler is %T\n", before)
 
-			ctx, span := trace.StartSpan(ctx, "internal.mid.Middleware")
+			ctx, span := trace.StartSpan(ctx, "errconv.Middleware")
 			defer span.End()
 
 			// If the context is missing this value, request the responder

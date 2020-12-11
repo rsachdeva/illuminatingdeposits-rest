@@ -9,8 +9,8 @@ import (
 	"github.com/pkg/errors"
 )
 
-// ComputeDelta calculations for all banks
-func (ni NewInterest) ComputeDelta() (Interest, error) {
+// CalculateDelta calculations for all banks
+func (ni NewInterest) CalculateDelta() (Interest, error) {
 	bks, delta, err := ni.computeBanksDelta()
 	if err != nil {
 		return Interest{}, err
@@ -62,7 +62,7 @@ func (nb NewBank) computeBankDelta() ([]Deposit, float64, error) {
 	return ds, bDelta, nil
 }
 
-// ComputeDelta calculates interest for 30 days for output/response Deposit
+// CalculateDelta calculates interest for 30 days for output/response Deposit
 func (d *Deposit) computeDepositDelta() error {
 	e := d.earned()
 	e30Days, err := earned30days(e, d.Years)

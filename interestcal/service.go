@@ -18,10 +18,10 @@ type Service struct {
 	Log *log.Logger
 }
 
-// Create decodes the body of a request to create interest calculations. The full
+// ListCalculations decodes the body of a request to create interest calculations. The full
 // banks and deposit details with generated 30 days Service fields are sent back in the response.
-func (*Service) Create(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
-	ctx, span := trace.StartSpan(ctx, "interestsvc.Invest.Create")
+func (*Service) ListCalculations(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
+	ctx, span := trace.StartSpan(ctx, "interestcal.Service.ListCalculations")
 	defer span.End()
 
 	debug.Dump(r)
@@ -30,7 +30,7 @@ func (*Service) Create(ctx context.Context, w http.ResponseWriter, r *http.Reque
 		return errors.Wrap(err, "decoding new interest calculation request with banks and deposits")
 	}
 
-	in, err := nin.ComputeDelta()
+	in, err := nin.CalculateDelta()
 	if err != nil {
 		return errors.Wrap(err, "creating new interest calculations")
 	}
@@ -40,5 +40,5 @@ func (*Service) Create(ctx context.Context, w http.ResponseWriter, r *http.Reque
 
 func RegisterSvc(log *log.Logger, m *responder.ServeMux) {
 	i := Service{Log: log}
-	m.Handle(http.MethodPost, "/v1/interests", i.Create)
+	m.Handle(http.MethodPost, "/v1/interests", i.ListCalculations)
 }
