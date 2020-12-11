@@ -12,24 +12,24 @@ import (
 	"go.opencensus.io/trace"
 )
 
-// Service provides support for orchestration health checks.
-type Service struct {
-	Db *sqlx.DB
+// service provides support for orchestration health checks.
+type service struct {
+	db *sqlx.DB
 
 	// ADD OTHER STATE LIKE THE LOGGER IF NEEDED.
 }
 
 // Health validates the appjson is healthy and ready to accept requests.
-func (c *Service) Health(ctx context.Context, w http.ResponseWriter, _ *http.Request) error {
-	ctx, span := trace.StartSpan(ctx, "postgresconn.Service.Health")
+func (c *service) Health(ctx context.Context, w http.ResponseWriter, _ *http.Request) error {
+	ctx, span := trace.StartSpan(ctx, "postgresconn.service.Health")
 	defer span.End()
 
 	var health struct {
 		Status string `json:"status"`
 	}
 
-	// Service if the postgresconn is ready.
-	if err := healthvalue.StatusCheck(ctx, c.Db); err != nil {
+	// service if the postgresconn is ready.
+	if err := healthvalue.StatusCheck(ctx, c.db); err != nil {
 
 		// If the postgresconn is not ready we will tell the cli and use a 500
 		// status. Do not respond by just returning an error because further up in
@@ -44,6 +44,6 @@ func (c *Service) Health(ctx context.Context, w http.ResponseWriter, _ *http.Req
 
 func RegisterSvc(db *sqlx.DB, m *appmux.Router) {
 	// Register health check handler. This appjson is not authenticated.
-	c := Service{Db: db}
+	c := service{db: db}
 	m.Handle(http.MethodGet, "/v1/health", c.Health)
 }

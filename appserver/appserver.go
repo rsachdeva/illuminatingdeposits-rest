@@ -89,7 +89,7 @@ func ConfigureAndServe() error {
 	}()
 
 	// =========================================================================
-	// Start Debug Service
+	// Start Debug service
 	//
 	// /debug/pprof - Added to the default appjson by importing the net/http/pprof package.
 	// /debug/vars - Added to the default appjson by importing the expvar package.

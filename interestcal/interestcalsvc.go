@@ -14,15 +14,15 @@ import (
 	"go.opencensus.io/trace"
 )
 
-// Service handler
-type Service struct {
-	Log *log.Logger
+// service handler
+type service struct {
+	log *log.Logger
 }
 
 // ListCalculations decodes the body of a request to create interest calculations. The full
-// banks and deposit details with generated 30 days Service fields are sent back in the response.
-func (*Service) ListCalculations(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
-	ctx, span := trace.StartSpan(ctx, "interestcal.Service.ListCalculations")
+// banks and deposit details with generated 30 days service fields are sent back in the response.
+func (s *service) ListCalculations(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
+	ctx, span := trace.StartSpan(ctx, "interestcal.service.ListCalculations")
 	defer span.End()
 
 	reqlog.Dump(r)
@@ -31,6 +31,7 @@ func (*Service) ListCalculations(ctx context.Context, w http.ResponseWriter, r *
 		return errors.Wrap(err, "decoding new interest calculation request with banks and deposits")
 	}
 
+	s.log.Println("Starting interest and 30day interest calculations(also called as delta)")
 	in, err := nin.CalculateDelta()
 	if err != nil {
 		return errors.Wrap(err, "creating new interest calculations")
@@ -40,6 +41,6 @@ func (*Service) ListCalculations(ctx context.Context, w http.ResponseWriter, r *
 }
 
 func RegisterSvc(log *log.Logger, m *appmux.Router) {
-	i := Service{Log: log}
+	i := service{log: log}
 	m.Handle(http.MethodPost, "/v1/interests", i.ListCalculations)
 }
