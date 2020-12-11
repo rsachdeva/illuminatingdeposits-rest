@@ -12,6 +12,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/rsachdeva/illuminatingdeposits-rest/app/middlewarefunc"
 	"github.com/rsachdeva/illuminatingdeposits-rest/conf"
+	"github.com/rsachdeva/illuminatingdeposits-rest/postgreshealth"
 	"github.com/rsachdeva/illuminatingdeposits-rest/responder"
 )
 
@@ -115,9 +116,9 @@ func ConfigureAndServe() error {
 		middlewarefunc.Metrics(),
 		middlewarefunc.Panics(log))
 	s.Handler = m
-	registerDbHealthService(db, m)
-	registerUserService(db, m)
-	registerInvestService(log, m)
+	postgreshealth.RegisterPostgresHealthService(db, m)
+	RegisterUserService(db, m)
+	RegisterInvestService(log, m)
 
 	err = ListenAndServeWithShutdown(s, log, shutdownCh, cfg)
 	if err != nil {
