@@ -18,7 +18,7 @@ func wrapMiddleware(mws []Middleware, handler Handler) Handler {
 		if mw != nil {
 			// last middle ware wraps first
 			// so in this list
-			// 	app := web.NewServeMux(log, mid.Errors(log), mid.Metrics())
+			// 	appserver := web.NewServeMux(log, mid.Errors(log), mid.Metrics())
 			// the last middlewarefunc mid.Metrics h is wrapped initially
 			// and then mid.Errors h is wrapped
 			handler = mw(handler)

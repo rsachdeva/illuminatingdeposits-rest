@@ -107,7 +107,7 @@ func (a *ServeMux) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	a.och.ServeHTTP(w, r)
 }
 
-// SignalShutdown is used to gracefully shutdown the app when an integrity
+// SignalShutdown is used to gracefully shutdown the appserver when an integrity
 // issue is identified.
 func (a *ServeMux) SignalShutdown() {
 	a.log.Println("error returned from handler indicated integrity issue, shutting down responder")

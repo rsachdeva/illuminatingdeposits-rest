@@ -1,4 +1,6 @@
-package app
+// Package appserver provides appserver configuration for db, tracing, tls and env variables.
+// It also provides regsitration for services including starting the server
+package appserver
 
 import (
 	"crypto/tls"
@@ -10,7 +12,7 @@ import (
 	"os"
 
 	"github.com/pkg/errors"
-	"github.com/rsachdeva/illuminatingdeposits-rest/app/middlewarefunc"
+	"github.com/rsachdeva/illuminatingdeposits-rest/appserver/middlewarefunc"
 	"github.com/rsachdeva/illuminatingdeposits-rest/conf"
 	"github.com/rsachdeva/illuminatingdeposits-rest/interestcal"
 	"github.com/rsachdeva/illuminatingdeposits-rest/postgreshealth"

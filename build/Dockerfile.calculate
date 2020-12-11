@@ -1,4 +1,4 @@
-# Runs from root directory of the app for build context
+# Runs from root directory of the appserver for build context
 
 FROM golang:1.15.0-alpine AS build
 WORKDIR /illuminatingdeposits

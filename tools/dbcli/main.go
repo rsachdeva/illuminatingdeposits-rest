@@ -17,7 +17,7 @@ import (
 
 func main() {
 	if err := run(); err != nil {
-		log.Printf("error: quitting app: %+v", err)
+		log.Printf("error: quitting appserver: %+v", err)
 		os.Exit(1)
 	}
 
