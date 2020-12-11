@@ -40,13 +40,13 @@ func (us *Service) Create(ctx context.Context, w http.ResponseWriter, r *http.Re
 
 	u, err := uservalue.AddUser(ctx, us.Db, nu, time.Now())
 	if err != nil {
-		return err
+		return responder.NewRequestError(err, http.StatusConflict)
 	}
 
 	return responder.Respond(ctx, w, u, http.StatusCreated)
 }
 
-func RegisterUserService(db *sqlx.DB, m *responder.ServeMux) {
+func RegisterSvc(db *sqlx.DB, m *responder.ServeMux) {
 	// Register usermgmt interestsvc.
 	u := Service{Db: db}
 

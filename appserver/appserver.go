@@ -14,6 +14,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/rsachdeva/illuminatingdeposits-rest/appserver/middlewarefunc"
 	"github.com/rsachdeva/illuminatingdeposits-rest/conf"
+	"github.com/rsachdeva/illuminatingdeposits-rest/errconv"
 	"github.com/rsachdeva/illuminatingdeposits-rest/interestcal"
 	"github.com/rsachdeva/illuminatingdeposits-rest/postgreshealth"
 	"github.com/rsachdeva/illuminatingdeposits-rest/responder"
@@ -116,13 +117,13 @@ func ConfigureAndServe() error {
 
 	m := responder.NewServeMux(shutdownCh, log,
 		middlewarefunc.Logger(log),
-		middlewarefunc.Errors(log),
+		errconv.Middleware(log),
 		middlewarefunc.Metrics(),
 		middlewarefunc.Panics(log))
 	s.Handler = m
-	postgreshealth.RegisterPostgresHealthService(db, m)
-	usermgmt.RegisterUserService(db, m)
-	interestcal.RegisterInvestService(log, m)
+	postgreshealth.RegisterSvc(db, m)
+	usermgmt.RegisterSvc(db, m)
+	interestcal.RegisterSvc(log, m)
 
 	err = ListenAndServeWithShutdown(s, log, shutdownCh, cfg)
 	if err != nil {

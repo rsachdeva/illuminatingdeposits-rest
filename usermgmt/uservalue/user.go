@@ -3,6 +3,7 @@ package uservalue
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/google/uuid"
@@ -59,6 +60,7 @@ func AddUser(ctx context.Context, db *sqlx.DB, n NewUser, now time.Time) (*User,
 		u.DateCreated, u.DateUpdated,
 	)
 	if err != nil {
+		fmt.Printf("\ndb err is %T %v", err, err)
 		return nil, errors.Wrap(err, "inserting usermgmt")
 	}
 

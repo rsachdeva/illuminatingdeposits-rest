@@ -1,4 +1,5 @@
-package middlewarefunc
+// Package errconv provides conversion for errors
+package errconv
 
 import (
 	"context"
@@ -10,19 +11,19 @@ import (
 	"go.opencensus.io/trace"
 )
 
-// Errors handles errors coming out of the call chain. It detects normal
+// Middleware handles errors coming out of the call chain. It detects normal
 // application errors which are used to respond to the cli in a uniform way.
 // Unexpected errors (status >= 500) are logged.
-func Errors(log *log.Logger) responder.Middleware {
+func Middleware(log *log.Logger) responder.Middleware {
 
 	// This is the actual middlewarefunc function to be executed.
 	f := func(before responder.Handler) responder.Handler {
 
 		h := func(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
-			fmt.Printf("\tEntering Errors before handler is %T\n", before)
-			defer fmt.Printf("\tExiting Errors before handler is %T\n", before)
+			fmt.Printf("\tEntering Middleware before handler is %T\n", before)
+			defer fmt.Printf("\tExiting Middleware before handler is %T\n", before)
 
-			ctx, span := trace.StartSpan(ctx, "internal.mid.Errors")
+			ctx, span := trace.StartSpan(ctx, "internal.mid.Middleware")
 			defer span.End()
 
 			// If the context is missing this value, request the responder
@@ -34,7 +35,7 @@ func Errors(log *log.Logger) responder.Middleware {
 
 			// Run the handler chain and catch any propagated error.
 			if err := before(ctx, w, r); err != nil {
-
+                fmt.Println("Middleware err is", err)
 				// Log the error.
 				log.Printf("TraceID %s : \n ERROR :\n %+v  web.IsShutdown(err) is %v", v.TraceID, err, responder.IsShutdown(err))
 

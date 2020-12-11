@@ -40,14 +40,14 @@ func Respond(ctx context.Context, w http.ResponseWriter, data interface{}, statu
 // RespondError sends an error reponse back to the cli.
 func RespondError(ctx context.Context, w http.ResponseWriter, err error) error {
 
-	// If the error was of the type *web.ErrorRequest, the handler has
+	// If the error was of the type *ErrorRequest, the handler has
 	// a specific status code and error to return.
 	if webErr, ok := errors.Cause(err).(*ErrorRequest); ok {
 		er := ErrorResponse{
 			Error:  webErr.Err.Error(),
 			Fields: webErr.Fields,
 		}
-		fmt.Println("\ter is ", er)
+		fmt.Println("\tRespondError err is ", er)
 		if err := Respond(ctx, w, er, webErr.Status); err != nil {
 			return err
 		}

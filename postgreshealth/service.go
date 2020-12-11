@@ -41,7 +41,7 @@ func (c *Service) Health(ctx context.Context, w http.ResponseWriter, _ *http.Req
 	return responder.Respond(ctx, w, health, http.StatusOK)
 }
 
-func RegisterPostgresHealthService(db *sqlx.DB, m *responder.ServeMux) {
+func RegisterSvc(db *sqlx.DB, m *responder.ServeMux) {
 	// Register health check handler. This responder is not authenticated.
 	c := Service{Db: db}
 	m.Handle(http.MethodGet, "/v1/health", c.Health)

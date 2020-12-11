@@ -38,7 +38,7 @@ func (*Service) Create(ctx context.Context, w http.ResponseWriter, r *http.Reque
 	return responder.Respond(ctx, w, &in, http.StatusCreated)
 }
 
-func RegisterInvestService(log *log.Logger, m *responder.ServeMux) {
+func RegisterSvc(log *log.Logger, m *responder.ServeMux) {
 	i := Service{Log: log}
 	m.Handle(http.MethodPost, "/v1/interests", i.Create)
 }
