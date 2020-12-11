@@ -1,4 +1,4 @@
-package debug
+package reqlog
 
 import (
 	"fmt"

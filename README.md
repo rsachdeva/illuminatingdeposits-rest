@@ -142,6 +142,4 @@ OpenSSL 1.1.1g  21 Apr 2020
 
 
 # Version
-v0.9
-
-[http://localhost:3000/dashboard/#/]: http://localhost:3000/dashboard/#/
+v1.0

@@ -1,4 +1,4 @@
-package responder
+package appmux
 
 import (
 	"fmt"
@@ -39,7 +39,7 @@ func (err *ErrorRequest) Error() string {
 	return err.Err.Error()
 }
 
-// shutdown is a type used to help with the graceful termination of the responder.
+// shutdown is a type used to help with the graceful termination of the appjson.
 type shutdown struct {
 	Message string
 }

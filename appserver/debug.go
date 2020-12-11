@@ -6,7 +6,7 @@ import (
 )
 
 func Debug(log *log.Logger, cfg AppConfig) {
-	log.Println("debug responder listening on", cfg.Web.Debug)
+	log.Println("debug appjson listening on", cfg.Web.Debug)
 	err := http.ListenAndServe(cfg.Web.Debug, http.DefaultServeMux)
-	log.Println("debug responder closed", err)
+	log.Println("debug appjson closed", err)
 }

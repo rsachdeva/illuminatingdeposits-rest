@@ -1,4 +1,4 @@
-package responder
+package appjson
 
 import (
 	"context"
@@ -7,13 +7,14 @@ import (
 	"net/http"
 
 	"github.com/pkg/errors"
+	"github.com/rsachdeva/illuminatingdeposits-rest/appmux"
 )
 
 // Respond converts a Go value to JSON and sends it to the cli.
 func Respond(ctx context.Context, w http.ResponseWriter, data interface{}, statusCode int) error {
 
 	// Set the status code for the request logger middlewarefunc.
-	v := ctx.Value(KeyValues).(*Values)
+	v := ctx.Value(appmux.KeyValues).(*appmux.Values)
 	v.StatusCode = statusCode
 
 	if statusCode == http.StatusNoContent {
@@ -42,8 +43,8 @@ func RespondError(ctx context.Context, w http.ResponseWriter, err error) error {
 
 	// If the error was of the type *ErrorRequest, the handler has
 	// a specific status code and error to return.
-	if webErr, ok := errors.Cause(err).(*ErrorRequest); ok {
-		er := ErrorResponse{
+	if webErr, ok := errors.Cause(err).(*appmux.ErrorRequest); ok {
+		er := appmux.ErrorResponse{
 			Error:  webErr.Err.Error(),
 			Fields: webErr.Fields,
 		}
@@ -55,7 +56,7 @@ func RespondError(ctx context.Context, w http.ResponseWriter, err error) error {
 	}
 
 	// If not, the handler sent any arbitrary error value so use 500.
-	er := ErrorResponse{
+	er := appmux.ErrorResponse{
 		Error: http.StatusText(http.StatusInternalServerError),
 	}
 	if err := Respond(ctx, w, er, http.StatusInternalServerError); err != nil {

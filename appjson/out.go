@@ -1,4 +1,4 @@
-package responder
+package appjson
 
 import (
 	"encoding/json"

@@ -7,9 +7,10 @@ import (
 	"net/http"
 
 	"github.com/pkg/errors"
-	"github.com/rsachdeva/illuminatingdeposits-rest/debug"
+	"github.com/rsachdeva/illuminatingdeposits-rest/appjson"
+	"github.com/rsachdeva/illuminatingdeposits-rest/appmux"
 	"github.com/rsachdeva/illuminatingdeposits-rest/interestcal/interestvalue"
-	"github.com/rsachdeva/illuminatingdeposits-rest/responder"
+	"github.com/rsachdeva/illuminatingdeposits-rest/reqlog"
 	"go.opencensus.io/trace"
 )
 
@@ -24,9 +25,9 @@ func (*Service) ListCalculations(ctx context.Context, w http.ResponseWriter, r *
 	ctx, span := trace.StartSpan(ctx, "interestcal.Service.ListCalculations")
 	defer span.End()
 
-	debug.Dump(r)
+	reqlog.Dump(r)
 	var nin interestvalue.NewInterest
-	if err := responder.Decode(r, &nin); err != nil {
+	if err := appjson.Decode(r, &nin); err != nil {
 		return errors.Wrap(err, "decoding new interest calculation request with banks and deposits")
 	}
 
@@ -35,10 +36,10 @@ func (*Service) ListCalculations(ctx context.Context, w http.ResponseWriter, r *
 		return errors.Wrap(err, "creating new interest calculations")
 	}
 
-	return responder.Respond(ctx, w, &in, http.StatusCreated)
+	return appjson.Respond(ctx, w, &in, http.StatusCreated)
 }
 
-func RegisterSvc(log *log.Logger, m *responder.ServeMux) {
+func RegisterSvc(log *log.Logger, m *appmux.Router) {
 	i := Service{Log: log}
 	m.Handle(http.MethodPost, "/v1/interests", i.ListCalculations)
 }

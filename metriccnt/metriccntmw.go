@@ -8,7 +8,7 @@ import (
 	"net/http"
 	"runtime"
 
-	"github.com/rsachdeva/illuminatingdeposits-rest/responder"
+	"github.com/rsachdeva/illuminatingdeposits-rest/appmux"
 	"go.opencensus.io/trace"
 )
 
@@ -24,10 +24,10 @@ var m = struct {
 }
 
 // Metrics updates program counters.
-func Middleware() responder.Middleware {
+func Middleware() appmux.Middleware {
 
 	// This is the actual middlewarefunc function to be executed.
-	f := func(before responder.Handler) responder.Handler {
+	f := func(before appmux.Handler) appmux.Handler {
 
 		// Wrap this handler around the next one provided.
 		h := func(ctx context.Context, w http.ResponseWriter, r *http.Request) error {

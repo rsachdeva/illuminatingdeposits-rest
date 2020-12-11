@@ -1,4 +1,4 @@
-package responder
+package appmux
 
 import (
 	"context"
@@ -28,9 +28,9 @@ type Values struct {
 	Start      time.Time
 }
 
-// ServeMux is the entrypoint into our application and what controls the context of
+// Router is the entrypoint into our application and what controls the context of
 // each request. Feel free to add any configuration data/logic on this type.
-type ServeMux struct {
+type Router struct {
 	log      *log.Logger
 	mux      *chi.Mux
 	mws      []Middleware
@@ -38,17 +38,17 @@ type ServeMux struct {
 	shutdown chan os.Signal
 }
 
-// NewServeMux constructs an ServeMux to handle a set of routes. Any Middleware provided
+// NewRouter constructs an Router to handle a set of routes. Any Middleware provided
 // will be ran for every request.
-func NewServeMux(shutdownCh chan os.Signal, log *log.Logger, mw ...Middleware) *ServeMux {
-	m := ServeMux{
+func NewRouter(shutdownCh chan os.Signal, log *log.Logger, mw ...Middleware) *Router {
+	m := Router{
 		log:      log,
 		mux:      chi.NewRouter(),
 		mws:      mw,
 		shutdown: shutdownCh,
 	}
 
-	// ListCalculations an OpenCensus HTTP Handler which wraps the responder. This will start
+	// ListCalculations an OpenCensus HTTP Handler which wraps the appjson. This will start
 	// the initial span and annotate it with information about the request/response.
 	//
 	// This is configured to use the W3C TraceContext standard to set the remote
@@ -66,20 +66,15 @@ func NewServeMux(shutdownCh chan os.Signal, log *log.Logger, mw ...Middleware) *
 //
 // It converts our custom handler type to the std lib Handler type. It captures
 // errors from the handler and serves them to the cli in a uniform way.
-func (a *ServeMux) Handle(method, url string, h Handler, mw ...Middleware) {
+func (a *Router) Handle(method, url string, h Handler, mw ...Middleware) {
 
 	// First wrap handler specific middlewarefunc around this handler.
 	slicemws := append(a.mws, mw...)
 	fmt.Println("slicemws is", slicemws)
 	h = wrapMiddleware(slicemws, h)
 
-	// Add the application's general middlewarefunc to the handler chain.
-	// h = wrapMiddleware(a.mws, h)
-
-	// ListCalculations a function that conforms to the std lib definition of a handler.
-	// This is the first thing that will be executed when this responder is called.
 	fn := func(w http.ResponseWriter, r *http.Request) {
-		ctx, span := trace.StartSpan(r.Context(), "responder.ServerMux.Handle")
+		ctx, span := trace.StartSpan(r.Context(), "appmux.ServerMux.Handle")
 		defer span.End()
 
 		// ListCalculations a Values struct to record state for the request. Store the
@@ -103,13 +98,13 @@ func (a *ServeMux) Handle(method, url string, h Handler, mw ...Middleware) {
 }
 
 // ServeHTTP implements the http.Handler interface.
-func (a *ServeMux) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+func (a *Router) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	a.och.ServeHTTP(w, r)
 }
 
 // SignalShutdown is used to gracefully shutdown the appserver when an integrity
 // issue is identified.
-func (a *ServeMux) SignalShutdown() {
-	a.log.Println("error returned from handler indicated integrity issue, shutting down responder")
+func (a *Router) SignalShutdown() {
+	a.log.Println("error returned from handler indicated integrity issue, shutting down appjson")
 	a.shutdown <- syscall.SIGSTOP
 }
