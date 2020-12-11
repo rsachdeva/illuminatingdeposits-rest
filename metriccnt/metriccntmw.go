@@ -24,17 +24,17 @@ var m = struct {
 }
 
 // Metrics updates program counters.
-func Middleware() appmux.Middleware {
+func NewMiddleware() appmux.Middleware {
 
 	// This is the actual middlewarefunc function to be executed.
 	f := func(before appmux.Handler) appmux.Handler {
 
 		// Wrap this handler around the next one provided.
 		h := func(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
-			fmt.Printf("\t\tEntering metricscnt Middleware handler is %T\n", before)
-			defer fmt.Printf("\t\tExiting metricscnt Middleware handler is %T\n", before)
+			fmt.Printf("\t\tEntering metricscnt NewMiddleware handler is %T\n", before)
+			defer fmt.Printf("\t\tExiting metricscnt NewMiddleware handler is %T\n", before)
 
-			ctx, span := trace.StartSpan(ctx, "metriccnt.Middleware")
+			ctx, span := trace.StartSpan(ctx, "metriccnt.NewMiddleware")
 			defer span.End()
 
 			err := before(ctx, w, r)

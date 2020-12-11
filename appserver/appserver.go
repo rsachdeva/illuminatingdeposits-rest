@@ -118,10 +118,10 @@ func ConfigureAndServe() error {
 	shutdownCh := make(chan os.Signal, 1)
 
 	m := appmux.NewRouter(shutdownCh, log,
-		reqlog.Middleware(log),
-		errconv.Middleware(log),
-		metriccnt.Middleware(),
-		recoverpanic.Middleware(log))
+		reqlog.NewMiddleware(log),
+		errconv.NewMiddleware(log),
+		metriccnt.NewMiddleware(),
+		recoverpanic.NewMiddleware(log))
 	s.Handler = m
 	postgreshealth.RegisterSvc(db, m)
 	usermgmt.RegisterSvc(db, m)

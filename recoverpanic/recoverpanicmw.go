@@ -13,18 +13,18 @@ import (
 	"go.opencensus.io/trace"
 )
 
-// Middleware recovers from panics and converts the panic to an error so it is
+// NewMiddleware recovers from panics and converts the panic to an error so it is
 // reported in Metrics and handled in Errors.
-func Middleware(log *log.Logger) appmux.Middleware {
+func NewMiddleware(log *log.Logger) appmux.Middleware {
 
 	// This is the actual middlewarefunc function to be executed.
 	f := func(after appmux.Handler) appmux.Handler {
 
 		h := func(ctx context.Context, w http.ResponseWriter, r *http.Request) (err error) {
-			fmt.Printf("\t\t\t\t\tEntering recoverpanic Middleware handler is %T\n", after)
-			defer fmt.Printf("\t\t\t\t\tExiting recoverpanic Middleware handler is %T\n", after)
+			fmt.Printf("\t\t\t\t\tEntering recoverpanic NewMiddleware handler is %T\n", after)
+			defer fmt.Printf("\t\t\t\t\tExiting recoverpanic NewMiddleware handler is %T\n", after)
 
-			ctx, span := trace.StartSpan(ctx, "recoverpanic.Middleware")
+			ctx, span := trace.StartSpan(ctx, "recoverpanic.NewMiddleware")
 			defer span.End()
 
 			// If the context is missing this value, request the appjson

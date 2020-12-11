@@ -1,3 +1,4 @@
+// Package appmux provides mux, middleware, handler with regards to routing capabilities
 package appmux
 
 import (

@@ -12,19 +12,19 @@ import (
 	"go.opencensus.io/trace"
 )
 
-// Middleware writes some information about the request to the logs in the
+// NewMiddleware writes some information about the request to the logs in the
 // format: TraceID : (200) GET /foo -> IP ADDR (latency)
-func Middleware(log *log.Logger) appmux.Middleware {
+func NewMiddleware(log *log.Logger) appmux.Middleware {
 
 	// This is the actual middlewarefunc function to be executed.
 	f := func(before appmux.Handler) appmux.Handler {
 
 		// ListCalculations the handler that will be attached in the middlewarefunc chain.
 		h := func(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
-			fmt.Printf("Entering reqlog Middleware handler is %T\n", before)
-			defer fmt.Printf("Exiting reqlog Middleware handler is %T\n", before)
+			fmt.Printf("Entering reqlog NewMiddleware handler is %T\n", before)
+			defer fmt.Printf("Exiting reqlog NewMiddleware handler is %T\n", before)
 
-			ctx, span := trace.StartSpan(ctx, "reqlog.Middleware")
+			ctx, span := trace.StartSpan(ctx, "reqlog.NewMiddleware")
 			defer span.End()
 
 			// If the context is missing this value, request the appjson
