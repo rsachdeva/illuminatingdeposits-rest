@@ -25,10 +25,14 @@ The --build option is there for any code changes.
 
 
 ### To start only external db and trace service for working with Editor/IDE:
-And execute:
+Execute:
+``` 
 export COMPOSE_IGNORE_ORPHANS=True && \
 docker-compose -f ./deploy/compose/docker-compose.external-db-trace-only.yml up --build
+```
+
 Set the following env variables when starting directly running server: change as needed
+And per your Editor/IDE:
 ```
 export DEPOSITS_WEB_SERVICE_SERVER_TLS=true;DEPOSITS_DB_DISABLE_TLS=true;DEPOSITS_DB_HOST=127.0.0.1; DEPOSITS_TRACE_URL=http://127.0.0.1:9411/api/v2/spans
 go run cmd/server

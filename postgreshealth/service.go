@@ -1,10 +1,12 @@
-package dbconn
+// Package postgreshealth provides postgress health status check service
+package postgreshealth
 
 import (
 	"context"
 	"net/http"
 
 	"github.com/jmoiron/sqlx"
+	"github.com/rsachdeva/illuminatingdeposits-rest/postgreshealth/healthvalue"
 	"github.com/rsachdeva/illuminatingdeposits-rest/responder"
 	"go.opencensus.io/trace"
 )
@@ -18,17 +20,17 @@ type Service struct {
 
 // Health validates the responder is healthy and ready to accept requests.
 func (c *Service) Health(ctx context.Context, w http.ResponseWriter, _ *http.Request) error {
-	ctx, span := trace.StartSpan(ctx, "dbconn.Service.Health")
+	ctx, span := trace.StartSpan(ctx, "postgresconn.Service.Health")
 	defer span.End()
 
 	var health struct {
 		Status string `json:"status"`
 	}
 
-	// Service if the dbconn is ready.
-	if err := StatusCheck(ctx, c.Db); err != nil {
+	// Service if the postgresconn is ready.
+	if err := healthvalue.StatusCheck(ctx, c.Db); err != nil {
 
-		// If the dbconn is not ready we will tell the cli and use a 500
+		// If the postgresconn is not ready we will tell the cli and use a 500
 		// status. Do not respond by just returning an error because further up in
 		// the call stack will interpret that as an unhandled error.
 		health.Status = "Db not ready"

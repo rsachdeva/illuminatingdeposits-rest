@@ -12,7 +12,7 @@ import (
 func Output(w io.Writer, val interface{}) error {
 	jInter, err := json.MarshalIndent(val, "", "\t")
 	if err != nil {
-		return errors.Wrap(err, "invest for all banks jsoninput marshalling")
+		return errors.Wrap(err, "interestcal for all banks jsoninput marshalling")
 	}
 	fmt.Fprintf(w, "**** JSON Output with Indent ****\n\n%s\n\n", jInter)
 	return nil

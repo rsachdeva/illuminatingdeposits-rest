@@ -8,11 +8,11 @@ import (
 	"time"
 
 	"github.com/pkg/errors"
-	"github.com/rsachdeva/illuminatingdeposits-rest/auth"
+	"github.com/rsachdeva/illuminatingdeposits-rest/auth/authvalue"
 	"github.com/rsachdeva/illuminatingdeposits-rest/conf"
-	"github.com/rsachdeva/illuminatingdeposits-rest/dbconn"
+	"github.com/rsachdeva/illuminatingdeposits-rest/postgresconn"
 	"github.com/rsachdeva/illuminatingdeposits-rest/tools/dbcli/schema"
-	"github.com/rsachdeva/illuminatingdeposits-rest/user"
+	"github.com/rsachdeva/illuminatingdeposits-rest/usermgmt/uservalue"
 )
 
 func main() {
@@ -52,7 +52,7 @@ func run() error {
 	}
 
 	// This is used for multiple commands below.
-	dbConfig := dbconn.Config{
+	dbConfig := postgresconn.Config{
 		User:       cfg.DB.User,
 		Password:   cfg.DB.Password,
 		Host:       cfg.DB.Host,
@@ -78,8 +78,8 @@ func run() error {
 	return nil
 }
 
-func createAdmin(cfg dbconn.Config, email, password string) error {
-	db, err := dbconn.Open(cfg)
+func createAdmin(cfg postgresconn.Config, email, password string) error {
+	db, err := postgresconn.Open(cfg)
 	if err != nil {
 		return err
 	}
@@ -89,7 +89,7 @@ func createAdmin(cfg dbconn.Config, email, password string) error {
 		return errors.New("createAdmin command must be called with two additional arguments for email and password")
 	}
 
-	fmt.Printf("Admin user will be created with email %q and password %q\n", email, password)
+	fmt.Printf("Admin usermgmt will be created with email %q and password %q\n", email, password)
 	fmt.Print("Continue? (1/0) ")
 
 	var confirm bool
@@ -104,14 +104,14 @@ func createAdmin(cfg dbconn.Config, email, password string) error {
 
 	ctx := context.Background()
 
-	nu := user.NewUser{
+	nu := uservalue.NewUser{
 		Email:           email,
 		Password:        password,
 		PasswordConfirm: password,
-		Roles:           []string{auth.RoleAdmin, auth.RoleUser},
+		Roles:           []string{authvalue.RoleAdmin, authvalue.RoleUser},
 	}
 
-	u, err := user.Create(ctx, db, nu, time.Now())
+	u, err := uservalue.AddUser(ctx, db, nu, time.Now())
 	if err != nil {
 		return err
 	}
@@ -120,8 +120,8 @@ func createAdmin(cfg dbconn.Config, email, password string) error {
 	return nil
 }
 
-func migrate(cfg dbconn.Config) error {
-	db, err := dbconn.Open(cfg)
+func migrate(cfg postgresconn.Config) error {
+	db, err := postgresconn.Open(cfg)
 	if err != nil {
 		return err
 	}
@@ -135,8 +135,8 @@ func migrate(cfg dbconn.Config) error {
 	return nil
 }
 
-func seed(cfg dbconn.Config) error {
-	db, err := dbconn.Open(cfg)
+func seed(cfg postgresconn.Config) error {
+	db, err := postgresconn.Open(cfg)
 	if err != nil {
 		return err
 	}

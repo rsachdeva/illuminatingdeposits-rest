@@ -13,7 +13,7 @@ import (
 // harder to read for some cases compared to using .sql files. You may also
 // consider a combined approach using a tool like packr or go-bindata.
 //
-// Note that dbconn servers besides PostgreSQL may not support running
+// Note that postgresconn servers besides PostgreSQL may not support running
 // multiple queries as part of the same execution so this single large constant
 // may need to be broken up.
 
@@ -22,7 +22,7 @@ const seeds = `
 -- Create admin and regular User with password "gophers"
 INSERT INTO users (user_id, name, email, roles, password_hash, date_created, date_updated) VALUES
 	('5cf37266-3473-4006-984f-9325122678b7', 'Admin Gopher', 'admin@example.com', '{ADMIN,USER}', '$2a$10$1ggfMVZV6Js0ybvJufLRUOWHS5f6KneuP0XwwHpJ8L8ipdry9f2/a', '2019-03-24 00:00:00', '2019-03-24 00:00:00'),
-	('45b5fbd3-755f-4379-8f07-a58d4a30fa2f', 'User Gopher', 'user@example.com', '{USER}', '$2a$10$9/XASPKBbJKVfCAZKDH.UuhsuALDr5vVm6VrYA9VFR8rccK86C1hW', '2019-03-24 00:00:00', '2019-03-24 00:00:00')
+	('45b5fbd3-755f-4379-8f07-a58d4a30fa2f', 'User Gopher', 'usermgmt@example.com', '{USER}', '$2a$10$9/XASPKBbJKVfCAZKDH.UuhsuALDr5vVm6VrYA9VFR8rccK86C1hW', '2019-03-24 00:00:00', '2019-03-24 00:00:00')
 	ON CONFLICT DO NOTHING;
 `
 

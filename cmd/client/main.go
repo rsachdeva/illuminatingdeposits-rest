@@ -70,7 +70,7 @@ func tlsGetRequestHealth() {
 	fmt.Println("body is ", string(body))
 }
 
-// create user
+// create usermgmt
 func withoutTlsPostRequestCreateUser() {
 	fmt.Println("executing withoutTlsPostRequestCreateUser()")
 	client := &http.Client{}
@@ -136,7 +136,7 @@ func tlsPostRequestCreateUser() {
 	fmt.Println(string(body))
 }
 
-// invest
+// interestcal
 func withoutTlsPostRequestCreateInvest() {
 	fmt.Println("executing withoutTlsPostRequestCreateInvest()")
 	client := &http.Client{}

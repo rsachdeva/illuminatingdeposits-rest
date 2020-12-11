@@ -1,4 +1,4 @@
-package auth
+package authvalue
 
 // These are the expected values for Claims.Roles.
 const (

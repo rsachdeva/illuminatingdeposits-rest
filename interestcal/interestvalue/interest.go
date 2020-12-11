@@ -1,5 +1,6 @@
-// Package invest implements all business logic regarding interest and related types
-package invest
+// Package interestvalue provides struct values and associated operations for interest calculations for
+// each deposit in the bank, then for each bank and finally for all banks with 30day average earning
+package interestvalue
 
 const (
 

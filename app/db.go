@@ -2,11 +2,11 @@ package app
 
 import (
 	"github.com/jmoiron/sqlx"
-	"github.com/rsachdeva/illuminatingdeposits-rest/dbconn"
+	"github.com/rsachdeva/illuminatingdeposits-rest/postgresconn"
 )
 
 func Db(cfg AppConfig) (*sqlx.DB, error) {
-	db, err := dbconn.Open(dbconn.Config{
+	db, err := postgresconn.Open(postgresconn.Config{
 		User:       cfg.DB.User,
 		Password:   cfg.DB.Password,
 		Host:       cfg.DB.Host,

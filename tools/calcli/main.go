@@ -9,7 +9,7 @@ import (
 	"runtime/pprof"
 
 	"github.com/pkg/errors"
-	"github.com/rsachdeva/illuminatingdeposits-rest/invest"
+	"github.com/rsachdeva/illuminatingdeposits-rest/interestcal/interestvalue"
 	"github.com/rsachdeva/illuminatingdeposits-rest/responder"
 	"github.com/rsachdeva/illuminatingdeposits-rest/tools/calcli/handlers"
 )
@@ -41,7 +41,7 @@ func createInterest() error {
 	log := log.New(os.Stdout, "DEPOSITS : ", log.LstdFlags|log.Lmicroseconds|log.Lshortfile)
 
 	hi := handlers.Interest{Log: log}
-	var ni invest.NewInterest
+	var ni interestvalue.NewInterest
 
 	fmt.Println("flag.Arg(1) is", flag.Arg(1))
 	if err := responder.InputFile(flag.Arg(1), &ni); err != nil {

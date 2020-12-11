@@ -1,4 +1,5 @@
-package invest
+// Package interestcal provides interest calculation service
+package interestcal
 
 import (
 	"context"
@@ -7,6 +8,7 @@ import (
 
 	"github.com/pkg/errors"
 	"github.com/rsachdeva/illuminatingdeposits-rest/debug"
+	"github.com/rsachdeva/illuminatingdeposits-rest/interestcal/interestvalue"
 	"github.com/rsachdeva/illuminatingdeposits-rest/responder"
 	"go.opencensus.io/trace"
 )
@@ -23,7 +25,7 @@ func (*Service) Create(ctx context.Context, w http.ResponseWriter, r *http.Reque
 	defer span.End()
 
 	debug.Dump(r)
-	var nin NewInterest
+	var nin interestvalue.NewInterest
 	if err := responder.Decode(r, &nin); err != nil {
 		return errors.Wrap(err, "decoding new interest calculation request with banks and deposits")
 	}

@@ -1,4 +1,5 @@
-package user
+// Package interestvalue provides struct values and associated operations for user handling including persistence in postgres
+package uservalue
 
 import (
 	"context"
@@ -31,8 +32,7 @@ type NewUser struct {
 	PasswordConfirm string   `json:"password_confirm" validate:"eqfield=Password"`
 }
 
-// Create inserts a new user into the dbconn.
-func Create(ctx context.Context, db *sqlx.DB, n NewUser, now time.Time) (*User, error) {
+func AddUser(ctx context.Context, db *sqlx.DB, n NewUser, now time.Time) (*User, error) {
 
 	hash, err := bcrypt.GenerateFromPassword([]byte(n.Password), bcrypt.DefaultCost)
 	if err != nil {
@@ -59,7 +59,7 @@ func Create(ctx context.Context, db *sqlx.DB, n NewUser, now time.Time) (*User, 
 		u.DateCreated, u.DateUpdated,
 	)
 	if err != nil {
-		return nil, errors.Wrap(err, "inserting user")
+		return nil, errors.Wrap(err, "inserting usermgmt")
 	}
 
 	return &u, nil

@@ -5,7 +5,7 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
-// migrations contains the queries needed to construct the dbconn schema.
+// migrations contains the queries needed to construct the postgresconn schema.
 // Entries should never be removed from this slice once they have been ran in
 // production.
 //
