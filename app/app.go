@@ -14,6 +14,7 @@ import (
 	"github.com/rsachdeva/illuminatingdeposits-rest/conf"
 	"github.com/rsachdeva/illuminatingdeposits-rest/postgreshealth"
 	"github.com/rsachdeva/illuminatingdeposits-rest/responder"
+	"github.com/rsachdeva/illuminatingdeposits-rest/usermgmt"
 )
 
 func NewServer(cfg AppConfig, tl *tls.Config) *http.Server {
@@ -117,7 +118,7 @@ func ConfigureAndServe() error {
 		middlewarefunc.Panics(log))
 	s.Handler = m
 	postgreshealth.RegisterPostgresHealthService(db, m)
-	RegisterUserService(db, m)
+	usermgmt.RegisterUserService(db, m)
 	RegisterInvestService(log, m)
 
 	err = ListenAndServeWithShutdown(s, log, shutdownCh, cfg)

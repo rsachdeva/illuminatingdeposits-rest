@@ -45,3 +45,12 @@ func (us *Service) Create(ctx context.Context, w http.ResponseWriter, r *http.Re
 
 	return responder.Respond(ctx, w, u, http.StatusCreated)
 }
+
+func RegisterUserService(db *sqlx.DB, m *responder.ServeMux) {
+	// Register usermgmt interestsvc.
+	u := Service{Db: db}
+
+	// The responder can't be authenticated because we need this responder to
+	// create the usermgmt in the first place.
+	m.Handle(http.MethodPost, "/v1/users", u.Create)
+}
