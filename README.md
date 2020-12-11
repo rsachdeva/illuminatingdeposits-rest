@@ -11,22 +11,22 @@
  
 ### To start all services without TLS:
 Make sure DEPOSITS_WEB_SERVICE_SERVER_TLS=false in docker-compose.api.yml
-And execute:
-export COMPOSE_IGNORE_ORPHANS=True && \
-docker-compose -f ./deploy/compose/docker-compose.api.yml up --build
- 
 ### To start all services with TLS:
 Make sure DEPOSITS_WEB_SERVICE_SERVER_TLS=true in docker-compose.api.yml
-And execute:
+### And then execute:
+```
 export COMPOSE_IGNORE_ORPHANS=True && \
 docker-compose -f ./deploy/compose/docker-compose.api.yml up --build
+``` 
 
 The --build option is there for any code changes.
 
 
 ### Then Migrate and set up seed data:
+``` 
 export COMPOSE_IGNORE_ORPHANS=True && \
 docker-compose -f ./deploy/compose/docker-compose.seed.yml up --build
+```
 
 COMPOSE_IGNORE_ORPHANS is there for 
 docker compose [setting](https://docs.docker.com/compose/reference/envvars/#compose_ignore_orphans).
@@ -38,21 +38,24 @@ docker-compose -f ./deploy/compose/docker-compose.api.yml logs -f --tail 1
 Access [zipkin](https://zipkin.io/) service at [http://localhost:9411/zipkin/](http://localhost:9411/zipkin/)  
 
 ### Profiling
-http://localhost:4000/debug/pprof/
+[http://localhost:4000/debug/pprof/](http://localhost:4000/debug/pprof/)
 
 ### Metrics
-http://localhost:4000/debug/vars
+[http://localhost:4000/debug/vars](http://localhost:4000/debug/vars)  
 
 ### Shutdown 
-
+```
 docker-compose -f ./deploy/compose/docker-compose.api.yml down  
-docker-compose -f ./deploy/compose/docker-compose.seed.yml down
+docker-compose -f ./deploy/compose/docker-compose.seed.yml down 
+```
 
 ### Quick calculations with Same JSON output without actually invoking REST Http Method
 Run at terminal:
 
+```
 docker build -f ./build/Dockerfile.calculate -t illumcalculate  . && \
-docker run illumcalculate
+docker run illumcalculate 
+```
 
 ### To start only external db and trace service for working with Editor/IDE:
 Execute:
@@ -120,7 +123,7 @@ Access Traefik Dashboard at [http://localhost:3000/dashboard/#/](http://localhos
 
 ### Distributed Tracing with Kubernetes Ingress
 
-Access [zipkin](https://zipkin.io/) service at [http://zipkin.127.0.0.1.nip.io/zipkin/](http://zipkin.127.0.0.1.nip.io/zipkin)  
+Access [zipkin](https://zipkin.io/) service at [http://zipkin.127.0.0.1.nip.io/zipkin](http://zipkin.127.0.0.1.nip.io/zipkin)
 
 ### Shutdown
 
@@ -140,3 +143,5 @@ OpenSSL 1.1.1g  21 Apr 2020
 
 # Version
 v0.9
+
+[http://localhost:3000/dashboard/#/]: http://localhost:3000/dashboard/#/
