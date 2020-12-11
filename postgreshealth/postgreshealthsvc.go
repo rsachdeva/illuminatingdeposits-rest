@@ -6,8 +6,9 @@ import (
 	"net/http"
 
 	"github.com/jmoiron/sqlx"
+	"github.com/rsachdeva/illuminatingdeposits-rest/appmux"
 	"github.com/rsachdeva/illuminatingdeposits-rest/postgreshealth/healthvalue"
-	"github.com/rsachdeva/illuminatingdeposits-rest/responder"
+	"github.com/rsachdeva/illuminatingdeposits-rest/appjson"
 	"go.opencensus.io/trace"
 )
 
@@ -18,7 +19,7 @@ type Service struct {
 	// ADD OTHER STATE LIKE THE LOGGER IF NEEDED.
 }
 
-// Health validates the responder is healthy and ready to accept requests.
+// Health validates the appjson is healthy and ready to accept requests.
 func (c *Service) Health(ctx context.Context, w http.ResponseWriter, _ *http.Request) error {
 	ctx, span := trace.StartSpan(ctx, "postgresconn.Service.Health")
 	defer span.End()
@@ -34,15 +35,15 @@ func (c *Service) Health(ctx context.Context, w http.ResponseWriter, _ *http.Req
 		// status. Do not respond by just returning an error because further up in
 		// the call stack will interpret that as an unhandled error.
 		health.Status = "Db not ready"
-		return responder.Respond(ctx, w, health, http.StatusInternalServerError)
+		return appjson.Respond(ctx, w, health, http.StatusInternalServerError)
 	}
 
 	health.Status = "ok"
-	return responder.Respond(ctx, w, health, http.StatusOK)
+	return appjson.Respond(ctx, w, health, http.StatusOK)
 }
 
-func RegisterSvc(db *sqlx.DB, m *responder.ServeMux) {
-	// Register health check handler. This responder is not authenticated.
+func RegisterSvc(db *sqlx.DB, m *appmux.Router) {
+	// Register health check handler. This appjson is not authenticated.
 	c := Service{Db: db}
 	m.Handle(http.MethodGet, "/v1/health", c.Health)
 }

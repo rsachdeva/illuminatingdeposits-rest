@@ -16,10 +16,10 @@ import (
 	"github.com/rsachdeva/illuminatingdeposits-rest/errconv"
 	"github.com/rsachdeva/illuminatingdeposits-rest/interestcal"
 	"github.com/rsachdeva/illuminatingdeposits-rest/metriccnt"
+	"github.com/rsachdeva/illuminatingdeposits-rest/appmux"
 	"github.com/rsachdeva/illuminatingdeposits-rest/postgreshealth"
 	"github.com/rsachdeva/illuminatingdeposits-rest/recoverpanic"
 	"github.com/rsachdeva/illuminatingdeposits-rest/reqlog"
-	"github.com/rsachdeva/illuminatingdeposits-rest/responder"
 	"github.com/rsachdeva/illuminatingdeposits-rest/usermgmt"
 )
 
@@ -91,8 +91,8 @@ func ConfigureAndServe() error {
 	// =========================================================================
 	// Start Debug Service
 	//
-	// /debug/pprof - Added to the default responder by importing the net/http/pprof package.
-	// /debug/vars - Added to the default responder by importing the expvar package.
+	// /debug/pprof - Added to the default appjson by importing the net/http/pprof package.
+	// /debug/vars - Added to the default appjson by importing the expvar package.
 	//
 	// Not concerned with shutting this down when the application is shutdownCh.
 	go func() {
@@ -117,7 +117,7 @@ func ConfigureAndServe() error {
 	// https://golang.org/pkg/os/signal/#Notify
 	shutdownCh := make(chan os.Signal, 1)
 
-	m := responder.NewServeMux(shutdownCh, log,
+	m := appmux.NewRouter(shutdownCh, log,
 		reqlog.Middleware(log),
 		errconv.Middleware(log),
 		metriccnt.Middleware(),

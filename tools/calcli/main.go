@@ -10,7 +10,7 @@ import (
 
 	"github.com/pkg/errors"
 	"github.com/rsachdeva/illuminatingdeposits-rest/interestcal/interestvalue"
-	"github.com/rsachdeva/illuminatingdeposits-rest/responder"
+	"github.com/rsachdeva/illuminatingdeposits-rest/appjson"
 	"github.com/rsachdeva/illuminatingdeposits-rest/tools/calcli/handlers"
 )
 
@@ -44,7 +44,7 @@ func createInterest() error {
 	var ni interestvalue.NewInterest
 
 	fmt.Println("flag.Arg(1) is", flag.Arg(1))
-	if err := responder.InputFile(flag.Arg(1), &ni); err != nil {
+	if err := appjson.InputFile(flag.Arg(1), &ni); err != nil {
 		return errors.Wrap(err, "parsing json file for interest")
 	}
 	executionTimes := 1

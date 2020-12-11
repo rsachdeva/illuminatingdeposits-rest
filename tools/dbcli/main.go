@@ -23,8 +23,6 @@ func main() {
 
 }
 
-//DEPOSITS_DB_DISABLE_TLS=true for local testing with db
-//DEPOSITS_DB_HOST=192.168.254.33
 type AppConfig struct {
 	DB struct {
 		User       string `conf:"default:postgres"`

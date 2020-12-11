@@ -1,4 +1,4 @@
-package responder
+package appmux
 
 // Middleware is a function designed to run some code before and/or after
 // another Handler. It is designed to remove boilerplate or other concerns not
@@ -18,7 +18,7 @@ func wrapMiddleware(mws []Middleware, handler Handler) Handler {
 		if mw != nil {
 			// last middle ware wraps first
 			// so in this list
-			// 	appserver := web.NewServeMux(log, mid.Errors(log), mid.Metrics())
+			// 	appserver := web.NewRouter(log, mid.Errors(log), mid.Metrics())
 			// the last middlewarefunc mid.Metrics h is wrapped initially
 			// and then mid.Errors h is wrapped
 			handler = mw(handler)

@@ -10,7 +10,8 @@ import (
 	"github.com/jmoiron/sqlx"
 	"github.com/pkg/errors"
 	"github.com/rsachdeva/illuminatingdeposits-rest/auth/authvalue"
-	"github.com/rsachdeva/illuminatingdeposits-rest/responder"
+	"github.com/rsachdeva/illuminatingdeposits-rest/appmux"
+	"github.com/rsachdeva/illuminatingdeposits-rest/appjson"
 	"github.com/rsachdeva/illuminatingdeposits-rest/usermgmt/uservalue"
 	"go.opencensus.io/trace"
 )
@@ -28,7 +29,7 @@ func (us *Service) Create(ctx context.Context, w http.ResponseWriter, r *http.Re
 	fmt.Printf("r.Header.GetGet(\"Authorization\") is %s", r.Header.Get("Authorization"))
 	if !ok {
 		err := errors.New("must provide email and password in Basic auth")
-		return responder.NewRequestError(err, http.StatusUnauthorized)
+		return appmux.NewRequestError(err, http.StatusUnauthorized)
 	}
 
 	nu := uservalue.NewUser{
@@ -40,17 +41,17 @@ func (us *Service) Create(ctx context.Context, w http.ResponseWriter, r *http.Re
 
 	u, err := uservalue.AddUser(ctx, us.Db, nu, time.Now())
 	if err != nil {
-		return responder.NewRequestError(err, http.StatusConflict)
+		return appmux.NewRequestError(err, http.StatusConflict)
 	}
 
-	return responder.Respond(ctx, w, u, http.StatusCreated)
+	return appjson.Respond(ctx, w, u, http.StatusCreated)
 }
 
-func RegisterSvc(db *sqlx.DB, m *responder.ServeMux) {
+func RegisterSvc(db *sqlx.DB, m *appmux.Router) {
 	// Register usermgmt interestsvc.
 	u := Service{Db: db}
 
-	// The responder can't be authenticated because we need this responder to
+	// The appjson can't be authenticated because we need this appjson to
 	// create the usermgmt in the first place.
 	m.Handle(http.MethodPost, "/v1/users", u.Create)
 }

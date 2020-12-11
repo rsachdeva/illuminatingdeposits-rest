@@ -6,7 +6,7 @@ import (
 
 	"github.com/pkg/errors"
 	"github.com/rsachdeva/illuminatingdeposits-rest/interestcal/interestvalue"
-	"github.com/rsachdeva/illuminatingdeposits-rest/responder"
+	"github.com/rsachdeva/illuminatingdeposits-rest/appjson"
 )
 
 //Interest handler
@@ -24,5 +24,5 @@ func (ih Interest) Create(w io.Writer, nibs interestvalue.NewInterest, execution
 	if err != nil {
 		return errors.Wrap(err, "create calculating for interestcal.NewInterest")
 	}
-	return responder.Output(w, ibs)
+	return appjson.Output(w, ibs)
 }
