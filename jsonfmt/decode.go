@@ -11,7 +11,7 @@ import (
 
 	en "github.com/go-playground/locales/en"
 	ut "github.com/go-playground/universal-translator"
-	"github.com/rsachdeva/illuminatingdeposits-rest/appmux"
+	"github.com/rsachdeva/illuminatingdeposits-rest/muxhttp"
 	validator "gopkg.in/go-playground/validator.v9"
 	en_translations "gopkg.in/go-playground/validator.v9/translations/en"
 )

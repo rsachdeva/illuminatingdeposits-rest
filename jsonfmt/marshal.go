@@ -7,7 +7,7 @@ import (
 	"net/http"
 
 	"github.com/pkg/errors"
-	"github.com/rsachdeva/illuminatingdeposits-rest/appmux"
+	"github.com/rsachdeva/illuminatingdeposits-rest/muxhttp"
 )
 
 // Respond converts a Go value to JSON and sends it to the cli.

@@ -16,7 +16,7 @@ import (
 	"github.com/rsachdeva/illuminatingdeposits-rest/errconv"
 	"github.com/rsachdeva/illuminatingdeposits-rest/interestcal"
 	"github.com/rsachdeva/illuminatingdeposits-rest/metriccnt"
-	"github.com/rsachdeva/illuminatingdeposits-rest/appmux"
+	"github.com/rsachdeva/illuminatingdeposits-rest/muxhttp"
 	"github.com/rsachdeva/illuminatingdeposits-rest/postgreshealth"
 	"github.com/rsachdeva/illuminatingdeposits-rest/recoverpanic"
 	"github.com/rsachdeva/illuminatingdeposits-rest/reqlog"

@@ -8,7 +8,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/rsachdeva/illuminatingdeposits-rest/appmux"
+	"github.com/rsachdeva/illuminatingdeposits-rest/muxhttp"
 	"go.opencensus.io/trace"
 )
 

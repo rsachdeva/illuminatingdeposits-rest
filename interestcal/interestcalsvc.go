@@ -8,7 +8,7 @@ import (
 
 	"github.com/pkg/errors"
 	"github.com/rsachdeva/illuminatingdeposits-rest/jsonfmt"
-	"github.com/rsachdeva/illuminatingdeposits-rest/appmux"
+	"github.com/rsachdeva/illuminatingdeposits-rest/muxhttp"
 	"github.com/rsachdeva/illuminatingdeposits-rest/interestcal/interestvalue"
 	"github.com/rsachdeva/illuminatingdeposits-rest/reqlog"
 	"go.opencensus.io/trace"

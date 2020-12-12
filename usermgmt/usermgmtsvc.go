@@ -10,7 +10,7 @@ import (
 	"github.com/jmoiron/sqlx"
 	"github.com/pkg/errors"
 	"github.com/rsachdeva/illuminatingdeposits-rest/auth/authvalue"
-	"github.com/rsachdeva/illuminatingdeposits-rest/appmux"
+	"github.com/rsachdeva/illuminatingdeposits-rest/muxhttp"
 	"github.com/rsachdeva/illuminatingdeposits-rest/jsonfmt"
 	"github.com/rsachdeva/illuminatingdeposits-rest/usermgmt/uservalue"
 	"go.opencensus.io/trace"

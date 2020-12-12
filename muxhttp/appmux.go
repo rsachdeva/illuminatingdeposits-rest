@@ -1,4 +1,4 @@
-// Package appmux provides mux, middleware, handler with regards to routing capabilities
+// Package muxhttp provides mux, middleware, handler with regards to routing capabilities
 package appmux
 
 import (
@@ -75,7 +75,7 @@ func (a *Router) Handle(method, url string, h Handler, mw ...Middleware) {
 	h = wrapMiddleware(slicemws, h)
 
 	fn := func(w http.ResponseWriter, r *http.Request) {
-		ctx, span := trace.StartSpan(r.Context(), "appmux.ServerMux.Handle")
+		ctx, span := trace.StartSpan(r.Context(), "muxhttp.ServerMux.Handle")
 		defer span.End()
 
 		// ListCalculations a Values struct to record state for the request. Store the

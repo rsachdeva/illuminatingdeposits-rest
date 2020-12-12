@@ -9,7 +9,7 @@ import (
 	"runtime/debug"
 
 	"github.com/pkg/errors"
-	"github.com/rsachdeva/illuminatingdeposits-rest/appmux"
+	"github.com/rsachdeva/illuminatingdeposits-rest/muxhttp"
 	"go.opencensus.io/trace"
 )
 

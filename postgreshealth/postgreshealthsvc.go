@@ -6,7 +6,7 @@ import (
 	"net/http"
 
 	"github.com/jmoiron/sqlx"
-	"github.com/rsachdeva/illuminatingdeposits-rest/appmux"
+	"github.com/rsachdeva/illuminatingdeposits-rest/muxhttp"
 	"github.com/rsachdeva/illuminatingdeposits-rest/postgreshealth/healthvalue"
 	"github.com/rsachdeva/illuminatingdeposits-rest/jsonfmt"
 	"go.opencensus.io/trace"
