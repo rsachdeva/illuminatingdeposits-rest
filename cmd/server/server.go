@@ -1,6 +1,6 @@
 // Package appserver provides appserver configuration for db, tracing, tls and env variables.
 // It also provides regsitration for services including starting the server
-package appserver
+package main
 
 import (
 	"crypto/tls"

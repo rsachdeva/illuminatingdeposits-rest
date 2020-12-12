@@ -1,3 +1,4 @@
+// Package jsomfmt provides json format for file reading and http requests
 package jsonfmt
 
 import (

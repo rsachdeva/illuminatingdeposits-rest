@@ -1,4 +1,4 @@
-package appserver
+package main
 
 import (
 	"crypto/tls"
