@@ -39,7 +39,7 @@ func (err *ErrorRequest) Error() string {
 	return err.Err.Error()
 }
 
-// shutdown is a type used to help with the graceful termination of the appjson.
+// shutdown is a type used to help with the graceful termination of the jsonfmt.
 type shutdown struct {
 	Message string
 }

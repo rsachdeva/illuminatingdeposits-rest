@@ -91,8 +91,8 @@ func ConfigureAndServe() error {
 	// =========================================================================
 	// Start Debug service
 	//
-	// /debug/pprof - Added to the default appjson by importing the net/http/pprof package.
-	// /debug/vars - Added to the default appjson by importing the expvar package.
+	// /debug/pprof - Added to the default jsonfmt by importing the net/http/pprof package.
+	// /debug/vars - Added to the default jsonfmt by importing the expvar package.
 	//
 	// Not concerned with shutting this down when the application is shutdownCh.
 	go func() {

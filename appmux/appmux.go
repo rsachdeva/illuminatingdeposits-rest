@@ -49,7 +49,7 @@ func NewRouter(shutdownCh chan os.Signal, log *log.Logger, mw ...Middleware) *Ro
 		shutdown: shutdownCh,
 	}
 
-	// ListCalculations an OpenCensus HTTP Handler which wraps the appjson. This will start
+	// ListCalculations an OpenCensus HTTP Handler which wraps the jsonfmt. This will start
 	// the initial span and annotate it with information about the request/response.
 	//
 	// This is configured to use the W3C TraceContext standard to set the remote
@@ -106,6 +106,6 @@ func (a *Router) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 // SignalShutdown is used to gracefully shutdown the appserver when an integrity
 // issue is identified.
 func (a *Router) SignalShutdown() {
-	a.log.Println("error returned from handler indicated integrity issue, shutting down appjson")
+	a.log.Println("error returned from handler indicated integrity issue, shutting down jsonfmt")
 	a.shutdown <- syscall.SIGSTOP
 }

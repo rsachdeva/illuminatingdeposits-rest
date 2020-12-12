@@ -11,7 +11,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/rsachdeva/illuminatingdeposits-rest/auth/authvalue"
 	"github.com/rsachdeva/illuminatingdeposits-rest/appmux"
-	"github.com/rsachdeva/illuminatingdeposits-rest/appjson"
+	"github.com/rsachdeva/illuminatingdeposits-rest/jsonfmt"
 	"github.com/rsachdeva/illuminatingdeposits-rest/usermgmt/uservalue"
 	"go.opencensus.io/trace"
 )
@@ -44,14 +44,14 @@ func (us *service) Create(ctx context.Context, w http.ResponseWriter, r *http.Re
 		return appmux.NewRequestError(err, http.StatusConflict)
 	}
 
-	return appjson.Respond(ctx, w, u, http.StatusCreated)
+	return jsonfmt.Respond(ctx, w, u, http.StatusCreated)
 }
 
 func RegisterSvc(db *sqlx.DB, m *appmux.Router) {
 	// Register usermgmt interestsvc.
 	u := service{db: db}
 
-	// The appjson can't be authenticated because we need this appjson to
+	// The jsonfmt can't be authenticated because we need this jsonfmt to
 	// create the usermgmt in the first place.
 	m.Handle(http.MethodPost, "/v1/users", u.Create)
 }

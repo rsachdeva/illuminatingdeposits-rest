@@ -27,7 +27,7 @@ func NewMiddleware(log *log.Logger) appmux.Middleware {
 			ctx, span := trace.StartSpan(ctx, "recoverpanic.NewMiddleware")
 			defer span.End()
 
-			// If the context is missing this value, request the appjson
+			// If the context is missing this value, request the jsonfmt
 			// to be shutdown gracefully.
 			v, ok := ctx.Value(appmux.KeyValues).(*appmux.Values)
 			if !ok {

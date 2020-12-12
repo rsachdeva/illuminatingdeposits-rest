@@ -8,7 +8,7 @@ import (
 	"github.com/jmoiron/sqlx"
 	"github.com/rsachdeva/illuminatingdeposits-rest/appmux"
 	"github.com/rsachdeva/illuminatingdeposits-rest/postgreshealth/healthvalue"
-	"github.com/rsachdeva/illuminatingdeposits-rest/appjson"
+	"github.com/rsachdeva/illuminatingdeposits-rest/jsonfmt"
 	"go.opencensus.io/trace"
 )
 
@@ -19,7 +19,7 @@ type service struct {
 	// ADD OTHER STATE LIKE THE LOGGER IF NEEDED.
 }
 
-// Health validates the appjson is healthy and ready to accept requests.
+// Health validates the jsonfmt is healthy and ready to accept requests.
 func (c *service) Health(ctx context.Context, w http.ResponseWriter, _ *http.Request) error {
 	ctx, span := trace.StartSpan(ctx, "postgresconn.service.Health")
 	defer span.End()
@@ -35,15 +35,15 @@ func (c *service) Health(ctx context.Context, w http.ResponseWriter, _ *http.Req
 		// status. Do not respond by just returning an error because further up in
 		// the call stack will interpret that as an unhandled error.
 		health.Status = "Db not ready"
-		return appjson.Respond(ctx, w, health, http.StatusInternalServerError)
+		return jsonfmt.Respond(ctx, w, health, http.StatusInternalServerError)
 	}
 
 	health.Status = "ok"
-	return appjson.Respond(ctx, w, health, http.StatusOK)
+	return jsonfmt.Respond(ctx, w, health, http.StatusOK)
 }
 
 func RegisterSvc(db *sqlx.DB, m *appmux.Router) {
-	// Register health check handler. This appjson is not authenticated.
+	// Register health check handler. This jsonfmt is not authenticated.
 	c := service{db: db}
 	m.Handle(http.MethodGet, "/v1/health", c.Health)
 }

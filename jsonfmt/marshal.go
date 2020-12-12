@@ -1,4 +1,4 @@
-package appjson
+package jsonfmt
 
 import (
 	"context"

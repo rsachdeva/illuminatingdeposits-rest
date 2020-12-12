@@ -7,7 +7,7 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/rsachdeva/illuminatingdeposits-rest/appjson"
+	"github.com/rsachdeva/illuminatingdeposits-rest/jsonfmt"
 	"github.com/rsachdeva/illuminatingdeposits-rest/appmux"
 	"go.opencensus.io/trace"
 )
@@ -27,7 +27,7 @@ func NewMiddleware(log *log.Logger) appmux.Middleware {
 			ctx, span := trace.StartSpan(ctx, "errconv.NewMiddleware")
 			defer span.End()
 
-			// If the context is missing this value, request the appjson
+			// If the context is missing this value, request the jsonfmt
 			// to be shutdown gracefully.
 			v, ok := ctx.Value(appmux.KeyValues).(*appmux.Values)
 			if !ok {
@@ -41,12 +41,12 @@ func NewMiddleware(log *log.Logger) appmux.Middleware {
 				log.Printf("TraceID %s : \n ERROR :\n %+v  web.IsShutdown(err) is %v", v.TraceID, err, appmux.IsShutdown(err))
 
 				// Respond to the error.
-				if err := appjson.RespondError(ctx, w, err); err != nil {
+				if err := jsonfmt.RespondError(ctx, w, err); err != nil {
 					return err
 				}
 
 				// If we receive the shutdown err we need to return it
-				// back to the base handler to shutdown the appjson.
+				// back to the base handler to shutdown the jsonfmt.
 				if ok := appmux.IsShutdown(err); ok {
 					return err
 				}
