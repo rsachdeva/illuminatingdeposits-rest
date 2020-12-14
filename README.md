@@ -78,20 +78,19 @@ go run github.com/rsachdeva/illuminatingdeposits-rest/cmd/server
 
 ### Interest Service REST HTTP Methods Invoked:
 
-####Without TLS Client: 
+####Without TLS Sanity test Client: 
 See tools/resteditor/HealthCRUD.http for request examples and sample response.
 Use dev env for localhost:3000  
-Or go to cmd/client/main.go  
+Or go to cmd/sanitytestclient/main.go  
 And uncomment any desired function request starting with "withoutTls..."
-Make sure to make email unique to avoid error
-See Base64EncodedString call line in the file
+Make sure to make email unique to avoid error, see Base64EncodedString call line in the file for this.
 
-####TLS Client: 
-Go to cmd/client/main.go  
+####TLS Sanity test Client: 
+export GODEBUG=x509ignoreCN=0  
+Go to cmd/sanitytestclient/main.go  
 And uncomment any desired function request starting with "tls..."
-run cmd/client
-Make sure to make email unique to avoid error
-See Base64EncodedString call line in the file
+run cmd/sanitytestclient
+Make sure to make email unique to avoid error, see Base64EncodedString call line in the file for this.
 
 # Push Images to Docker Hub
 ```shell
