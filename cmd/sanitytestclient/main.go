@@ -11,7 +11,7 @@ import (
 	"strings"
 )
 
-// tls client
+// tls sanitytestclient
 func tlsClient() (error, *http.Client) {
 	caCert, err := ioutil.ReadFile("conf/tls/cacrtto.pem")
 	if err != nil {
@@ -56,7 +56,7 @@ func tlsGetRequestHealth() {
 	fmt.Println("executing tLSGetRequestHealth()")
 	err, client := tlsClient()
 	if err != nil {
-		log.Fatalf("tls client err is %v", err)
+		log.Fatalf("tls sanitytestclient err is %v", err)
 	}
 	resp, err := client.Get("https://localhost:3000/v1/health")
 	if err != nil {
@@ -106,7 +106,7 @@ func tlsPostRequestCreateUser() {
 	fmt.Println("executing tlsPostRequestCreateUser()")
 	err, client := tlsClient()
 	if err != nil {
-		log.Fatalf("tls client err is %v", err)
+		log.Fatalf("tls sanitytestclient err is %v", err)
 	}
 	url := "https://localhost:3000/v1/users"
 	method := "POST"
@@ -230,7 +230,7 @@ func tlsPostRequestCreateInvest() {
 	fmt.Println("executing tlsPostRequestCreateInvest()")
 	err, client := tlsClient()
 	if err != nil {
-		log.Fatalf("tls client err is %v", err)
+		log.Fatalf("tls sanitytestclient err is %v", err)
 	}
 
 	url := "https://localhost:3000/v1/interests"
