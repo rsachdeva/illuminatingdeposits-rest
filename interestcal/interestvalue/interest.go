@@ -14,13 +14,15 @@ const (
 	Br = "Brokered CD"
 )
 
-// InterestRequest is for input/request
-type InterestRequest struct {
+// CreateInterestRequest is for input/request
+// for now keeping it in gRPC Style
+type CreateInterestRequest struct {
 	NewBanks []NewBank `json:"banks"`
 }
 
-// InterestResponse is for output/response
-type InterestResponse struct {
+// CreateInterestResponse is for output/response
+// for now keeping it in gRPC Style
+type CreateInterestResponse struct {
 	Banks []Bank `json:"banks"`
 
 	Delta float64 `json:"30daysInterest"`

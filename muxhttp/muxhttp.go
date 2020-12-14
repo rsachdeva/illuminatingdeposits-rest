@@ -49,7 +49,7 @@ func NewRouter(shutdownCh chan os.Signal, log *log.Logger, mw ...Middleware) *Ro
 		shutdown: shutdownCh,
 	}
 
-	// ListCalculations an OpenCensus HTTP Handler which wraps the jsonfmt. This will start
+	// CreateInterest an OpenCensus HTTP Handler which wraps the jsonfmt. This will start
 	// the initial span and annotate it with information about the request/response.
 	//
 	// This is configured to use the W3C TraceContext standard to set the remote
@@ -78,7 +78,7 @@ func (a *Router) Handle(method, url string, h Handler, mw ...Middleware) {
 		ctx, span := trace.StartSpan(r.Context(), "muxhttp.ServerMux.Handle")
 		defer span.End()
 
-		// ListCalculations a Values struct to record state for the request. Store the
+		// CreateInterest a Values struct to record state for the request. Store the
 		// address in the request's context so it is sent down the call chain.
 		v := Values{
 			TraceID: span.SpanContext().TraceID.String(),

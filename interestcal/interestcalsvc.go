@@ -19,14 +19,15 @@ type service struct {
 	log *log.Logger
 }
 
-// ListCalculations decodes the body of a request to create interest calculations. The full
+// CreateInterest decodes the body of a request to create interest calculations. The full
 // banks and deposit details with generated 30 days service fields are sent back in the response.
-func (s *service) ListCalculations(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
-	ctx, span := trace.StartSpan(ctx, "interestcal.service.ListCalculations")
+// https://cloud.google.com/apis/design/standard_methods
+func (s *service) CreateInterest(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
+	ctx, span := trace.StartSpan(ctx, "interestcal.service.CreateInterest")
 	defer span.End()
 
 	reqlog.Dump(r)
-	var nin interestvalue.InterestRequest
+	var nin interestvalue.CreateInterestRequest
 	if err := jsonfmt.Decode(r, &nin); err != nil {
 		return errors.Wrap(err, "decoding new interest calculation request with banks and deposits")
 	}
@@ -42,5 +43,5 @@ func (s *service) ListCalculations(ctx context.Context, w http.ResponseWriter, r
 
 func RegisterSvc(log *log.Logger, m *appmux.Router) {
 	i := service{log: log}
-	m.Handle(http.MethodPost, "/v1/interests", i.ListCalculations)
+	m.Handle(http.MethodPost, "/v1/interests", i.CreateInterest)
 }

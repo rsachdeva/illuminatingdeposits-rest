@@ -10,22 +10,22 @@ import (
 )
 
 // CalculateDelta calculations for all banks
-func (ni InterestRequest) CalculateDelta() (InterestResponse, error) {
-	bks, delta, err := ni.computeBanksDelta()
+func (cireq CreateInterestRequest) CalculateDelta() (CreateInterestResponse, error) {
+	bks, delta, err := cireq.computeBanksDelta()
 	if err != nil {
-		return InterestResponse{}, err
+		return CreateInterestResponse{}, err
 	}
-	intBanks := InterestResponse{
+	ciresp := CreateInterestResponse{
 		Banks: bks,
 		Delta: roundToNearest(delta),
 	}
-	return intBanks, nil
+	return ciresp, nil
 }
 
-func (ni InterestRequest) computeBanksDelta() ([]Bank, float64, error) {
+func (cireq CreateInterestRequest) computeBanksDelta() ([]Bank, float64, error) {
 	var bks []Bank
 	var delta float64
-	for _, nb := range ni.NewBanks {
+	for _, nb := range cireq.NewBanks {
 		ds, bDelta, err := nb.computeBankDelta()
 		if err != nil {
 			return nil, 0, err

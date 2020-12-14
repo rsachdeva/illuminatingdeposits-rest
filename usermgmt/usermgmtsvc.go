@@ -22,7 +22,7 @@ type service struct {
 }
 
 func (us *service) Create(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
-	ctx, span := trace.StartSpan(ctx, "usermgmt.service.ListCalculations")
+	ctx, span := trace.StartSpan(ctx, "usermgmt.service.CreateInterest")
 	defer span.End()
 
 	email, pass, ok := r.BasicAuth()

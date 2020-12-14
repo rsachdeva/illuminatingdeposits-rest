@@ -19,7 +19,7 @@ func NewMiddleware(log *log.Logger) appmux.Middleware {
 	// This is the actual middlewarefunc function to be executed.
 	f := func(before appmux.Handler) appmux.Handler {
 
-		// ListCalculations the handler that will be attached in the middlewarefunc chain.
+		// CreateInterest the handler that will be attached in the middlewarefunc chain.
 		h := func(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
 			fmt.Printf("Entering reqlog NewMiddleware handler is %T\n", before)
 			defer fmt.Printf("Exiting reqlog NewMiddleware handler is %T\n", before)

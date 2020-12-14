@@ -11,25 +11,25 @@ import (
 	"github.com/pkg/errors"
 	"github.com/rsachdeva/illuminatingdeposits-rest/interestcal/interestvalue"
 	"github.com/rsachdeva/illuminatingdeposits-rest/jsonfmt"
-	"github.com/rsachdeva/illuminatingdeposits-rest/tools/calcli/handlers"
+	"github.com/rsachdeva/illuminatingdeposits-rest/tools/calcli/interestcal"
 )
 
 func main() {
-	if err := ListCalculations(); err != nil {
+	if err := InterestCal(); err != nil {
 		log.Printf("error: quitting appserver: %+v", err)
 		os.Exit(1)
 	}
 
 }
 
-func ListCalculations() error {
+func InterestCal() error {
 	var cpuprofile = flag.String("cpuprofile", "", "write cpu profile to `file`")
 	var memprofile = flag.String("memprofile", "", "write memory profile to `file`")
 	flag.Parse()
 	if *cpuprofile != "" {
 		f, err := os.Create(*cpuprofile)
 		if err != nil {
-			log.Fatal("could not ListCalculations CPU profile: ", err)
+			log.Fatal("could not InterestCal CPU profile: ", err)
 		}
 		defer f.Close() // error handling omitted for example
 		if err := pprof.StartCPUProfile(f); err != nil {
@@ -40,8 +40,8 @@ func ListCalculations() error {
 
 	log := log.New(os.Stdout, "DEPOSITS : ", log.LstdFlags|log.Lmicroseconds|log.Lshortfile)
 
-	hi := handlers.Interest{Log: log}
-	var ni interestvalue.InterestRequest
+	hi := interestcal.Service{Log: log}
+	var ni interestvalue.CreateInterestRequest
 
 	fmt.Println("flag.Arg(1) is", flag.Arg(1))
 	if err := jsonfmt.InputFile(flag.Arg(1), &ni); err != nil {
@@ -52,14 +52,14 @@ func ListCalculations() error {
 		executionTimes = 100000
 	}
 	fmt.Println("executionTimes is", executionTimes)
-	if err := hi.ListCalculations(os.Stdout, ni, executionTimes); err != nil {
+	if err := hi.CreateInterest(os.Stdout, ni, executionTimes); err != nil {
 		return errors.Wrap(err, "printing all banks calculations")
 	}
 
 	if *memprofile != "" {
 		f, err := os.Create(*memprofile)
 		if err != nil {
-			log.Fatal("could not ListCalculations memory profile: ", err)
+			log.Fatal("could not InterestCal memory profile: ", err)
 		}
 		defer f.Close() // error handling omitted for example
 		runtime.GC()    // get up-to-date statistics
