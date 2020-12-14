@@ -15,21 +15,21 @@ import (
 )
 
 func main() {
-	if err := createInterest(); err != nil {
+	if err := ListCalculations(); err != nil {
 		log.Printf("error: quitting appserver: %+v", err)
 		os.Exit(1)
 	}
 
 }
 
-func createInterest() error {
+func ListCalculations() error {
 	var cpuprofile = flag.String("cpuprofile", "", "write cpu profile to `file`")
 	var memprofile = flag.String("memprofile", "", "write memory profile to `file`")
 	flag.Parse()
 	if *cpuprofile != "" {
 		f, err := os.Create(*cpuprofile)
 		if err != nil {
-			log.Fatal("could not createInterest CPU profile: ", err)
+			log.Fatal("could not ListCalculations CPU profile: ", err)
 		}
 		defer f.Close() // error handling omitted for example
 		if err := pprof.StartCPUProfile(f); err != nil {
@@ -41,7 +41,7 @@ func createInterest() error {
 	log := log.New(os.Stdout, "DEPOSITS : ", log.LstdFlags|log.Lmicroseconds|log.Lshortfile)
 
 	hi := handlers.Interest{Log: log}
-	var ni interestvalue.NewInterest
+	var ni interestvalue.InterestRequest
 
 	fmt.Println("flag.Arg(1) is", flag.Arg(1))
 	if err := jsonfmt.InputFile(flag.Arg(1), &ni); err != nil {
@@ -52,14 +52,14 @@ func createInterest() error {
 		executionTimes = 100000
 	}
 	fmt.Println("executionTimes is", executionTimes)
-	if err := hi.Create(os.Stdout, ni, executionTimes); err != nil {
+	if err := hi.ListCalculations(os.Stdout, ni, executionTimes); err != nil {
 		return errors.Wrap(err, "printing all banks calculations")
 	}
 
 	if *memprofile != "" {
 		f, err := os.Create(*memprofile)
 		if err != nil {
-			log.Fatal("could not createInterest memory profile: ", err)
+			log.Fatal("could not ListCalculations memory profile: ", err)
 		}
 		defer f.Close() // error handling omitted for example
 		runtime.GC()    // get up-to-date statistics

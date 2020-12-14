@@ -10,7 +10,7 @@ import (
 	"github.com/rsachdeva/illuminatingdeposits-rest/muxhttp"
 )
 
-// Respond converts a Go value to JSON and sends it to the cli.
+// Respond converts a Go value to JSON and sends it
 func Respond(ctx context.Context, w http.ResponseWriter, data interface{}, statusCode int) error {
 
 	// Set the status code for the request logger middlewarefunc.

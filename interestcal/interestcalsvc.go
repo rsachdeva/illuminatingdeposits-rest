@@ -26,7 +26,7 @@ func (s *service) ListCalculations(ctx context.Context, w http.ResponseWriter, r
 	defer span.End()
 
 	reqlog.Dump(r)
-	var nin interestvalue.NewInterest
+	var nin interestvalue.InterestRequest
 	if err := jsonfmt.Decode(r, &nin); err != nil {
 		return errors.Wrap(err, "decoding new interest calculation request with banks and deposits")
 	}
