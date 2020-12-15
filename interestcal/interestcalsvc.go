@@ -1,4 +1,4 @@
-// Package interestcal provides interest calculation service
+// Package interestcal provides interest calculation service for the server api
 package interestcal
 
 import (
@@ -7,9 +7,9 @@ import (
 	"net/http"
 
 	"github.com/pkg/errors"
+	"github.com/rsachdeva/illuminatingdeposits-rest/interestcal/interestvalue"
 	"github.com/rsachdeva/illuminatingdeposits-rest/jsonfmt"
 	"github.com/rsachdeva/illuminatingdeposits-rest/muxhttp"
-	"github.com/rsachdeva/illuminatingdeposits-rest/interestcal/interestvalue"
 	"github.com/rsachdeva/illuminatingdeposits-rest/reqlog"
 	"go.opencensus.io/trace"
 )
@@ -27,18 +27,18 @@ func (s *service) CreateInterest(ctx context.Context, w http.ResponseWriter, r *
 	defer span.End()
 
 	reqlog.Dump(r)
-	var nin interestvalue.CreateInterestRequest
-	if err := jsonfmt.Decode(r, &nin); err != nil {
+	var req interestvalue.CreateInterestRequest
+	if err := jsonfmt.Decode(r, &req); err != nil {
 		return errors.Wrap(err, "decoding new interest calculation request with banks and deposits")
 	}
-
+	s.log.Printf("\nDecoded json is %+v\n", req)
 	s.log.Println("Starting interest and 30day interest calculations(also called as delta)")
-	in, err := nin.CalculateDelta()
+	resp, err := req.CalculateDelta()
 	if err != nil {
 		return errors.Wrap(err, "creating new interest calculations")
 	}
 
-	return jsonfmt.Respond(ctx, w, &in, http.StatusCreated)
+	return jsonfmt.Respond(ctx, w, &resp, http.StatusCreated)
 }
 
 func RegisterSvc(log *log.Logger, m *appmux.Router) {

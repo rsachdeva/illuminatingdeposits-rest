@@ -3,15 +3,14 @@ package usermgmt
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 	"time"
 
 	"github.com/jmoiron/sqlx"
 	"github.com/pkg/errors"
-	"github.com/rsachdeva/illuminatingdeposits-rest/auth/authvalue"
-	"github.com/rsachdeva/illuminatingdeposits-rest/muxhttp"
 	"github.com/rsachdeva/illuminatingdeposits-rest/jsonfmt"
+	"github.com/rsachdeva/illuminatingdeposits-rest/muxhttp"
+	"github.com/rsachdeva/illuminatingdeposits-rest/reqlog"
 	"github.com/rsachdeva/illuminatingdeposits-rest/usermgmt/uservalue"
 	"go.opencensus.io/trace"
 )
@@ -22,21 +21,14 @@ type service struct {
 }
 
 func (us *service) Create(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
-	ctx, span := trace.StartSpan(ctx, "usermgmt.service.CreateInterest")
+	ctx, span := trace.StartSpan(ctx, "interestcal.service.CreateInterest")
 	defer span.End()
 
-	email, pass, ok := r.BasicAuth()
-	fmt.Printf("r.Header.GetGet(\"Authorization\") is %s", r.Header.Get("Authorization"))
-	if !ok {
-		err := errors.New("must provide email and password in Basic auth")
-		return appmux.NewRequestError(err, http.StatusUnauthorized)
-	}
+	reqlog.Dump(r)
 
-	nu := uservalue.NewUser{
-		Email:           email,
-		Password:        pass,
-		PasswordConfirm: pass,
-		Roles:           []string{authvalue.RoleUser},
+	var nu uservalue.NewUser
+	if err := jsonfmt.Decode(r, &nu); err != nil {
+		return errors.Wrapf(err, "unable to decode payload")
 	}
 
 	u, err := uservalue.AddUser(ctx, us.db, nu, time.Now())

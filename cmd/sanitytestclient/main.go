@@ -11,7 +11,6 @@ import (
 	"strings"
 )
 
-// tls sanitytestclient
 func tlsClient() (error, *http.Client) {
 	caCert, err := ioutil.ReadFile("conf/tls/cacrtto.pem")
 	if err != nil {
@@ -31,7 +30,6 @@ func tlsClient() (error, *http.Client) {
 	return nil, client
 }
 
-// base64 encoded string
 func Base64EncodedString(email, password string) string {
 	auth := email + ":" + password
 	return base64.StdEncoding.EncodeToString([]byte(auth))
@@ -70,22 +68,26 @@ func tlsGetRequestHealth() {
 	fmt.Println("body is ", string(body))
 }
 
-// create usermgmt
 func withoutTlsPostRequestCreateUser() {
 	fmt.Println("executing withoutTlsPostRequestCreateUser()")
 	client := &http.Client{}
 	url := "http://localhost:3000/v1/users"
 	method := "POST"
-	req, err := http.NewRequest(method, url, nil)
+	payload := strings.NewReader(`{
+           "name":            "Rob PikeNotTLS",
+		   "email":           "growth-n@drinnovations.us",
+		   "roles":           ["Admin"],
+           "password":        "kubernetes",
+           "password_confirm": "kubernetes"
+    }`)
+
+	req, err := http.NewRequest(method, url, payload)
 
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
-	e := Base64EncodedString("someone-e@drinnovations.us", "jmdjmd")
-	fmt.Printf("encoded string is %s\n", e)
-	authHeader := fmt.Sprintf("Basic %s", e)
-	req.Header.Add("Authorization", authHeader)
+	req.Header.Add("Content-Type", "application/json")
 
 	res, err := client.Do(req)
 	if err != nil {
@@ -110,16 +112,21 @@ func tlsPostRequestCreateUser() {
 	}
 	url := "https://localhost:3000/v1/users"
 	method := "POST"
-	req, err := http.NewRequest(method, url, nil)
+	payload := strings.NewReader(`{
+           "name":            "Rob Pike",
+		   "email":           "growth-a@drinnovations.us",
+		   "roles":           ["Admin"],
+           "password":        "kubernetes",
+           "password_confirm": "kubernetes"
+    }`)
+
+	req, err := http.NewRequest(method, url, payload)
 
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
-	e := Base64EncodedString("someone2-ijmd@drinnovations.us", "jmdjmd")
-	fmt.Printf("encoded string is %s\n", e)
-	authHeader := fmt.Sprintf("Basic %s", e)
-	req.Header.Add("Authorization", authHeader)
+	req.Header.Add("Content-Type", "application/json")
 
 	res, err := client.Do(req)
 	if err != nil {
@@ -136,9 +143,8 @@ func tlsPostRequestCreateUser() {
 	fmt.Println(string(body))
 }
 
-// interestcal
-func withoutTlsPostRequestCreateInvest() {
-	fmt.Println("executing withoutTlsPostRequestCreateInvest()")
+func withoutTlsPostRequestCreateInterest() {
+	fmt.Println("executing withoutTlsPostRequestCreateInterest()")
 	client := &http.Client{}
 	url := "http://localhost:3000/v1/interests"
 	method := "POST"
@@ -152,7 +158,7 @@ func withoutTlsPostRequestCreateInvest() {
 				  "annualType": "Checking",
 				  "annualRate%": 0,
 				  "years": 1,
-				  "amount": 1
+				  "amount": 100
 				},
 				{
 				  "account": "1256",
@@ -226,8 +232,8 @@ func withoutTlsPostRequestCreateInvest() {
 	fmt.Println(string(body))
 }
 
-func tlsPostRequestCreateInvest() {
-	fmt.Println("executing tlsPostRequestCreateInvest()")
+func tlsPostRequestCreateInterest() {
+	fmt.Println("executing tlsPostRequestCreateInterest()")
 	err, client := tlsClient()
 	if err != nil {
 		log.Fatalf("tls sanitytestclient err is %v", err)
@@ -245,7 +251,7 @@ func tlsPostRequestCreateInvest() {
 				  "annualType": "Checking",
 				  "annualRate%": 0,
 				  "years": 1,
-				  "amount": 1
+				  "amount": 100
 				},
 				{
 				  "account": "1256",
@@ -324,6 +330,6 @@ func main() {
 	tlsGetRequestHealth()
 	//withoutTlsPostRequestCreateUser()
 	tlsPostRequestCreateUser()
-	// withoutTlsPostRequestCreateInvest()
-	tlsPostRequestCreateInvest()
+	// withoutTlsPostRequestCreateInterest()
+	tlsPostRequestCreateInterest()
 }
