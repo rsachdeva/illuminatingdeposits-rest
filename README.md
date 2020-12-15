@@ -1,5 +1,5 @@
-# Illuminating Deposits
-# All command should be executed from the root directory (illuminatingdeposits) of the project 
+# Illuminating Deposits - Rest http json
+# All commands should be executed from the root directory (illuminatingdeposits-rest) of the project 
 (Development is WIP)
 
 <p align="center">
