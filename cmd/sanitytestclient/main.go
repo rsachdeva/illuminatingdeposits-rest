@@ -36,7 +36,7 @@ func Base64EncodedString(email, password string) string {
 }
 
 // health
-func withoutTlsGetRequestHealth() {
+func withoutTlsGetRequestDbHealth() {
 	fmt.Println("executing withoutTLSGetRequestHealth()")
 	resp, err := http.Get("http://localhost:3000/v1/health")
 	if err != nil {
@@ -50,7 +50,7 @@ func withoutTlsGetRequestHealth() {
 	fmt.Println("body is ", string(body))
 }
 
-func tlsGetRequestHealth() {
+func tlsGetRequestDbHealth() {
 	fmt.Println("executing tLSGetRequestHealth()")
 	err, client := tlsClient()
 	if err != nil {
@@ -326,10 +326,11 @@ func tlsPostRequestCreateInterest() {
 }
 
 func main() {
-	// withoutTlsGetRequestHealth()
-	tlsGetRequestHealth()
-	//withoutTlsPostRequestCreateUser()
-	tlsPostRequestCreateUser()
+	// withoutTlsGetRequestDbHealth()
+	// withoutTlsPostRequestCreateUser()
 	// withoutTlsPostRequestCreateInterest()
+
+	tlsGetRequestDbHealth()
+	tlsPostRequestCreateUser()
 	tlsPostRequestCreateInterest()
 }

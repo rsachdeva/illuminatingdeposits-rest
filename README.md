@@ -61,7 +61,12 @@ docker run illumcalculate
 Execute:
 ```shell
 export COMPOSE_IGNORE_ORPHANS=True && \
-docker-compose -f ./deploy/compose/docker-compose.external-db-trace-only.yml up --build
+docker-compose -f ./deploy/compose/docker-compose.external-db-trace-only.yml up
+```
+and
+```shell 
+export COMPOSE_IGNORE_ORPHANS=True && \
+docker-compose -f ./deploy/compose/docker-compose.seed.yml up --build
 ```
 
 Set the following env variables when starting directly running server: change as needed
@@ -71,9 +76,9 @@ export DEPOSITS_WEB_SERVICE_SERVER_TLS=true
 export DEPOSITS_DB_DISABLE_TLS=true
 export DEPOSITS_DB_HOST=127.0.0.1
 export DEPOSITS_TRACE_URL=http://127.0.0.1:9411/api/v2/spans
-go run github.com/rsachdeva/illuminatingdeposits-rest/tools/dbcli migrate  (only once)
-go run github.com/rsachdeva/illuminatingdeposits-rest/tools/dbcli seed     (only once)
-go run github.com/rsachdeva/illuminatingdeposits-rest/cmd/server
+go run ./tools/dbcli migrate  (only once)
+go run ./tools/dbcli seed     (only once)
+go run ./cmd/server
 ```
 
 ### Interest Service REST HTTP Methods Invoked:
@@ -134,18 +139,36 @@ kubectl delete -f deploy/kubernetes/.
 
 # TLS files
 ```shell
-docker build -t tlscert:v0.1 -f ./build/Dockerfile.openssl . && \
-docker run -v $PWD/config/tls:/tls tlscert:v0.1
+docker build -t tlscert:v0.1 -f ./build/Dockerfile.openssl ./conf/tls && \
+docker run -v $PWD/conf/tls:/tls tlscert:v0.1
 ``` 
 
 To see openssl version being used in Docker:
 ```shell
-docker build -t tlscert:v0.1 -f ./build/Dockerfile.openssl . && \
-docker run -ti -v $PWD/config/tls:/tls tlscert:v0.1 sh
-
-/tls # openssl version
-OpenSSL 1.1.1g  21 Apr 2020
+docker build -t tlscert:v0.1 -f ./build/Dockerfile.openssl ./conf/tls && \
+docker run -ti -v $PWD/conf/tls:/tls tlscert:v0.1 sh
 ```
+
+You get a prompt
+/tls
+
+And enter version check
+```shell
+openssl version
+```
+```
+
+### Troubleshooting
+If for any reason no connection is happening from client to server or client hangs or server start up issues:
+Run
+```
+ps aux | grep "go run" 
+```
+or
+```
+ps aux | grep "go_build" 
+```
+to confirm is something else is already running
 
 # Version
 v1.0
