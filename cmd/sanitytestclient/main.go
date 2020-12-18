@@ -3,7 +3,6 @@ package main
 import (
 	"crypto/tls"
 	"crypto/x509"
-	"encoding/base64"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -11,10 +10,10 @@ import (
 	"strings"
 )
 
-func tlsClient() (error, *http.Client) {
+func tlsClient() (*http.Client, error) {
 	caCert, err := ioutil.ReadFile("conf/tls/cacrtto.pem")
 	if err != nil {
-		log.Fatal(err)
+		return nil, err
 	}
 	caCertPool := x509.NewCertPool()
 	// AppendCertsFromPEM attempts to parse a series of PEM encoded certificates.
@@ -27,36 +26,12 @@ func tlsClient() (error, *http.Client) {
 			},
 		},
 	}
-	return nil, client
+	return client, nil
 }
 
-func Base64EncodedString(email, password string) string {
-	auth := email + ":" + password
-	return base64.StdEncoding.EncodeToString([]byte(auth))
-}
-
-// health
-func withoutTlsGetRequestDbHealth() {
-	fmt.Println("executing withoutTLSGetRequestHealth()")
-	resp, err := http.Get("http://localhost:3000/v1/health")
-	if err != nil {
-		log.Fatalf("err in Get %v", err)
-	}
-	defer resp.Body.Close()
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		log.Fatalf("err reading response %v", err)
-	}
-	fmt.Println("body is ", string(body))
-}
-
-func tlsGetRequestDbHealth() {
+func requestGetDbHealth(client *http.Client, prefix string) {
 	fmt.Println("executing tLSGetRequestHealth()")
-	err, client := tlsClient()
-	if err != nil {
-		log.Fatalf("tls sanitytestclient err is %v", err)
-	}
-	resp, err := client.Get("https://localhost:3000/v1/health")
+	resp, err := client.Get(fmt.Sprintf("%vlocalhost:3000/v1/health", prefix))
 	if err != nil {
 		log.Fatalf("err in get is %v", err)
 	}
@@ -68,15 +43,14 @@ func tlsGetRequestDbHealth() {
 	fmt.Println("body is ", string(body))
 }
 
-func withoutTlsPostRequestCreateUser() {
-	fmt.Println("executing withoutTlsPostRequestCreateUser()")
-	client := &http.Client{}
-	url := "http://localhost:3000/v1/users"
+func requestPostCreateUser(client *http.Client, prefix string) {
+	fmt.Println("executing requestPostCreateUser()")
+	url := fmt.Sprintf("%vlocalhost:3000/v1/users", prefix)
 	method := "POST"
 	payload := strings.NewReader(`{
-           "name":            "Rob PikeNotTLS",
-		   "email":           "growth-n@drinnovations.us",
-		   "roles":           ["Admin"],
+           "name":            "Rohit Sachdeva",
+		   "email":           "growth-p@drinnovations.us",
+		   "roles":           ["USER"],
            "password":        "kubernetes",
            "password_confirm": "kubernetes"
     }`)
@@ -104,142 +78,9 @@ func withoutTlsPostRequestCreateUser() {
 	fmt.Println(string(body))
 }
 
-func tlsPostRequestCreateUser() {
-	fmt.Println("executing tlsPostRequestCreateUser()")
-	err, client := tlsClient()
-	if err != nil {
-		log.Fatalf("tls sanitytestclient err is %v", err)
-	}
-	url := "https://localhost:3000/v1/users"
-	method := "POST"
-	payload := strings.NewReader(`{
-           "name":            "Rob Pike",
-		   "email":           "growth-a@drinnovations.us",
-		   "roles":           ["Admin"],
-           "password":        "kubernetes",
-           "password_confirm": "kubernetes"
-    }`)
-
-	req, err := http.NewRequest(method, url, payload)
-
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	req.Header.Add("Content-Type", "application/json")
-
-	res, err := client.Do(req)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	defer res.Body.Close()
-
-	body, err := ioutil.ReadAll(res.Body)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	fmt.Println(string(body))
-}
-
-func withoutTlsPostRequestCreateInterest() {
-	fmt.Println("executing withoutTlsPostRequestCreateInterest()")
-	client := &http.Client{}
-	url := "http://localhost:3000/v1/interests"
-	method := "POST"
-	payload := strings.NewReader(`{
-		  "banks": [
-			{
-			  "name": "HAPPIEST",
-			  "deposits": [
-				{
-				  "account": "1234",
-				  "annualType": "Checking",
-				  "annualRate%": 0,
-				  "years": 1,
-				  "amount": 100
-				},
-				{
-				  "account": "1256",
-				  "annualType": "CD",
-				  "annualRate%": 24,
-				  "years": 2,
-				  "amount": 10700
-				},
-				{
-				  "account": "1111",
-				  "annualType": "CD",
-				  "annualRate%": 1.01,
-				  "years": 10,
-				  "amount": 27000
-				}
-			  ]
-			},
-			{
-			  "name": "NICE",
-			  "deposits": [
-				{
-				  "account": "1234",
-				  "annualType": "Brokered CD",
-				  "annualRate%": 2.4,
-				  "years": 7,
-				  "amount": 10990
-				}
-			  ]
-			},
-			{
-			  "name": "ANGRY",
-			  "deposits": [
-				{
-				  "account": "1234",
-				  "annualType": "Brokered CD",
-				  "annualRate%": 5,
-				  "years": 7,
-				  "amount": 10990
-				},
-				{
-				  "account": "9898",
-				  "annualType": "CD",
-				  "annualRate%": 2.22,
-				  "years": 1,
-				  "amount": 5500
-				}
-			  ]
-			}
-		  ]
-		}`)
-	req, err := http.NewRequest(method, url, payload)
-
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	req.Header.Add("Content-Type", "application/json")
-
-	res, err := client.Do(req)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	defer res.Body.Close()
-
-	body, err := ioutil.ReadAll(res.Body)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	fmt.Println(string(body))
-}
-
-func tlsPostRequestCreateInterest() {
-	fmt.Println("executing tlsPostRequestCreateInterest()")
-	err, client := tlsClient()
-	if err != nil {
-		log.Fatalf("tls sanitytestclient err is %v", err)
-	}
-
-	url := "https://localhost:3000/v1/interests"
+func requestPostCreateInterest(client *http.Client, prefix string) {
+	fmt.Println("executing requestPostCreateInterest()")
+	url := fmt.Sprintf("%vlocalhost:3000/v1/interests", prefix)
 	method := "POST"
 	payload := strings.NewReader(`{
 		  "banks": [
@@ -326,11 +167,24 @@ func tlsPostRequestCreateInterest() {
 }
 
 func main() {
-	// withoutTlsGetRequestDbHealth()
-	// withoutTlsPostRequestCreateUser()
-	// withoutTlsPostRequestCreateInterest()
+	tls := true
+	fmt.Println("tls is", tls)
 
-	tlsGetRequestDbHealth()
-	tlsPostRequestCreateUser()
-	tlsPostRequestCreateInterest()
+	var client *http.Client
+	var err error
+	var prefix string
+
+	client = http.DefaultClient
+	prefix = "http://"
+	if tls {
+		client, err = tlsClient()
+		if err != nil {
+			log.Fatalf("tls client err is %v", err)
+		}
+		prefix = "https://"
+	}
+
+	requestGetDbHealth(client, prefix)
+	requestPostCreateUser(client, prefix)
+	requestPostCreateInterest(client, prefix)
 }

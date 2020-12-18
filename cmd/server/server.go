@@ -40,15 +40,6 @@ func NewServer(cfg AppConfig, tl *tls.Config) *http.Server {
 }
 
 func ConfigureAndServe() error {
-
-	// =========================================================================
-	// Logging
-
-	log := log.New(os.Stdout, "DEPOSITS : ", log.LstdFlags|log.Lmicroseconds|log.Llongfile)
-
-	// =========================================================================
-	// Configuration
-
 	cfg, err := ParsedConfig(AppConfig{})
 	if err != nil {
 		return err
@@ -56,6 +47,10 @@ func ConfigureAndServe() error {
 
 	log.Printf("main : Started")
 	defer log.Println("main : Completed")
+
+	fmt.Println("tls is", cfg.Web.ServiceServerTLS)
+
+	log := log.New(os.Stdout, "DEPOSITS : ", log.LstdFlags|log.Lmicroseconds|log.Llongfile)
 
 	out, err := conf.String(&cfg)
 	if err != nil {
