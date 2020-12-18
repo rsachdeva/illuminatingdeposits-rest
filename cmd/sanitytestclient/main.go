@@ -51,7 +51,7 @@ func requestPostCreateUser(client *http.Client, prefix string) {
 	method := "POST"
 	payload := strings.NewReader(`{
            "name":            "Rohit Sachdeva",
-		   "email":           "growth-b1@drinnovations.us",
+		   "email":           "growth-aplus1@drinnovations.us",
 		   "roles":           ["USER"],
            "password":        "kubernetes",
            "password_confirm": "kubernetes"

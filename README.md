@@ -1,5 +1,5 @@
 # Illuminating Deposits - Rest http json
-# All commands should be executed from the root directory (illuminatingdeposits-rest) of the project 
+###### All commands should be executed from the root directory (illuminatingdeposits-rest) of the project 
 (Development is WIP)
 
 <p align="center">
@@ -7,17 +7,20 @@
 </p>
 
 # REST API using JSON for Messages
-# Docker Compose Deployment
 
-# Start postgres and tracing
+## Docker Compose Deployment
+
+### Start postgres and tracing
+```
 export COMPOSE_IGNORE_ORPHANS=True && \
-docker-compose -f ./deploy/compose/docker-compose.external-db-trace-only.yml up
+docker-compose -f ./deploy/compose/docker-compose.external-db-trace-only.yml up 
+```
 
 ### Then Migrate and set up seed data:
 ```shell
 export COMPOSE_IGNORE_ORPHANS=True && \
 docker-compose -f ./deploy/compose/docker-compose.seed.yml up --build
-````
+```
 
 ### To start all services without TLS:
 Make sure DEPOSITS_REST_SERVICE_TLS=false in docker-compose.rest.server.yml
@@ -90,7 +93,41 @@ The server side DEPOSITS_REST_SERVICE_TLS should be consistent and set for clien
 Uncomment any desired function request
 Make sure to make email unique to avoid error.
 
-# Push Images to Docker Hub
+### TLS files
+```shell
+docker build -t tlscert:v0.1 -f ./build/Dockerfile.openssl ./conf/tls && \
+docker run -v $PWD/conf/tls:/tls tlscert:v0.1
+``` 
+
+To see openssl version being used in Docker:
+```shell
+docker build -t tlscert:v0.1 -f ./build/Dockerfile.openssl ./conf/tls && \
+docker run -ti -v $PWD/conf/tls:/tls tlscert:v0.1 sh
+```
+
+You get a prompt
+/tls
+
+And enter version check
+```shell
+openssl version
+```
+
+### Troubleshooting
+If for any reason no connection is happening from client to server or client hangs or server start up issues:
+Run
+```
+ps aux | grep "go run"
+ps aux | grep "go_build" 
+```
+
+to confirm is something else is already running
+
+
+## Kubernetes Deployment - WIP
+
+### Push Images to Docker Hub
+
 ```shell
 docker build -t rsachdeva/illuminatingdeposits.rest.server:v0.1 -f ./build/Dockerfile.rest.server .  
 docker push rsachdeva/illuminatingdeposits.rest.server:v0.1 
@@ -98,7 +135,7 @@ docker build -t rsachdeva/illuminatingdeposits.seed:v0.1 -f ./build/Dockerfile.s
 docker push rsachdeva/illuminatingdeposits.seed:v0.1  
 ``` 
 
-# Kubernetes Deployment - WIP
+### kubectl apply
 
 ```shell
 kubectl apply -f deploy/kubernetes/traefik-ingress-daemonset-service.yaml 
@@ -120,7 +157,7 @@ kubectl port-forward service/postgres 5432:postgres
 Now can easily connect using
 jdbc:postgresql://localhost:5432/postgres
 
-Access Traefik Dashboard at [http://localhost:3000/dashboard/#/](http://localhost:3000/dashboard/#/)   
+Access Traefik Dashboard at [http://localhost:3000/dashboard/#/](http://localhost:3000/dashboard/#/)
 
 ### Distributed Tracing with Kubernetes Ingress
 
@@ -129,39 +166,6 @@ Access [zipkin](https://zipkin.io/) service at [http://zipkin.127.0.0.1.nip.io/z
 ### Shutdown
 
 kubectl delete -f deploy/kubernetes/.
-
-# TLS files
-```shell
-docker build -t tlscert:v0.1 -f ./build/Dockerfile.openssl ./conf/tls && \
-docker run -v $PWD/conf/tls:/tls tlscert:v0.1
-``` 
-
-To see openssl version being used in Docker:
-```shell
-docker build -t tlscert:v0.1 -f ./build/Dockerfile.openssl ./conf/tls && \
-docker run -ti -v $PWD/conf/tls:/tls tlscert:v0.1 sh
-```
-
-You get a prompt
-/tls
-
-And enter version check
-```shell
-openssl version
-```
-```
-
-### Troubleshooting
-If for any reason no connection is happening from client to server or client hangs or server start up issues:
-Run
-```
-ps aux | grep "go run" 
-```
-or
-```
-ps aux | grep "go_build" 
-```
-to confirm is something else is already running
 
 # Version
 v1.0

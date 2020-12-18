@@ -16,7 +16,6 @@ services:
     container_name: restserver
     networks:
       - deposits_shared_rest_network
-    command: ./server
     ports:
       - 3000:3000
       - 4000:4000

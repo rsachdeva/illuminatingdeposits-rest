@@ -1,0 +1,4 @@
+build/
+deploy/
+README.md
+cmd/sanitytestclient
