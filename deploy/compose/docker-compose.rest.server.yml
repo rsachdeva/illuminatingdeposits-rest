@@ -9,15 +9,17 @@ networks:
     driver: bridge
 
 services:
-
-  dbcli:
+  depositsrestsvcserver:
     build:
       context: ../..
-      dockerfile: ./build/Dockerfile.seed
+      dockerfile: ./build/Dockerfile.rest.server
+    container_name: restserver
     networks:
       - deposits_shared_rest_network
-    command: >
-      bash -c "./dbcli migrate
-      && ./dbcli seed"
+    command: ./server
+    ports:
+      - 3000:3000
+      - 4000:4000
     environment:
+      - DEPOSITS_WEB_SERVICE_SERVER_TLS=true
       - DEPOSITS_DB_DISABLE_TLS=true

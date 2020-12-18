@@ -8,19 +8,10 @@
 
 # REST API using JSON for Messages
 # Docker Compose Deployment
- 
-### To start all services without TLS:
-Make sure DEPOSITS_WEB_SERVICE_SERVER_TLS=false in docker-compose.api.yml
-### To start all services with TLS:
-Make sure DEPOSITS_WEB_SERVICE_SERVER_TLS=true in docker-compose.api.yml
-### And then execute:
-```shell
+
+# Start postgres and tracing
 export COMPOSE_IGNORE_ORPHANS=True && \
-docker-compose -f ./deploy/compose/docker-compose.api.yml up --build
-``` 
-
-The --build option is there for any code changes.
-
+docker-compose -f ./deploy/compose/docker-compose.external-db-trace-only.yml up
 
 ### Then Migrate and set up seed data:
 ```shell
@@ -28,11 +19,23 @@ export COMPOSE_IGNORE_ORPHANS=True && \
 docker-compose -f ./deploy/compose/docker-compose.seed.yml up --build
 ````
 
+### To start all services without TLS:
+Make sure DEPOSITS_WEB_SERVICE_SERVER_TLS=false in docker-compose.rest.server.yml
+### To start all services with TLS:
+Make sure DEPOSITS_WEB_SERVICE_SERVER_TLS=true in docker-compose.rest.server.yml
+### And then execute:
+```shell
+export COMPOSE_IGNORE_ORPHANS=True && \
+docker-compose -f ./deploy/compose/docker-compose.rest.server.yml up --build
+``` 
+
+The --build option is there for any code changes.
+
 COMPOSE_IGNORE_ORPHANS is there for 
 docker compose [setting](https://docs.docker.com/compose/reference/envvars/#compose_ignore_orphans).
 
 ### Logs of running services (in a separate terminal):
-docker-compose -f ./deploy/compose/docker-compose.api.yml logs -f --tail 1  
+docker-compose -f ./deploy/compose/docker-compose.rest.server.yml logs -f --tail 1  
 
 ### Distributed Tracing
 Access [zipkin](https://zipkin.io/) service at [http://localhost:9411/zipkin/](http://localhost:9411/zipkin/)  
@@ -45,8 +48,8 @@ Access [zipkin](https://zipkin.io/) service at [http://localhost:9411/zipkin/](h
 
 ### Shutdown 
 ```shell
-docker-compose -f ./deploy/compose/docker-compose.api.yml down  
-docker-compose -f ./deploy/compose/docker-compose.seed.yml down 
+docker-compose -f ./deploy/compose/docker-compose.external-db-trace-only.yml down
+docker-compose -f ./deploy/compose/docker-compose.rest.server.yml down
 ```
 
 ### Quick calculations with Same JSON output without actually invoking REST Http Method
@@ -57,50 +60,41 @@ docker build -f ./build/Dockerfile.calculate -t illumcalculate  . && \
 docker run illumcalculate 
 ```
 
-### To start only external db and trace service for working with Editor/IDE:
-Execute:
-```shell
+### To start only external db and trace service for working with local machine Editor/IDE:
+Start postgres and tracing as usual
 export COMPOSE_IGNORE_ORPHANS=True && \
 docker-compose -f ./deploy/compose/docker-compose.external-db-trace-only.yml up
-```
-and
-```shell 
+
+### Then Migrate and set up seed data:
+```shell
 export COMPOSE_IGNORE_ORPHANS=True && \
 docker-compose -f ./deploy/compose/docker-compose.seed.yml up --build
-```
+````
 
-Set the following env variables when starting directly running server: change as needed
+Then Set the following env variables when starting directly running server: change as needed
 And per your Editor/IDE:
 ```shell
 export DEPOSITS_WEB_SERVICE_SERVER_TLS=true
 export DEPOSITS_DB_DISABLE_TLS=true
 export DEPOSITS_DB_HOST=127.0.0.1
 export DEPOSITS_TRACE_URL=http://127.0.0.1:9411/api/v2/spans
-go run ./tools/dbcli migrate  (only once)
-go run ./tools/dbcli seed     (only once)
 go run ./cmd/server
 ```
 
-### Interest Service REST HTTP Methods Invoked:
+### REST HTTP Services Endpoints Invoked:
 
-#### Without TLS Sanity test Client:
-See tools/resteditor/HealthCRUD.http for request examples and sample response.
-Use dev env for localhost:3000  
-Or go to cmd/sanitytestclient/main.go  
-And uncomment any desired function request starting with "withoutTls..."
+#### Sanity test Client:
+See    
+cmd/sanitytestclient/main.go  
+In main function -- change tls setting to true or false.
+The server side DEPOSITS_WEB_SERVICE_SERVER_TLS should be consistent.
+Uncomment any desired function request
 Make sure to make email unique to avoid error.
-
-#### TLS Sanity test Client:  
-export GODEBUG=x509ignoreCN=0
-Go to cmd/sanitytestclient/main.go  
-And uncomment any desired function request starting with "tls..."
-run cmd/sanitytestclient
-Make sure to make email unique to avoid error
 
 # Push Images to Docker Hub
 ```shell
-docker build -t rsachdeva/illuminatingdeposits.api:v0.1 -f ./build/Dockerfile.api .  
-docker push rsachdeva/illuminatingdeposits.api:v0.1 
+docker build -t rsachdeva/illuminatingdeposits.rest.server:v0.1 -f ./build/Dockerfile.rest.server .  
+docker push rsachdeva/illuminatingdeposits.rest.server:v0.1 
 docker build -t rsachdeva/illuminatingdeposits.seed:v0.1 -f ./build/Dockerfile.seed .  
 docker push rsachdeva/illuminatingdeposits.seed:v0.1  
 ``` 

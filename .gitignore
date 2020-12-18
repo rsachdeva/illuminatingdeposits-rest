@@ -6,3 +6,5 @@ docker-remove.sh
 build/Dockerfile.mycalculate
 conf/tls/ca.key
 conf/tls/server.csr
+
+deploy/compose/postgres-volume/
