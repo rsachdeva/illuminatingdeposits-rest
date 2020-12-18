@@ -20,9 +20,9 @@ docker-compose -f ./deploy/compose/docker-compose.seed.yml up --build
 ````
 
 ### To start all services without TLS:
-Make sure DEPOSITS_WEB_SERVICE_SERVER_TLS=false in docker-compose.rest.server.yml
+Make sure DEPOSITS_REST_SERVICE_TLS=false in docker-compose.rest.server.yml
 ### To start all services with TLS:
-Make sure DEPOSITS_WEB_SERVICE_SERVER_TLS=true in docker-compose.rest.server.yml
+Make sure DEPOSITS_REST_SERVICE_TLS=true in docker-compose.rest.server.yml
 ### And then execute:
 ```shell
 export COMPOSE_IGNORE_ORPHANS=True && \
@@ -74,7 +74,7 @@ docker-compose -f ./deploy/compose/docker-compose.seed.yml up --build
 Then Set the following env variables when starting directly running server: change as needed
 And per your Editor/IDE:
 ```shell
-export DEPOSITS_WEB_SERVICE_SERVER_TLS=true
+export DEPOSITS_REST_SERVICE_TLS=true
 export DEPOSITS_DB_DISABLE_TLS=true
 export DEPOSITS_DB_HOST=127.0.0.1
 export DEPOSITS_TRACE_URL=http://127.0.0.1:9411/api/v2/spans
@@ -85,9 +85,8 @@ go run ./cmd/server
 
 #### Sanity test Client:
 See    
-cmd/sanitytestclient/main.go  
-In main function -- change tls setting to true or false.
-The server side DEPOSITS_WEB_SERVICE_SERVER_TLS should be consistent.
+cmd/sanitytestclient/main.go
+The server side DEPOSITS_REST_SERVICE_TLS should be consistent and set for client also.
 Uncomment any desired function request
 Make sure to make email unique to avoid error.
 

@@ -8,6 +8,8 @@ import (
 	"log"
 	"net/http"
 	"strings"
+
+	"github.com/rsachdeva/illuminatingdeposits-rest/readenv"
 )
 
 func tlsClient() (*http.Client, error) {
@@ -167,8 +169,8 @@ func requestPostCreateInterest(client *http.Client, prefix string) {
 }
 
 func main() {
-	tls := true
-	fmt.Println("tls is", tls)
+	tlsEnabled := readenv.TlsEnabled()
+	fmt.Println("tls is", tlsEnabled)
 
 	var client *http.Client
 	var err error
@@ -176,7 +178,7 @@ func main() {
 
 	client = http.DefaultClient
 	prefix = "http://"
-	if tls {
+	if tlsEnabled {
 		client, err = tlsClient()
 		if err != nil {
 			log.Fatalf("tls client err is %v", err)

@@ -18,21 +18,21 @@ import (
 	"github.com/rsachdeva/illuminatingdeposits-rest/metriccnt"
 	"github.com/rsachdeva/illuminatingdeposits-rest/muxhttp"
 	"github.com/rsachdeva/illuminatingdeposits-rest/postgreshealth"
+	"github.com/rsachdeva/illuminatingdeposits-rest/readenv"
 	"github.com/rsachdeva/illuminatingdeposits-rest/recoverpanic"
 	"github.com/rsachdeva/illuminatingdeposits-rest/reqlog"
 	"github.com/rsachdeva/illuminatingdeposits-rest/usermgmt"
 )
 
-func NewServer(cfg AppConfig, tl *tls.Config) *http.Server {
+func NewServer(cfg AppConfig, tlc *tls.Config) *http.Server {
 	server := http.Server{
 		Addr:         cfg.Web.Address,
 		ReadTimeout:  cfg.Web.ReadTimeout,
 		WriteTimeout: cfg.Web.WriteTimeout,
 	}
-	if tl != nil {
-		server.TLSConfig = tl
+	if tlc != nil {
+		server.TLSConfig = tlc
 	}
-	fmt.Println("DEPOSITS_WEB_SERVICE_SERVER_TLS is ", cfg.Web.ServiceServerTLS)
 	fmt.Println("server.TLSConfig is ", server.TLSConfig)
 	fmt.Println("DEPOSITS_DB_HOST is ", cfg.DB.Host)
 	fmt.Println("DEPOSITS_TRACE_URL is", cfg.Trace.URL)
@@ -47,8 +47,6 @@ func ConfigureAndServe() error {
 
 	log.Printf("main : Started")
 	defer log.Println("main : Completed")
-
-	fmt.Println("tls is", cfg.Web.ServiceServerTLS)
 
 	log := log.New(os.Stdout, "DEPOSITS : ", log.LstdFlags|log.Lmicroseconds|log.Llongfile)
 
@@ -94,14 +92,16 @@ func ConfigureAndServe() error {
 		Debug(log, cfg)
 	}()
 
-	var tl *tls.Config
-	if cfg.Web.ServiceServerTLS {
-		tl, err = tlsConfig()
+	tlsEnabled := readenv.TlsEnabled()
+	fmt.Println("tls is", tlsEnabled)
+	var tlc *tls.Config
+	if tlsEnabled {
+		tlc, err = tlsConfig()
 		if err != nil {
 			return err
 		}
 	}
-	s := NewServer(cfg, tl)
+	s := NewServer(cfg, tlc)
 	// =========================================================================
 	// Register API Services and Start Server
 

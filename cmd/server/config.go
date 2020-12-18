@@ -13,12 +13,11 @@ import (
 
 type AppConfig struct {
 	Web struct {
-		ServiceServerTLS bool          `conf:"default:false"`
-		Address          string        `conf:"default:0.0.0.0:3000"`
-		Debug            string        `conf:"default:0.0.0.0:4000"`
-		ReadTimeout      time.Duration `conf:"default:5s"`
-		WriteTimeout     time.Duration `conf:"default:5s"`
-		ShutdownTimeout  time.Duration `conf:"default:5s"`
+		Address         string        `conf:"default:0.0.0.0:3000"`
+		Debug           string        `conf:"default:0.0.0.0:4000"`
+		ReadTimeout     time.Duration `conf:"default:5s"`
+		WriteTimeout    time.Duration `conf:"default:5s"`
+		ShutdownTimeout time.Duration `conf:"default:5s"`
 	}
 	DB struct {
 		User       string `conf:"default:postgres"`

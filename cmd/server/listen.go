@@ -10,6 +10,7 @@ import (
 	"syscall"
 
 	"github.com/pkg/errors"
+	"github.com/rsachdeva/illuminatingdeposits-rest/readenv"
 )
 
 func ListenAndServeWithShutdown(server *http.Server, log *log.Logger, shutdownCh chan os.Signal, cfg AppConfig) error {
@@ -21,7 +22,7 @@ func ListenAndServeWithShutdown(server *http.Server, log *log.Logger, shutdownCh
 	go func() {
 		log.Printf("main : Register listening on %s", server.Addr)
 		// send signal to serverErrorCh
-		if cfg.Web.ServiceServerTLS {
+		if readenv.TlsEnabled() {
 			serverErrorsCh <- server.ListenAndServeTLS("", "")
 			return
 		}
