@@ -15,7 +15,7 @@ import (
 
 // User represents someone with access to our system.
 type User struct {
-	ID           string         `db:"uuid" json:"id"`
+	Uuid         string         `db:"uuid" json:"uuid"`
 	Name         string         `db:"name" json:"name"`
 	Email        string         `db:"email" json:"email"`
 	Roles        pq.StringArray `db:"roles" json:"roles"`
@@ -40,7 +40,7 @@ func AddUser(ctx context.Context, db *sqlx.DB, n NewUser, now time.Time) (*User,
 	}
 
 	u := User{
-		ID:           uuid.New().String(),
+		Uuid:         uuid.New().String(),
 		Name:         n.Name,
 		Email:        n.Email,
 		PasswordHash: hash,
@@ -52,7 +52,7 @@ func AddUser(ctx context.Context, db *sqlx.DB, n NewUser, now time.Time) (*User,
 	const q = `INSERT INTO users
 		(uuid, name, email, password_hash, roles, date_created, date_updated)
 		VALUES ($1, $2, $3, $4, $5, $6, $7)`
-	_, err = db.ExecContext(ctx, q, u.ID, u.Name, u.Email, u.PasswordHash, u.Roles, u.DateCreated, u.DateUpdated)
+	_, err = db.ExecContext(ctx, q, u.Uuid, u.Name, u.Email, u.PasswordHash, u.Roles, u.DateCreated, u.DateUpdated)
 	if err != nil {
 		fmt.Printf("\ndb err is %T %v", err, err)
 		return nil, errors.Wrap(err, "inserting usermgmt")

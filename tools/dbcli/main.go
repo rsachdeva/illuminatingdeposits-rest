@@ -34,7 +34,6 @@ type AppConfig struct {
 	Args conf.Args
 }
 
-
 func ParsedConfig(cfg AppConfig) (AppConfig, error) {
 	if err := conf.Parse(os.Args[1:], "DEPOSITS", &cfg); err != nil {
 		if err == conf.ErrHelpWanted {
@@ -133,7 +132,7 @@ func createAdmin(cfg postgresconn.Config, email, password string) error {
 		return err
 	}
 
-	fmt.Println("User created with id:", u.ID)
+	fmt.Println("User created with id:", u.Uuid)
 	return nil
 }
 
