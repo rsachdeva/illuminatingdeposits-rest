@@ -18,7 +18,7 @@ var migrations = []darwin.Migration{
 		Description: "Add users",
 		Script: `
 CREATE TABLE users (
-	user_id       UUID,
+	uuid          UUID,
 	name          TEXT,
 	email         TEXT UNIQUE,
 	roles         TEXT[],
@@ -27,7 +27,7 @@ CREATE TABLE users (
 	date_created TIMESTAMP,
 	date_updated TIMESTAMP,
 
-	PRIMARY KEY (user_id)
+	PRIMARY KEY (uuid)
 );`,
 	},
 }

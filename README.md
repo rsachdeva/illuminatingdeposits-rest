@@ -11,7 +11,7 @@
 ## Docker Compose Deployment
 
 ### Start postgres and tracing
-```
+```shell
 export COMPOSE_IGNORE_ORPHANS=True && \
 docker-compose -f ./deploy/compose/docker-compose.external-db-trace-only.yml up 
 ```

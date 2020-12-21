@@ -15,7 +15,7 @@ import (
 
 // User represents someone with access to our system.
 type User struct {
-	ID           string         `db:"user_id" json:"id"`
+	ID           string         `db:"uuid" json:"id"`
 	Name         string         `db:"name" json:"name"`
 	Email        string         `db:"email" json:"email"`
 	Roles        pq.StringArray `db:"roles" json:"roles"`
@@ -50,7 +50,7 @@ func AddUser(ctx context.Context, db *sqlx.DB, n NewUser, now time.Time) (*User,
 	}
 
 	const q = `INSERT INTO users
-		(user_id, name, email, password_hash, roles, date_created, date_updated)
+		(uuid, name, email, password_hash, roles, date_created, date_updated)
 		VALUES ($1, $2, $3, $4, $5, $6, $7)`
 	_, err = db.ExecContext(ctx, q, u.ID, u.Name, u.Email, u.PasswordHash, u.Roles, u.DateCreated, u.DateUpdated)
 	if err != nil {
