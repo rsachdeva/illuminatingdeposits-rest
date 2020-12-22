@@ -1,4 +1,4 @@
-// Package errconv provides counter for metrics for all services
+// Package metriccnt provides counter for metrics for all services
 package metriccnt
 
 import (
