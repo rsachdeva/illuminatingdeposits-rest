@@ -27,18 +27,18 @@ func (s *service) CreateInterest(ctx context.Context, w http.ResponseWriter, r *
 	defer span.End()
 
 	reqlog.Dump(r)
-	var req interestvalue.CreateInterestRequest
-	if err := jsonfmt.Decode(r, &req); err != nil {
+	var cireq interestvalue.CreateInterestRequest
+	if err := jsonfmt.Decode(r, &cireq); err != nil {
 		return errors.Wrap(err, "decoding new interest calculation request with banks and deposits")
 	}
-	s.log.Printf("\nDecoded json is %+v\n", req)
+	s.log.Printf("\nDecoded json is %+v\n", cireq)
 	s.log.Println("Starting interest and 30day interest calculations(also called as delta)")
-	resp, err := req.CalculateDelta()
+	ciresp, err := cireq.CalculateDelta()
 	if err != nil {
 		return errors.Wrap(err, "creating new interest calculations")
 	}
 
-	return jsonfmt.Respond(ctx, w, &resp, http.StatusCreated)
+	return jsonfmt.Respond(ctx, w, &ciresp, http.StatusCreated)
 }
 
 func RegisterSvc(log *log.Logger, m *appmux.Router) {

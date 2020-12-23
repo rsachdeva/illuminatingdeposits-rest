@@ -8,7 +8,6 @@ import (
 	"time"
 
 	"github.com/pkg/errors"
-	"github.com/rsachdeva/illuminatingdeposits-rest/auth/authvalue"
 	"github.com/rsachdeva/illuminatingdeposits-rest/conf"
 	"github.com/rsachdeva/illuminatingdeposits-rest/postgresconn"
 	"github.com/rsachdeva/illuminatingdeposits-rest/tools/dbcli/schema"
@@ -124,7 +123,7 @@ func createAdmin(cfg postgresconn.Config, email, password string) error {
 		Email:           email,
 		Password:        password,
 		PasswordConfirm: password,
-		Roles:           []string{authvalue.RoleAdmin, authvalue.RoleUser},
+		Roles:           []string{"Admin", "User"},
 	}
 
 	u, err := uservalue.AddUser(ctx, db, nu, time.Now())

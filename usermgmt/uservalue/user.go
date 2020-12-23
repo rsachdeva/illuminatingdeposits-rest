@@ -60,3 +60,9 @@ func AddUser(ctx context.Context, db *sqlx.DB, n NewUser, now time.Time) (*User,
 
 	return &u, nil
 }
+
+func FindByEmail(ctx context.Context, db *sqlx.DB, email string) (User, error) {
+	u := User{}
+
+	return u, nil
+}
