@@ -21,6 +21,7 @@ import (
 	"github.com/rsachdeva/illuminatingdeposits-rest/readenv"
 	"github.com/rsachdeva/illuminatingdeposits-rest/recoverpanic"
 	"github.com/rsachdeva/illuminatingdeposits-rest/reqlog"
+	"github.com/rsachdeva/illuminatingdeposits-rest/userauthn"
 	"github.com/rsachdeva/illuminatingdeposits-rest/usermgmt"
 )
 
@@ -118,8 +119,13 @@ func ConfigureAndServe() error {
 		metriccnt.NewMiddleware(),
 		recoverpanic.NewMiddleware(log))
 	s.Handler = m
+	log.Println("Registering REST json PostgresHealthService...")
 	postgreshealth.RegisterSvc(db, m)
+	log.Println("Registering REST json UserMgmtService...")
 	usermgmt.RegisterSvc(db, m)
+	log.Println("Registering REST json UserAuthenticationService...")
+	userauthn.RegisterSvc(db, m)
+	log.Println("Registering REST json InterestCalService...")
 	interestcal.RegisterSvc(log, m)
 
 	err = ListenAndServeWithShutdown(s, log, shutdownCh, cfg)
