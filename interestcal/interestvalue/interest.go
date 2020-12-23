@@ -25,7 +25,7 @@ type CreateInterestRequest struct {
 type CreateInterestResponse struct {
 	Banks []Bank `json:"banks"`
 
-	Delta float64 `json:"30daysInterest"`
+	Delta float64 `json:"delta"`
 }
 
 // NewBank is for input/request with Bank data and its deposits
@@ -39,7 +39,7 @@ type Bank struct {
 	Name     string    `json:"name"`
 	Deposits []Deposit `json:"deposits"`
 
-	Delta float64 `json:"30daysInterest"`
+	Delta float64 `json:"delta"`
 }
 
 // NewDeposit is is for input/request with Bank data and its deposits
@@ -61,5 +61,5 @@ type Deposit struct {
 	Years  float64 `json:"years"`
 	Amount float64 `json:"amount"`
 
-	Delta float64 `json:"30daysInterest"`
+	Delta float64 `json:"delta"`
 }
