@@ -64,8 +64,8 @@ func AddUser(ctx context.Context, db *sqlx.DB, n NewUser, now time.Time) (*User,
 func FindByEmail(ctx context.Context, db *sqlx.DB, email string) (User, error) {
 	usr := User{}
 
-	err := db.GetContext(ctx, &usr, db.Rebind("SELECT u.uuid, u.password_hash, u.roles FROM users u WHERE u.email=?"), email)
-	fmt.Println("usr.Email just after Postgres query", usr.Email)
+	err := db.GetContext(ctx, &usr, db.Rebind("SELECT u.uuid, u.password_hash, u.roles, u.Email FROM users u WHERE u.email=?"), email)
+	fmt.Printf("\nusr just after Postgres query %#v", usr)
 	if err != nil {
 		return User{}, err
 	}
