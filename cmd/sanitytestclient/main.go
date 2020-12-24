@@ -80,7 +80,7 @@ func requestPostCreateUser(client *http.Client, prefix string) {
 	fmt.Println(string(body))
 }
 
-func requestPostCreateInterest(client *http.Client, prefix string) {
+func requestPostCreateInterest(accessToken string, client *http.Client, prefix string) {
 	fmt.Println("executing requestPostCreateInterest()")
 	url := fmt.Sprintf("%vlocalhost:3000/v1/interests", prefix)
 	method := "POST"
@@ -152,6 +152,7 @@ func requestPostCreateInterest(client *http.Client, prefix string) {
 		return
 	}
 	req.Header.Add("Content-Type", "application/json")
+	req.Header.Set("Authorization", "Bearer "+accessToken)
 
 	res, err := client.Do(req)
 	if err != nil {
@@ -197,5 +198,5 @@ func nonAccessTokenRequests(client *http.Client, prefix string) {
 
 func accessTokenRequiredRequests(accessToken string, client *http.Client, prefix string) {
 	fmt.Println("accessToken to be sent for accessTokenRequiredRequests...", accessToken)
-	requestPostCreateInterest(client, prefix)
+	requestPostCreateInterest(accessToken, client, prefix)
 }

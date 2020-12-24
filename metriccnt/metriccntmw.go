@@ -4,7 +4,6 @@ package metriccnt
 import (
 	"context"
 	"expvar"
-	"fmt"
 	"net/http"
 	"runtime"
 
@@ -31,9 +30,6 @@ func NewMiddleware() muxhttp.Middleware {
 
 		// Wrap this handler around the next one provided.
 		h := func(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
-			fmt.Printf("\t\tEntering metricscnt NewMiddleware handler is %T\n", before)
-			defer fmt.Printf("\t\tExiting metricscnt NewMiddleware handler is %T\n", before)
-
 			ctx, span := trace.StartSpan(ctx, "metriccnt.NewMiddleware")
 			defer span.End()
 

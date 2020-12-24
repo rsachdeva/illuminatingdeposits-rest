@@ -24,7 +24,7 @@ func (us service) Create(ctx context.Context, w http.ResponseWriter, r *http.Req
 	ctx, span := trace.StartSpan(ctx, "usermgmt.Create")
 	defer span.End()
 
-	reqlog.Dump(r)
+	reqlog.Dump(r, "usermgmt.Create")
 
 	var nu uservalue.NewUser
 	if err := jsonfmt.Decode(r, &nu); err != nil {

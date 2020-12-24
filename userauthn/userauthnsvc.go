@@ -22,7 +22,7 @@ func (svc service) CreateToken(ctx context.Context, w http.ResponseWriter, r *ht
 	ctx, span := trace.StartSpan(ctx, "usermgmt.Create")
 	defer span.End()
 
-	reqlog.Dump(r)
+	reqlog.Dump(r, "userauthn.CreateToken")
 
 	var ctreq userauthnvalue.CreateTokenRequest
 	if err := jsonfmt.Decode(r, &ctreq); err != nil {

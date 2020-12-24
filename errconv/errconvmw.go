@@ -21,9 +21,6 @@ func NewMiddleware(log *log.Logger) muxhttp.Middleware {
 	f := func(before muxhttp.Handler) muxhttp.Handler {
 
 		h := func(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
-			fmt.Printf("\tEntering errconv middleware handler is %T\n", before)
-			defer fmt.Printf("\tExiting errconv middleware handler is %T\n", before)
-
 			ctx, span := trace.StartSpan(ctx, "errconv.NewMiddleware")
 			defer span.End()
 

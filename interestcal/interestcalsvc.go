@@ -25,8 +25,7 @@ type service struct {
 func (s service) CreateInterest(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
 	ctx, span := trace.StartSpan(ctx, "interestcal.service.CreateInterest")
 	defer span.End()
-
-	reqlog.Dump(r)
+	reqlog.Dump(r, "interestcal.CreateInterest")
 	var cireq interestvalue.CreateInterestRequest
 	if err := jsonfmt.Decode(r, &cireq); err != nil {
 		return errors.Wrap(err, "decoding new interest calculation request with banks and deposits")

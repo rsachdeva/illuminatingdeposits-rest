@@ -3,7 +3,6 @@ package recoverpanic
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"net/http"
 	"runtime/debug"
@@ -21,9 +20,6 @@ func NewMiddleware(log *log.Logger) muxhttp.Middleware {
 	f := func(after muxhttp.Handler) muxhttp.Handler {
 
 		h := func(ctx context.Context, w http.ResponseWriter, r *http.Request) (err error) {
-			fmt.Printf("\t\t\t\t\tEntering recoverpanic NewMiddleware handler is %T\n", after)
-			defer fmt.Printf("\t\t\t\t\tExiting recoverpanic NewMiddleware handler is %T\n", after)
-
 			ctx, span := trace.StartSpan(ctx, "recoverpanic.NewMiddleware")
 			defer span.End()
 

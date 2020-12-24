@@ -3,7 +3,6 @@ package reqlog
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"net/http"
 	"time"
@@ -17,13 +16,10 @@ import (
 func NewMiddleware(log *log.Logger) muxhttp.Middleware {
 
 	// This is the actual middlewarefunc function to be executed.
-	f := func(before muxhttp.Handler) muxhttp.Handler {
+	f := func(handler muxhttp.Handler) muxhttp.Handler {
 
 		// CreateInterest the handler that will be attached in the middlewarefunc chain.
 		h := func(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
-			fmt.Printf("Entering reqlog NewMiddleware handler is %T\n", before)
-			defer fmt.Printf("Exiting reqlog NewMiddleware handler is %T\n", before)
-
 			ctx, span := trace.StartSpan(ctx, "reqlog.NewMiddleware")
 			defer span.End()
 
@@ -34,14 +30,17 @@ func NewMiddleware(log *log.Logger) muxhttp.Middleware {
 				return muxhttp.NewShutdownError("in logger mid web value missing from context")
 			}
 
-			err := before(ctx, w, r)
+			log.Printf("At the start reqLogmw: r.Header is %#v", r.Header)
+			log.Printf("reqLogmw: r.Header[\"Authorization\"] is %#v", r.Header["Authorization"])
 
-			log.Printf("%s : (%d) : %s %s -> %s (%s)",
+			log.Printf("handler func type being called %T", handler)
+			err := handler(ctx, w, r)
+
+			log.Printf("AT the end reqLogmw: %s : (%d) : %s %s -> %s (%s)",
 				v.TraceID, v.StatusCode,
 				r.Method, r.URL.Path,
 				r.RemoteAddr, time.Since(v.Start),
 			)
-
 			// Return the error so it can be handled further up the chain.
 			return err
 		}
