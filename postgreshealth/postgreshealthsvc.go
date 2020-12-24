@@ -6,9 +6,9 @@ import (
 	"net/http"
 
 	"github.com/jmoiron/sqlx"
+	"github.com/rsachdeva/illuminatingdeposits-rest/jsonfmt"
 	"github.com/rsachdeva/illuminatingdeposits-rest/muxhttp"
 	"github.com/rsachdeva/illuminatingdeposits-rest/postgreshealth/healthvalue"
-	"github.com/rsachdeva/illuminatingdeposits-rest/jsonfmt"
 	"go.opencensus.io/trace"
 )
 
@@ -42,7 +42,7 @@ func (c *service) Health(ctx context.Context, w http.ResponseWriter, _ *http.Req
 	return jsonfmt.Respond(ctx, w, health, http.StatusOK)
 }
 
-func RegisterSvc(db *sqlx.DB, m *appmux.Router) {
+func RegisterSvc(db *sqlx.DB, m *muxhttp.Router) {
 	// Register health check handler. This jsonfmt is not authenticated.
 	c := service{db: db}
 	m.Handle(http.MethodGet, "/v1/health", c.Health)

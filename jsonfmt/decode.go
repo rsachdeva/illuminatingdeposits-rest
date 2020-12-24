@@ -57,7 +57,7 @@ func Decode(r *http.Request, val interface{}) error {
 	decoder := json.NewDecoder(r.Body)
 	decoder.DisallowUnknownFields()
 	if err := decoder.Decode(val); err != nil {
-		return appmux.NewRequestError(err, http.StatusBadRequest)
+		return muxhttp.NewRequestError(err, http.StatusBadRequest)
 	}
 
 	if err := validate.Struct(val); err != nil {
@@ -72,16 +72,16 @@ func Decode(r *http.Request, val interface{}) error {
 		// Accept-Language header if you intend to support multiple languages.
 		lang, _ := translator.GetTranslator("en")
 
-		var fields []appmux.FieldError
+		var fields []muxhttp.FieldError
 		for _, verror := range verrors {
-			field := appmux.FieldError{
+			field := muxhttp.FieldError{
 				Field: verror.Field(),
 				Error: verror.Translate(lang),
 			}
 			fields = append(fields, field)
 		}
 
-		return &appmux.ErrorRequest{
+		return &muxhttp.ErrorRequest{
 			Err:    errors.New("field validation error"),
 			Status: http.StatusBadRequest,
 			Fields: fields,

@@ -15,10 +15,10 @@ import (
 
 // NewMiddleware recovers from panics and converts the panic to an error so it is
 // reported in Metrics and handled in Errors.
-func NewMiddleware(log *log.Logger) appmux.Middleware {
+func NewMiddleware(log *log.Logger) muxhttp.Middleware {
 
 	// This is the actual middlewarefunc function to be executed.
-	f := func(after appmux.Handler) appmux.Handler {
+	f := func(after muxhttp.Handler) muxhttp.Handler {
 
 		h := func(ctx context.Context, w http.ResponseWriter, r *http.Request) (err error) {
 			fmt.Printf("\t\t\t\t\tEntering recoverpanic NewMiddleware handler is %T\n", after)
@@ -29,9 +29,9 @@ func NewMiddleware(log *log.Logger) appmux.Middleware {
 
 			// If the context is missing this value, request the jsonfmt
 			// to be shutdown gracefully.
-			v, ok := ctx.Value(appmux.KeyValues).(*appmux.Values)
+			v, ok := ctx.Value(muxhttp.KeyValues).(*muxhttp.Values)
 			if !ok {
-				return appmux.NewShutdownError("in panic mid web value missing from context")
+				return muxhttp.NewShutdownError("in panic mid web value missing from context")
 			}
 
 			// Defer a function to recover from a panic and set the err return

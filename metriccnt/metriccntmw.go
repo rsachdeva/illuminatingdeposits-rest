@@ -24,10 +24,10 @@ var m = struct {
 }
 
 // Metrics updates program counters.
-func NewMiddleware() appmux.Middleware {
+func NewMiddleware() muxhttp.Middleware {
 
 	// This is the actual middlewarefunc function to be executed.
-	f := func(before appmux.Handler) appmux.Handler {
+	f := func(before muxhttp.Handler) muxhttp.Handler {
 
 		// Wrap this handler around the next one provided.
 		h := func(ctx context.Context, w http.ResponseWriter, r *http.Request) error {

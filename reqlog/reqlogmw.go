@@ -14,10 +14,10 @@ import (
 
 // NewMiddleware writes some information about the request to the logs in the
 // format: TraceID : (200) GET /foo -> IP ADDR (latency)
-func NewMiddleware(log *log.Logger) appmux.Middleware {
+func NewMiddleware(log *log.Logger) muxhttp.Middleware {
 
 	// This is the actual middlewarefunc function to be executed.
-	f := func(before appmux.Handler) appmux.Handler {
+	f := func(before muxhttp.Handler) muxhttp.Handler {
 
 		// CreateInterest the handler that will be attached in the middlewarefunc chain.
 		h := func(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
@@ -29,9 +29,9 @@ func NewMiddleware(log *log.Logger) appmux.Middleware {
 
 			// If the context is missing this value, request the jsonfmt
 			// to be shutdown gracefully.
-			v, ok := ctx.Value(appmux.KeyValues).(*appmux.Values)
+			v, ok := ctx.Value(muxhttp.KeyValues).(*muxhttp.Values)
 			if !ok {
-				return appmux.NewShutdownError("in logger mid web value missing from context")
+				return muxhttp.NewShutdownError("in logger mid web value missing from context")
 			}
 
 			err := before(ctx, w, r)

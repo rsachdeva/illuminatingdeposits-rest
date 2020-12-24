@@ -14,7 +14,7 @@ import (
 func Respond(ctx context.Context, w http.ResponseWriter, data interface{}, statusCode int) error {
 
 	// Set the status code for the request logger middlewarefunc.
-	v := ctx.Value(appmux.KeyValues).(*appmux.Values)
+	v := ctx.Value(muxhttp.KeyValues).(*muxhttp.Values)
 	v.StatusCode = statusCode
 
 	if statusCode == http.StatusNoContent {
@@ -43,8 +43,8 @@ func RespondError(ctx context.Context, w http.ResponseWriter, err error) error {
 
 	// If the error was of the type *ErrorRequest, the handler has
 	// a specific status code and error to return.
-	if webErr, ok := errors.Cause(err).(*appmux.ErrorRequest); ok {
-		er := appmux.ErrorResponse{
+	if webErr, ok := errors.Cause(err).(*muxhttp.ErrorRequest); ok {
+		er := muxhttp.ErrorResponse{
 			Error:  webErr.Err.Error(),
 			Fields: webErr.Fields,
 		}
@@ -56,7 +56,7 @@ func RespondError(ctx context.Context, w http.ResponseWriter, err error) error {
 	}
 
 	// If not, the handler sent any arbitrary error value so use 500.
-	er := appmux.ErrorResponse{
+	er := muxhttp.ErrorResponse{
 		Error: http.StatusText(http.StatusInternalServerError),
 	}
 	if err := Respond(ctx, w, er, http.StatusInternalServerError); err != nil {

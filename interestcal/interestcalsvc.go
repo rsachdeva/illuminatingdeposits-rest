@@ -41,7 +41,7 @@ func (s *service) CreateInterest(ctx context.Context, w http.ResponseWriter, r *
 	return jsonfmt.Respond(ctx, w, &ciresp, http.StatusCreated)
 }
 
-func RegisterSvc(log *log.Logger, m *appmux.Router) {
+func RegisterSvc(log *log.Logger, m *muxhttp.Router) {
 	i := service{log: log}
 	m.Handle(http.MethodPost, "/v1/interests", i.CreateInterest)
 }

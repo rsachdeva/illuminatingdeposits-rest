@@ -113,7 +113,7 @@ func ConfigureAndServe() error {
 	// https://golang.org/pkg/os/signal/#Notify
 	shutdownCh := make(chan os.Signal, 1)
 
-	m := appmux.NewRouter(shutdownCh, log,
+	m := muxhttp.NewRouter(shutdownCh, log,
 		reqlog.NewMiddleware(log),
 		errconv.NewMiddleware(log),
 		metriccnt.NewMiddleware(),

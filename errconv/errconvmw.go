@@ -15,10 +15,10 @@ import (
 // NewMiddleware handles errors coming out of the call chain. It detects normal
 // application errors which are used to respond to the cli in a uniform way.
 // Unexpected errors (status >= 500) are logged.
-func NewMiddleware(log *log.Logger) appmux.Middleware {
+func NewMiddleware(log *log.Logger) muxhttp.Middleware {
 
 	// This is the actual middlewarefunc function to be executed.
-	f := func(before appmux.Handler) appmux.Handler {
+	f := func(before muxhttp.Handler) muxhttp.Handler {
 
 		h := func(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
 			fmt.Printf("\tEntering errconv middleware handler is %T\n", before)
@@ -29,16 +29,16 @@ func NewMiddleware(log *log.Logger) appmux.Middleware {
 
 			// If the context is missing this value, request the jsonfmt
 			// to be shutdown gracefully.
-			v, ok := ctx.Value(appmux.KeyValues).(*appmux.Values)
+			v, ok := ctx.Value(muxhttp.KeyValues).(*muxhttp.Values)
 			if !ok {
-				return appmux.NewShutdownError("in error mid web value missing from context")
+				return muxhttp.NewShutdownError("in error mid web value missing from context")
 			}
 
 			// Run the handler chain and catch any propagated error.
 			if err := before(ctx, w, r); err != nil {
-                fmt.Println("NewMiddleware err is", err)
+				fmt.Println("NewMiddleware err is", err)
 				// Log the error.
-				log.Printf("TraceID %s : \n ERROR :\n %+v  web.IsShutdown(err) is %v", v.TraceID, err, appmux.IsShutdown(err))
+				log.Printf("TraceID %s : \n ERROR :\n %+v  web.IsShutdown(err) is %v", v.TraceID, err, muxhttp.IsShutdown(err))
 
 				// Respond to the error.
 				if err := jsonfmt.RespondError(ctx, w, err); err != nil {
@@ -47,7 +47,7 @@ func NewMiddleware(log *log.Logger) appmux.Middleware {
 
 				// If we receive the shutdown err we need to return it
 				// back to the base handler to shutdown the jsonfmt.
-				if ok := appmux.IsShutdown(err); ok {
+				if ok := muxhttp.IsShutdown(err); ok {
 					return err
 				}
 			}

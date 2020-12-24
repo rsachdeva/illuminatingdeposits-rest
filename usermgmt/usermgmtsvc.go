@@ -33,13 +33,13 @@ func (us *service) Create(ctx context.Context, w http.ResponseWriter, r *http.Re
 
 	u, err := uservalue.AddUser(ctx, us.db, nu, time.Now())
 	if err != nil {
-		return appmux.NewRequestError(err, http.StatusConflict)
+		return muxhttp.NewRequestError(err, http.StatusConflict)
 	}
 
 	return jsonfmt.Respond(ctx, w, u, http.StatusCreated)
 }
 
-func RegisterSvc(db *sqlx.DB, m *appmux.Router) {
+func RegisterSvc(db *sqlx.DB, m *muxhttp.Router) {
 	// Register usermgmt interestsvc.
 	u := service{db: db}
 

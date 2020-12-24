@@ -1,5 +1,5 @@
 // Package muxhttp provides mux, middleware, handler with regards to routing capabilities
-package appmux
+package muxhttp
 
 import (
 	"context"
