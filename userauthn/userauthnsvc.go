@@ -31,7 +31,7 @@ func (svc *service) CreateToken(ctx context.Context, w http.ResponseWriter, r *h
 
 	ctresp, err := generateAccessToken(ctx, svc.db, &ctreq)
 	if err != nil {
-		return muxhttp.NewRequestError(err, http.StatusConflict)
+		return err
 	}
 
 	return jsonfmt.Respond(ctx, w, ctresp, http.StatusCreated)

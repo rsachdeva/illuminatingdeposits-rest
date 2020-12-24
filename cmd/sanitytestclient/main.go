@@ -111,7 +111,9 @@ func requestPostCreateToken(client *http.Client, prefix string) {
 		fmt.Println(err)
 		return
 	}
+	fmt.Println("string(body) response: ")
 	fmt.Println(string(body))
+	fmt.Println("res.Status is", res.Status)
 }
 
 func requestPostCreateInterest(client *http.Client, prefix string) {
