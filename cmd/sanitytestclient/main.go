@@ -51,7 +51,7 @@ func requestPostCreateUser(client *http.Client, prefix string) {
 	method := "POST"
 	payload := strings.NewReader(`{
            "name":            "Rohit Sachdeva",
-		   "email":           "growth-a91@drinnovations.us",
+		   "email":           "growth-s91@drinnovations.us",
 		   "roles":           ["USER"],
            "password":        "kubernetes",
            "password_confirm": "kubernetes"
@@ -222,8 +222,8 @@ func main() {
 		prefix = "https://"
 	}
 
-	// requestGetDbHealth(client, prefix)
-	// requestPostCreateUser(client, prefix)
+	requestGetDbHealth(client, prefix)
+	requestPostCreateUser(client, prefix)
 	requestPostCreateToken(client, prefix)
-	// requestPostCreateInterest(client, prefix)
+	requestPostCreateInterest(client, prefix)
 }

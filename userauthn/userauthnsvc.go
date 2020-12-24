@@ -18,7 +18,7 @@ type service struct {
 	db *sqlx.DB
 }
 
-func (svc *service) CreateToken(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
+func (svc service) CreateToken(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
 	ctx, span := trace.StartSpan(ctx, "usermgmt.Create")
 	defer span.End()
 

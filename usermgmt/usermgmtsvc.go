@@ -20,7 +20,7 @@ type service struct {
 	db *sqlx.DB
 }
 
-func (us *service) Create(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
+func (us service) Create(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
 	ctx, span := trace.StartSpan(ctx, "usermgmt.Create")
 	defer span.End()
 

@@ -22,7 +22,7 @@ type service struct {
 // CreateInterest decodes the body of a request to create interest calculations. The full
 // banks and deposit details with generated 30 days service fields are sent back in the response.
 // https://cloud.google.com/apis/design/standard_methods
-func (s *service) CreateInterest(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
+func (s service) CreateInterest(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
 	ctx, span := trace.StartSpan(ctx, "interestcal.service.CreateInterest")
 	defer span.End()
 

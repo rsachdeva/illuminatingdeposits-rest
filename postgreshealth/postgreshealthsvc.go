@@ -20,7 +20,7 @@ type service struct {
 }
 
 // Health validates the jsonfmt is healthy and ready to accept requests.
-func (c *service) Health(ctx context.Context, w http.ResponseWriter, _ *http.Request) error {
+func (c service) Health(ctx context.Context, w http.ResponseWriter, _ *http.Request) error {
 	ctx, span := trace.StartSpan(ctx, "postgresconn.service.Health")
 	defer span.End()
 
