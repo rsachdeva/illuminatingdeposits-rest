@@ -166,7 +166,9 @@ func requestPostCreateInterest(accessToken string, client *http.Client, prefix s
 		fmt.Println(err)
 		return
 	}
+	fmt.Println("string(body) response: ")
 	fmt.Println(string(body))
+	fmt.Println("res.Status is", res.Status)
 }
 
 func main() {

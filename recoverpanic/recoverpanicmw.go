@@ -17,7 +17,7 @@ import (
 func NewMiddleware(log *log.Logger) muxhttp.Middleware {
 
 	// This is the actual middlewarefunc function to be executed.
-	f := func(after muxhttp.Handler) muxhttp.Handler {
+	f := func(handler muxhttp.Handler) muxhttp.Handler {
 
 		h := func(ctx context.Context, w http.ResponseWriter, r *http.Request) (err error) {
 			ctx, span := trace.StartSpan(ctx, "recoverpanic.NewMiddleware")
@@ -31,7 +31,7 @@ func NewMiddleware(log *log.Logger) muxhttp.Middleware {
 			}
 
 			// Defer a function to recover from a panic and set the err return
-			// variable after the fact.
+			// variable handler the fact.
 			defer func() {
 				if r := recover(); r != nil {
 					err = errors.Errorf("panic: %v", r)
@@ -42,7 +42,7 @@ func NewMiddleware(log *log.Logger) muxhttp.Middleware {
 			}()
 
 			// Call the next Handler and set its return value in the err variable.
-			return after(ctx, w, r)
+			return handler(ctx, w, r)
 		}
 
 		return h

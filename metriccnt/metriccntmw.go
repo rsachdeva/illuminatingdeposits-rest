@@ -26,14 +26,14 @@ var m = struct {
 func NewMiddleware() muxhttp.Middleware {
 
 	// This is the actual middlewarefunc function to be executed.
-	f := func(before muxhttp.Handler) muxhttp.Handler {
+	f := func(handler muxhttp.Handler) muxhttp.Handler {
 
 		// Wrap this handler around the next one provided.
 		h := func(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
 			ctx, span := trace.StartSpan(ctx, "metriccnt.NewMiddleware")
 			defer span.End()
 
-			err := before(ctx, w, r)
+			err := handler(ctx, w, r)
 
 			// Increment the request counter.
 			m.req.Add(1)

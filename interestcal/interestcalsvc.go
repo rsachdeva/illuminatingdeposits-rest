@@ -11,6 +11,7 @@ import (
 	"github.com/rsachdeva/illuminatingdeposits-rest/jsonfmt"
 	"github.com/rsachdeva/illuminatingdeposits-rest/muxhttp"
 	"github.com/rsachdeva/illuminatingdeposits-rest/reqlog"
+	"github.com/rsachdeva/illuminatingdeposits-rest/userauthn"
 	"go.opencensus.io/trace"
 )
 
@@ -40,7 +41,7 @@ func (s service) CreateInterest(ctx context.Context, w http.ResponseWriter, r *h
 	return jsonfmt.Respond(ctx, w, &ciresp, http.StatusCreated)
 }
 
-func RegisterSvc(log *log.Logger, m *muxhttp.Router) {
+func RegisterSvc(log *log.Logger, rt *muxhttp.Router) {
 	i := service{log: log}
-	m.Handle(http.MethodPost, "/v1/interests", i.CreateInterest)
+	rt.Handle(http.MethodPost, "/v1/interests", i.CreateInterest, userauthn.NewMiddleware(log))
 }

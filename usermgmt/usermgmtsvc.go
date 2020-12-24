@@ -39,11 +39,11 @@ func (us service) Create(ctx context.Context, w http.ResponseWriter, r *http.Req
 	return jsonfmt.Respond(ctx, w, u, http.StatusCreated)
 }
 
-func RegisterSvc(db *sqlx.DB, m *muxhttp.Router) {
+func RegisterSvc(db *sqlx.DB, rt *muxhttp.Router) {
 	// Register usermgmt interestsvc.
 	u := service{db: db}
 
 	// The jsonfmt can't be authenticated because we need this jsonfmt to
 	// create the usermgmt in the first place.
-	m.Handle(http.MethodPost, "/v1/users", u.Create)
+	rt.Handle(http.MethodPost, "/v1/users", u.Create)
 }

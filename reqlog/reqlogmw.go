@@ -30,13 +30,17 @@ func NewMiddleware(log *log.Logger) muxhttp.Middleware {
 				return muxhttp.NewShutdownError("in logger mid web value missing from context")
 			}
 
-			log.Printf("At the start reqLogmw: r.Header is %#v", r.Header)
+			log.Printf("START reqLogmw: r.Header is %#v", r.Header)
 			log.Printf("reqLogmw: r.Header[\"Authorization\"] is %#v", r.Header["Authorization"])
+			log.Printf("%s: started: %s %s -> %s",
+				v.TraceID,
+				r.Method, r.URL.Path, r.RemoteAddr,
+			)
 
 			log.Printf("handler func type being called %T", handler)
 			err := handler(ctx, w, r)
 
-			log.Printf("AT the end reqLogmw: %s : (%d) : %s %s -> %s (%s)",
+			log.Printf("END reqLogmw: %s : (%d) : %s %s -> %s (%s)",
 				v.TraceID, v.StatusCode,
 				r.Method, r.URL.Path,
 				r.RemoteAddr, time.Since(v.Start),

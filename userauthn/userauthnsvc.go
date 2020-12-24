@@ -37,7 +37,7 @@ func (svc service) CreateToken(ctx context.Context, w http.ResponseWriter, r *ht
 	return jsonfmt.Respond(ctx, w, ctresp, http.StatusCreated)
 }
 
-func RegisterSvc(db *sqlx.DB, m *muxhttp.Router) {
+func RegisterSvc(db *sqlx.DB, rt *muxhttp.Router) {
 	u := service{db: db}
-	m.Handle(http.MethodPost, "/v1/users/token", u.CreateToken)
+	rt.Handle(http.MethodPost, "/v1/users/token", u.CreateToken)
 }
