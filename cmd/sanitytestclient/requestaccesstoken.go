@@ -51,5 +51,18 @@ func requestPostCreateToken(client *http.Client, prefix string) string {
 		log.Fatalln("decode error: ", err)
 	}
 	fmt.Println("vusr.AccessToken is: ")
-	return ctresp.VerifiedUser.AccessToken
+	var token string
+	useExpired := true
+	if useExpired {
+		storedTk, err := ioutil.ReadFile("cmd/sanitytestclient/expiredtoken.data")
+		token = string(storedTk)
+		if err != nil {
+			log.Fatal(err)
+		}
+		log.Println("Expired JWT for testing\n", token)
+		return token
+	}
+	log.Println("Expired JWT for testing\n", token)
+	token = ctresp.VerifiedUser.AccessToken
+	return token
 }

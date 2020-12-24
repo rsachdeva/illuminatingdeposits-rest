@@ -3,28 +3,12 @@ package userauthn
 import (
 	"fmt"
 	"log"
-	"strings"
+	"net/http"
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/pkg/errors"
+	"github.com/rsachdeva/illuminatingdeposits-rest/muxhttp"
 )
-
-// valid validates the authorization.
-func valid(authorization []string) error {
-	if len(authorization) < 1 {
-		return errors.New("no authorization header")
-	}
-	token := strings.TrimPrefix(authorization[0], "Bearer ")
-	claims, err := verify(token)
-	if err != nil {
-		return err
-	}
-	email := claims.Email
-	if len(email) < 1 {
-		return errors.New("invalid token without email")
-	}
-	return nil
-}
 
 // Verify verifies the access token string and return a user claim if the token is valid
 func verify(accessToken string) (*customClaims, error) {
@@ -45,7 +29,9 @@ func verify(accessToken string) (*customClaims, error) {
 		if ve, ok := err.(*jwt.ValidationError); ok {
 			log.Printf("interceptor verify got invalid token ve is: %v", ve)
 			if ve.Errors&(jwt.ValidationErrorExpired) != 0 {
-				return nil, errors.New(fmt.Sprintf("Token is expired. Please recreate token: %v", err))
+				return nil, muxhttp.NewRequestError(
+					errors.New(fmt.Sprintf("Token is expired. Please recreate token: %v", err)),
+					http.StatusUnauthorized)
 			}
 		}
 		log.Printf("interceptor verify got invalid token: %v", err)
@@ -56,6 +42,6 @@ func verify(accessToken string) (*customClaims, error) {
 	if !ok {
 		return nil, fmt.Errorf("invalid token claims")
 	}
-	fmt.Printf("\nIn Verify claims are %+v\n", claims)
+	fmt.Printf("In Verify claims are %+v\n", claims)
 	return claims, nil
 }

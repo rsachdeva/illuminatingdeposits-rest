@@ -168,4 +168,4 @@ Access [zipkin](https://zipkin.io/) service at [http://zipkin.127.0.0.1.nip.io/z
 kubectl delete -f deploy/kubernetes/.
 
 # Version
-v1.51
+v1.52
