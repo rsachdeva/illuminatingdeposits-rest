@@ -80,42 +80,6 @@ func requestPostCreateUser(client *http.Client, prefix string) {
 	fmt.Println(string(body))
 }
 
-func requestPostCreateToken(client *http.Client, prefix string) {
-	fmt.Println("executing requestPostCreateToken()")
-	url := fmt.Sprintf("%vlocalhost:3000/v1/users/token", prefix)
-	method := "POST"
-	payload := strings.NewReader(`{
-			"verify_user": {
-				"email": "growth-a91@drinnovations.us",
-				"password": "kubernetes"
-			}
-    }`)
-
-	req, err := http.NewRequest(method, url, payload)
-
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	req.Header.Add("Content-Type", "application/json")
-
-	res, err := client.Do(req)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	defer res.Body.Close()
-
-	body, err := ioutil.ReadAll(res.Body)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	fmt.Println("string(body) response: ")
-	fmt.Println(string(body))
-	fmt.Println("res.Status is", res.Status)
-}
-
 func requestPostCreateInterest(client *http.Client, prefix string) {
 	fmt.Println("executing requestPostCreateInterest()")
 	url := fmt.Sprintf("%vlocalhost:3000/v1/interests", prefix)
@@ -221,9 +185,17 @@ func main() {
 		}
 		prefix = "https://"
 	}
+	nonAccessTokenRequests(client, prefix)
+	accessToken := requestPostCreateToken(client, prefix)
+	accessTokenRequiredRequests(accessToken, client, prefix)
+}
 
+func nonAccessTokenRequests(client *http.Client, prefix string) {
 	requestGetDbHealth(client, prefix)
-	requestPostCreateUser(client, prefix)
-	requestPostCreateToken(client, prefix)
+	// requestPostCreateUser(client, prefix)
+}
+
+func accessTokenRequiredRequests(accessToken string, client *http.Client, prefix string) {
+	fmt.Println("accessToken to be sent for accessTokenRequiredRequests...", accessToken)
 	requestPostCreateInterest(client, prefix)
 }
