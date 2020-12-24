@@ -6,14 +6,13 @@ import (
 	"strings"
 
 	"github.com/dgrijalva/jwt-go"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
+	"github.com/pkg/errors"
 )
 
 // valid validates the authorization.
 func valid(authorization []string) error {
 	if len(authorization) < 1 {
-		return status.Errorf(codes.Unauthenticated, "no authorization header")
+		return errors.New("no authorization header")
 	}
 	token := strings.TrimPrefix(authorization[0], "Bearer ")
 	claims, err := verify(token)
@@ -22,7 +21,7 @@ func valid(authorization []string) error {
 	}
 	email := claims.Email
 	if len(email) < 1 {
-		return status.Errorf(codes.Unauthenticated, "invalid token without email")
+		return errors.New("invalid token without email")
 	}
 	return nil
 }
@@ -35,7 +34,7 @@ func verify(accessToken string) (*customClaims, error) {
 		func(token *jwt.Token) (interface{}, error) {
 			_, ok := token.Method.(*jwt.SigningMethodHMAC)
 			if !ok {
-				return nil, status.Errorf(codes.Unauthenticated, "unexpected token signing method")
+				return nil, errors.New("unexpected token signing method")
 			}
 
 			return []byte(secretKey), nil
@@ -46,11 +45,11 @@ func verify(accessToken string) (*customClaims, error) {
 		if ve, ok := err.(*jwt.ValidationError); ok {
 			log.Printf("interceptor verify got invalid token ve is: %v", ve)
 			if ve.Errors&(jwt.ValidationErrorExpired) != 0 {
-				return nil, status.Errorf(codes.Unauthenticated, fmt.Sprintf("Token is expired. Please recreate token: %v", err))
+				return nil, errors.New(fmt.Sprintf("Token is expired. Please recreate token: %v", err))
 			}
 		}
 		log.Printf("interceptor verify got invalid token: %v", err)
-		return nil, status.Errorf(codes.Unauthenticated, fmt.Sprintf("Verify got invalid token %v", err))
+		return nil, errors.New(fmt.Sprintf("Verify got invalid token %v", err))
 	}
 
 	claims, ok := token.Claims.(*customClaims)

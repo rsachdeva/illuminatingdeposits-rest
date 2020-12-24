@@ -10,9 +10,9 @@ type VerifiedUser struct {
 }
 
 type CreateTokenRequest struct {
-	VerifyUser *VerifyUser
+	VerifyUser *VerifyUser `json:"verify_user"`
 }
 
 type CreateTokenResponse struct {
-	VerifiedUser *VerifiedUser
+	VerifiedUser *VerifiedUser `json:"verified_user"`
 }

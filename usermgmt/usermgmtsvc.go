@@ -21,7 +21,7 @@ type service struct {
 }
 
 func (us *service) Create(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
-	ctx, span := trace.StartSpan(ctx, "interestcal.service.CreateInterest")
+	ctx, span := trace.StartSpan(ctx, "usermgmt.Create")
 	defer span.End()
 
 	reqlog.Dump(r)

@@ -8,7 +8,9 @@ import (
 	"github.com/pkg/errors"
 	"github.com/rsachdeva/illuminatingdeposits-rest/jsonfmt"
 	"github.com/rsachdeva/illuminatingdeposits-rest/muxhttp"
+	"github.com/rsachdeva/illuminatingdeposits-rest/reqlog"
 	"github.com/rsachdeva/illuminatingdeposits-rest/userauthn/userauthnvalue"
+	"go.opencensus.io/trace"
 )
 
 // Users holds interestsvc for dealing with usermgmt.
@@ -17,16 +19,25 @@ type service struct {
 }
 
 func (svc *service) CreateToken(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
+	ctx, span := trace.StartSpan(ctx, "usermgmt.Create")
+	defer span.End()
+
+	reqlog.Dump(r)
+
 	var ctreq userauthnvalue.CreateTokenRequest
-	ctresp, err := generateAccessToken(ctx, svc.db, &ctreq)
-	if err != nil {
-		return errors.Wrap(err, "generating access token")
+	if err := jsonfmt.Decode(r, &ctreq); err != nil {
+		return errors.Wrapf(err, "unable to decode payload")
 	}
 
-	return jsonfmt.Respond(ctx, w, &ctresp, http.StatusCreated)
+	ctresp, err := generateAccessToken(ctx, svc.db, &ctreq)
+	if err != nil {
+		return appmux.NewRequestError(err, http.StatusConflict)
+	}
+
+	return jsonfmt.Respond(ctx, w, ctresp, http.StatusCreated)
 }
 
 func RegisterSvc(db *sqlx.DB, m *appmux.Router) {
 	u := service{db: db}
-	m.Handle(http.MethodPost, "/v1/token", u.CreateToken)
+	m.Handle(http.MethodPost, "/v1/users/token", u.CreateToken)
 }

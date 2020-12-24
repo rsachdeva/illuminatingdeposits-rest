@@ -8,10 +8,9 @@ import (
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/jmoiron/sqlx"
+	"github.com/pkg/errors"
 	"github.com/rsachdeva/illuminatingdeposits-rest/userauthn/userauthnvalue"
 	"github.com/rsachdeva/illuminatingdeposits-rest/usermgmt/uservalue"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 )
 
 const (
@@ -30,9 +29,9 @@ func generateAccessToken(ctx context.Context, db *sqlx.DB, ctreq *userauthnvalue
 	uFound, err := uservalue.FindByEmail(ctx, db, vyu.Email)
 	log.Printf("user found byb email is %v", uFound)
 	if err != nil {
-		return nil, status.Errorf(codes.NotFound, fmt.Sprintf("NotFound Error: User not found for email %v", vyu.Email))
+		return nil, errors.Wrap(err, fmt.Sprintf("NotFound Error: User not found for email %v", vyu.Email))
 	}
-	log.Printf("we were actually able to find the user %v\n", uFound)
+	log.Printf("we were actually able to find the user email %v\n", uFound.Email)
 	pwMatchErr := passwordMatch(uFound.PasswordHash, vyu.Password)
 	log.Printf("Password match Err is %v\n", pwMatchErr)
 	if pwMatchErr != nil {
@@ -44,13 +43,13 @@ func generateAccessToken(ctx context.Context, db *sqlx.DB, ctreq *userauthnvalue
 		Roles: uFound.Roles,
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: time.Now().Add(tokenDuration).Unix(),
-			Issuer:    "github.com/rsachdeva/illuminatingdeposits-grpc",
+			Issuer:    "github.com/rsachdeva/illuminatingdeposits-rest",
 		},
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	signedToken, err := token.SignedString([]byte(secretKey))
 	if err != nil {
-		return nil, status.Errorf(codes.Internal, "cannot generate access token")
+		return nil, errors.Wrap(err, fmt.Sprintf("Cannot generate access token %v", vyu.Email))
 	}
 
 	fmt.Println("signedToken generated finally is", signedToken)

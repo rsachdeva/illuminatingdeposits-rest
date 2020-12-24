@@ -3,7 +3,6 @@ package appmux
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -71,7 +70,6 @@ func (a *Router) Handle(method, url string, h Handler, mw ...Middleware) {
 
 	// First wrap handler specific middlewarefunc around this handler.
 	slicemws := append(a.mws, mw...)
-	fmt.Println("slicemws is", slicemws)
 	h = wrapMiddleware(slicemws, h)
 
 	fn := func(w http.ResponseWriter, r *http.Request) {

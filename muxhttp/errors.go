@@ -27,7 +27,7 @@ type ErrorRequest struct { // Think of this as web.ErrorField - it is just a cus
 }
 
 // NewRequestError wraps a provided error with an HTTP status code. This
-// function should be used when interestsvc encounter expected errors.
+// function should be used when service encounter expected errors.
 func NewRequestError(err error, status int) error {
 	return &ErrorRequest{err, status, nil}
 }
