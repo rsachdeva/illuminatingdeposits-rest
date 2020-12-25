@@ -1,3 +1,9 @@
+// Provides sanity test client with all http json REST requests with TLS and when required JWT Authentication.
+// This is to help with quick check of overall system.
+// It is useful when doing refactoring as well.
+// Uses unique email every time to allow new user creation and uses access token for the newly created user.
+// Replace already persisted email in requestPostCreateToken, if requestCreateUser is not desired,
+// otherwise user not found error will happen.
 package main
 
 import (
@@ -9,8 +15,48 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/google/uuid"
 	"github.com/rsachdeva/illuminatingdeposits-rest/readenv"
 )
+
+const (
+	address  = "localhost:3000"
+	emailFmt = "growth-%v@drinnovations.us"
+)
+
+func main() {
+	tlsEnabled := readenv.TlsEnabled()
+	fmt.Println("tls is", tlsEnabled)
+
+	var client *http.Client
+	var err error
+	var prefix string
+
+	client = http.DefaultClient
+	prefix = "http://"
+	if tlsEnabled {
+		client, err = tlsClient()
+		if err != nil {
+			log.Fatalf("tls client err is %v", err)
+		}
+		prefix = "https://"
+	}
+	email := fmt.Sprintf(emailFmt, uuid.New().String())
+
+	nonAccessTokenRequests(client, prefix, email)
+	accessToken := requestPostCreateToken(client, prefix, email, false)
+	accessTokenRequiredRequests(accessToken, client, prefix)
+}
+
+func nonAccessTokenRequests(client *http.Client, prefix string, email string) {
+	requestGetDbHealth(client, prefix)
+	requestPostCreateUser(client, prefix, email)
+}
+
+func accessTokenRequiredRequests(accessToken string, client *http.Client, prefix string) {
+	fmt.Println("accessToken to be sent for accessTokenRequiredRequests...", accessToken)
+	requestPostCreateInterest(accessToken, client, prefix)
+}
 
 func tlsClient() (*http.Client, error) {
 	caCert, err := ioutil.ReadFile("conf/tls/cacrtto.pem")
@@ -33,7 +79,7 @@ func tlsClient() (*http.Client, error) {
 
 func requestGetDbHealth(client *http.Client, prefix string) {
 	fmt.Println("executing tLSGetRequestHealth()")
-	resp, err := client.Get(fmt.Sprintf("%vlocalhost:3000/v1/health", prefix))
+	resp, err := client.Get(fmt.Sprintf("%v%v/v1/health", prefix, address))
 	if err != nil {
 		log.Fatalf("err in get is %v", err)
 	}
@@ -45,17 +91,19 @@ func requestGetDbHealth(client *http.Client, prefix string) {
 	fmt.Println("body is ", string(body))
 }
 
-func requestPostCreateUser(client *http.Client, prefix string) {
+func requestPostCreateUser(client *http.Client, prefix string, email string) {
 	fmt.Println("executing requestPostCreateUser()")
-	url := fmt.Sprintf("%vlocalhost:3000/v1/users", prefix)
+	url := fmt.Sprintf("%v%v/v1/users", prefix, address)
 	method := "POST"
-	payload := strings.NewReader(`{
+	usr := fmt.Sprintf(`{
            "name":            "Rohit Sachdeva",
-		   "email":           "growth-s91@drinnovations.us",
+		   "email":           "%v",
 		   "roles":           ["USER"],
            "password":        "kubernetes",
-           "password_confirm": "kubernetes"
-    }`)
+           "password_confirm": "kubernetes"}`,
+		email)
+	fmt.Println("usr is ", usr)
+	payload := strings.NewReader(usr)
 
 	req, err := http.NewRequest(method, url, payload)
 
@@ -82,7 +130,7 @@ func requestPostCreateUser(client *http.Client, prefix string) {
 
 func requestPostCreateInterest(accessToken string, client *http.Client, prefix string) {
 	fmt.Println("executing requestPostCreateInterest()")
-	url := fmt.Sprintf("%vlocalhost:3000/v1/interests", prefix)
+	url := fmt.Sprintf("%v%v/v1/interests", prefix, address)
 	method := "POST"
 	payload := strings.NewReader(`{
 		  "banks": [
@@ -169,36 +217,4 @@ func requestPostCreateInterest(accessToken string, client *http.Client, prefix s
 	fmt.Println("string(body) response: ")
 	fmt.Println(string(body))
 	fmt.Println("res.Status is", res.Status)
-}
-
-func main() {
-	tlsEnabled := readenv.TlsEnabled()
-	fmt.Println("tls is", tlsEnabled)
-
-	var client *http.Client
-	var err error
-	var prefix string
-
-	client = http.DefaultClient
-	prefix = "http://"
-	if tlsEnabled {
-		client, err = tlsClient()
-		if err != nil {
-			log.Fatalf("tls client err is %v", err)
-		}
-		prefix = "https://"
-	}
-	nonAccessTokenRequests(client, prefix)
-	accessToken := requestPostCreateToken(client, prefix)
-	accessTokenRequiredRequests(accessToken, client, prefix)
-}
-
-func nonAccessTokenRequests(client *http.Client, prefix string) {
-	requestGetDbHealth(client, prefix)
-	// requestPostCreateUser(client, prefix)
-}
-
-func accessTokenRequiredRequests(accessToken string, client *http.Client, prefix string) {
-	fmt.Println("accessToken to be sent for accessTokenRequiredRequests...", accessToken)
-	requestPostCreateInterest(accessToken, client, prefix)
 }

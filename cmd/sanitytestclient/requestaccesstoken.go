@@ -11,16 +11,34 @@ import (
 	"github.com/rsachdeva/illuminatingdeposits-rest/userauthn/userauthnvalue"
 )
 
-func requestPostCreateToken(client *http.Client, prefix string) string {
+func requestPostCreateToken(client *http.Client, prefix string, email string, useExpired bool) string {
 	fmt.Println("executing requestPostCreateToken()")
+	var token string
+	if useExpired {
+		storedTk, err := ioutil.ReadFile("cmd/sanitytestclient/expiredtoken.data")
+		token = string(storedTk)
+		if err != nil {
+			log.Fatal(err)
+		}
+		log.Println("Expired JWT for testing", token)
+		return token
+	}
+	token = createToken(client, prefix, email)
+	log.Println("New JWT that can be used in next requests for Authentication\n", token)
+	return token
+}
+
+func createToken(client *http.Client, prefix string, email string) string {
 	url := fmt.Sprintf("%vlocalhost:3000/v1/users/token", prefix)
 	method := "POST"
-	payload := strings.NewReader(`{
-			"verify_user": {
-				"email": "growth-a91@drinnovations.us",
-				"password": "kubernetes"
-			}
-    }`)
+	vusr := fmt.Sprintf(`{
+		"verify_user": {
+			"email": "%v",
+            "password": "kubernetes"
+		}
+	}`, email)
+	fmt.Println("vusr data is", vusr)
+	payload := strings.NewReader(vusr)
 
 	req, err := http.NewRequest(method, url, payload)
 
@@ -50,19 +68,8 @@ func requestPostCreateToken(client *http.Client, prefix string) string {
 	if err := decoder.Decode(&ctresp); err != nil {
 		log.Fatalln("decode error: ", err)
 	}
-	fmt.Println("vusr.AccessToken is: ")
-	var token string
-	useExpired := true
-	if useExpired {
-		storedTk, err := ioutil.ReadFile("cmd/sanitytestclient/expiredtoken.data")
-		token = string(storedTk)
-		if err != nil {
-			log.Fatal(err)
-		}
-		log.Println("Expired JWT for testing\n", token)
-		return token
-	}
-	log.Println("Expired JWT for testing\n", token)
-	token = ctresp.VerifiedUser.AccessToken
+	fmt.Printf("ctresp.VerifiedUser is:%#v\n", ctresp.VerifiedUser)
+	token := ctresp.VerifiedUser.AccessToken
+	log.Println("New JWT that can be used in next requests for Authentication", token)
 	return token
 }

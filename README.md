@@ -1,4 +1,5 @@
 # Illuminating Deposits - Rest http json
+
 ###### All commands should be executed from the root directory (illuminatingdeposits-rest) of the project 
 (Development is WIP)
 
@@ -7,6 +8,21 @@
 </p>
 
 # REST API using JSON for Messages
+# Features include:
+- Golang (Go)  REST Http Service requests with json for Messages
+- TLS for all requests
+- Postgres DB health check service
+- User Management service with Postgres for user creation
+- JWT generation for Authentication
+- JWT Authentication for Interest Calculations
+- 30daysInterest for a deposit is called Delta
+- Delta is for
+    - each deposit
+    - each bank with all deposits
+    - all banks!
+- Sanity test client included
+- Docker support
+- Docker compose deployment for development
 
 ## Docker Compose Deployment
 
@@ -87,11 +103,13 @@ go run ./cmd/server
 ### REST HTTP Services Endpoints Invoked:
 
 #### Sanity test Client:
-See    
-cmd/sanitytestclient/main.go
-The server side DEPOSITS_REST_SERVICE_TLS should be consistent and set for client also.
-Uncomment any desired function request
-Make sure to make email unique to avoid error.
+The server side DEPOSITS_GRPC_SERVICE_TLS should be consistent and set for client also.
+Uncomment any request function if not desired.
+
+```shell 
+export GODEBUG=x509ignoreCN=0
+go run ./cmd/sanitytestclient
+```
 
 ### TLS files
 ```shell
@@ -108,7 +126,7 @@ docker run -ti -v $PWD/conf/tls:/tls tlscert:v0.1 sh
 You get a prompt
 /tls
 
-And enter version check
+Check version using command:
 ```shell
 openssl version
 ```
@@ -168,4 +186,4 @@ Access [zipkin](https://zipkin.io/) service at [http://zipkin.127.0.0.1.nip.io/z
 kubectl delete -f deploy/kubernetes/.
 
 # Version
-v1.52
+v2.0
