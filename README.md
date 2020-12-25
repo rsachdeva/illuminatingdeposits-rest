@@ -103,7 +103,7 @@ go run ./cmd/server
 ### REST HTTP Services Endpoints Invoked:
 
 #### Sanity test Client:
-The server side DEPOSITS_GRPC_SERVICE_TLS should be consistent and set for client also.
+The server side DEPOSITS_REST_SERVICE_TLS should be consistent and set for client also.
 Uncomment any request function if not desired.
 
 ```shell 
