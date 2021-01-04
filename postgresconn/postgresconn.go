@@ -43,6 +43,6 @@ func Open(cfg Config) (*sqlx.DB, error) {
 	}
 
 	log.Println("u.String() is ", u.String())
-	// postgres://postgres:postgres@Db/postgres?sslmode=disable&timezone=utc when connecting (for debugging)
+	// postgres://postgres:postgres@db/postgres?sslmode=disable&timezone=utc when connecting (for debugging)
 	return sqlx.Open("postgres", u.String())
 }

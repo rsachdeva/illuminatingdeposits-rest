@@ -1,6 +1,8 @@
 package schema
 
 import (
+	"log"
+
 	"github.com/jmoiron/sqlx"
 )
 
@@ -29,6 +31,7 @@ INSERT INTO users (uuid, name, email, roles, password_hash, date_created, date_u
 // Seed runs the set of seed-data queries against db. The queries are ran in a
 // transaction and rolled back if any fail.
 func Seed(db *sqlx.DB) error {
+	log.Println("Going to seed database..")
 	tx, err := db.Begin()
 	if err != nil {
 		return err
@@ -40,6 +43,6 @@ func Seed(db *sqlx.DB) error {
 		}
 		return err
 	}
-
+	log.Println("Seeding db completed without errors")
 	return tx.Commit()
 }
