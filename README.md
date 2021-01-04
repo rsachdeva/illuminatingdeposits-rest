@@ -141,6 +141,47 @@ ps aux | grep "go_build"
 
 to confirm is something else is already running
 
+# Running Integration/Unit tests
+Tests are designed to run in parallel with its own test server and docker based postgres db using dockertest.
+To run all tests wirh coverages reports for focussed packages:
+```shell 
+docker pull postgres:11.1-alpine (only once as tests use this image; so faster)
+export GODEBUG=x509ignoreCN=0  (only once for your shell as tests use tls) 
+go test -v -count=1 -covermode=count -coverpkg=./userauthn,./usermgmt,./postgreshealth,./interestcal -coverprofile cover.out ./... && go tool cover -func cover.out
+go test -v -count=1 -covermode=count -coverpkg=./userauthn,./usermgmt,./postgreshealth,./interestcal -coverprofile cover.out ./... && go tool cover -html cover.out
+```
+The -v is for Verbose output: log all tests as they are run. Search "FAIL:" in parallel test output here to see reason for failure
+in case any test fails.
+Just to run all easily with verbose ouput:
+```shell
+go test -v ./... 
+```
+The -count=1 is mainly to not use caching and can be added as follows if needed for
+any go test command:
+```shell 
+go test -v -count=1 ./...
+```
+See Editor specifcs to see Covered Parts in the Editor.
+#### Test Docker containers for Postgresdb
+Docker containers are mostly auto removed. This is done by passing true to testserver.InitRestServer(ctx, t, false)
+in your test.
+If you want to examine postgresdb data for a particular test, you can temporarily
+set allowPurge as false in testserver.InitRestHttpServer(ctx, t, false) for your test.
+Then after running specific failed test connect to postgres db in the docker container using any db ui.
+As an example, if you want coverage on a specific package and run a single test in a package with verbose output:
+```shell 
+go test -v -count=1 -covermode=count -coverpkg=./usermgmt -coverprofile cover.out -run=TestServiceServer_CreateUser ./usermgmt/... && go tool cover -func cover.out
+```
+Any docker containers still running after tests should be manually removed:
+```shell 
+docker ps
+docker stop $(docker ps -qa)
+docker rm -f $(docker ps -qa)
+```
+And if mongodb not connecting for tests: (reference: https://www.xspdf.com/help/52284027.html)
+```shell 
+docker volume rm $(docker volume ls -qf dangling=true)
+```
 
 ## Kubernetes Deployment - WIP
 
@@ -186,4 +227,4 @@ Access [zipkin](https://zipkin.io/) service at [http://zipkin.127.0.0.1.nip.io/z
 kubectl delete -f deploy/kubernetes/.
 
 # Version
-v2.0
+v2.2

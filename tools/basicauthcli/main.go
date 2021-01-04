@@ -12,5 +12,5 @@ func Base64EncodedString(username, password string) string {
 
 func main() {
 	e := Base64EncodedString("someone@drinnovations.us", "grocery")
-	fmt.Println("encoded string is %s", e)
+	fmt.Printf("encoded string is %s", e)
 }
