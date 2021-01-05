@@ -25,21 +25,6 @@ import (
 	"github.com/rsachdeva/illuminatingdeposits-rest/usermgmt"
 )
 
-func NewServer(cfg AppConfig, tlc *tls.Config) *http.Server {
-	server := http.Server{
-		Addr:         cfg.Web.Address,
-		ReadTimeout:  cfg.Web.ReadTimeout,
-		WriteTimeout: cfg.Web.WriteTimeout,
-	}
-	if tlc != nil {
-		server.TLSConfig = tlc
-	}
-	fmt.Println("server.TLSConfig is ", server.TLSConfig)
-	fmt.Println("DEPOSITS_DB_HOST is ", cfg.DB.Host)
-	fmt.Println("DEPOSITS_TRACE_URL is", cfg.Trace.URL)
-	return &server
-}
-
 func ConfigureAndServe() error {
 	cfg, err := ParsedConfig(AppConfig{})
 	if err != nil {
@@ -134,4 +119,19 @@ func ConfigureAndServe() error {
 	}
 
 	return nil
+}
+
+func NewServer(cfg AppConfig, tlc *tls.Config) *http.Server {
+	server := http.Server{
+		Addr:         cfg.Web.Address,
+		ReadTimeout:  cfg.Web.ReadTimeout,
+		WriteTimeout: cfg.Web.WriteTimeout,
+	}
+	if tlc != nil {
+		server.TLSConfig = tlc
+	}
+	fmt.Println("server.TLSConfig is ", server.TLSConfig)
+	fmt.Println("DEPOSITS_DB_HOST is ", cfg.DB.Host)
+	fmt.Println("DEPOSITS_TRACE_URL is", cfg.Trace.URL)
+	return &server
 }
