@@ -54,7 +54,7 @@ func InitRestHttp(t *testing.T, allowPurge bool) clientResult {
 		s.Close()
 		t.Logf("Purge allowed is %v", allowPurge)
 		if allowPurge {
-			t.Log("Purging dockertest for mongodb")
+			t.Log("Purging dockertest for postgres")
 			err := pool.Purge(resource)
 			if err != nil {
 				t.Fatalf("Could not purge container: %v", err)

@@ -37,7 +37,7 @@ func createToken(client *http.Client, prefix string, email string) string {
             "password": "kubernetes"
 		}
 	}`, email)
-	fmt.Println("vusr data is", vusr)
+	log.Println("vusr data is", vusr)
 	payload := strings.NewReader(vusr)
 
 	req, err := http.NewRequest(method, url, payload)
