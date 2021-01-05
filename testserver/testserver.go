@@ -19,13 +19,13 @@ import (
 	"github.com/rsachdeva/illuminatingdeposits-rest/usermgmt"
 )
 
-type clientResult struct {
+type ClientResult struct {
 	URL            string
 	TestClient     *http.Client
 	PostgresClient *sqlx.DB
 }
 
-func InitRestHttp(t *testing.T, allowPurge bool) clientResult {
+func InitRestHttpTls(t *testing.T, allowPurge bool) ClientResult {
 	log := log.New(os.Stdout, "DEPOSITSTESTS: ", log.LstdFlags|log.Lmicroseconds|log.Llongfile)
 	log.Println("Starting ServiceServer...")
 	db, pool, resource := PostgresConnect()
@@ -63,7 +63,7 @@ func InitRestHttp(t *testing.T, allowPurge bool) clientResult {
 		log.Println("End of program")
 	})
 
-	cr := clientResult{
+	cr := ClientResult{
 		URL:            s.URL,
 		TestClient:     s.Client(),
 		PostgresClient: db,
