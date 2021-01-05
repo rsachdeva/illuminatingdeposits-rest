@@ -61,5 +61,5 @@ func TestServiceServer_CreateUser(t *testing.T) {
 	require.Nil(t, err, "user decording should not give error")
 	fmt.Printf("nu is %v", nu)
 	require.NotNil(t, nu.Uuid, "UUID should not be nil")
-	require.Equal(t, nu.Email, "growth@drinnovations.us")
+	require.Equal(t, "growth@drinnovations.us", nu.Email)
 }
