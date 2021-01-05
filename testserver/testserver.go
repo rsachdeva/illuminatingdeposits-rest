@@ -2,6 +2,7 @@ package testserver
 
 import (
 	"log"
+	"net/http"
 	"net/http/httptest"
 	"os"
 	"testing"
@@ -20,6 +21,7 @@ import (
 
 type clientResult struct {
 	URL            string
+	TestClient     *http.Client
 	PostgresClient *sqlx.DB
 }
 
@@ -63,6 +65,7 @@ func InitRestHttp(t *testing.T, allowPurge bool) clientResult {
 
 	cr := clientResult{
 		URL:            s.URL,
+		TestClient:     s.Client(),
 		PostgresClient: db,
 	}
 

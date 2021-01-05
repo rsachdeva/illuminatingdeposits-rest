@@ -2,8 +2,6 @@
 package usermgmt_test
 
 import (
-	"crypto/tls"
-	"crypto/x509"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -17,7 +15,7 @@ func TestServiceServer_CreateUser(t *testing.T) {
 	t.Parallel()
 
 	cr := testserver.InitRestHttp(t, true)
-	client := http.DefaultClient
+	client := cr.TestClient
 	address := cr.URL
 	fmt.Printf("address is %v\n", address)
 	url := fmt.Sprintf("%v/v1/users", address)
@@ -52,24 +50,5 @@ func TestServiceServer_CreateUser(t *testing.T) {
 		fmt.Println(err)
 		return
 	}
-	fmt.Println(string(body))
-}
-
-func tlsClient() (*http.Client, error) {
-	caCert, err := ioutil.ReadFile("conf/tls/cacrtto.pem")
-	if err != nil {
-		return nil, err
-	}
-	caCertPool := x509.NewCertPool()
-	// AppendCertsFromPEM attempts to parse a series of PEM encoded certificates.
-	caCertPool.AppendCertsFromPEM(caCert)
-
-	client := &http.Client{
-		Transport: &http.Transport{
-			TLSClientConfig: &tls.Config{
-				RootCAs: caCertPool,
-			},
-		},
-	}
-	return client, nil
+	fmt.Println("in string the body is", string(body))
 }
