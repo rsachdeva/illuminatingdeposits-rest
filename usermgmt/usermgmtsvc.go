@@ -20,14 +20,14 @@ type service struct {
 	db *sqlx.DB
 }
 
-func (us service) Create(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
+func (us service) Create(ctx context.Context, w http.ResponseWriter, req *http.Request) error {
 	ctx, span := trace.StartSpan(ctx, "usermgmt.Create")
 	defer span.End()
 
-	reqlog.Dump(r, "usermgmt.Create")
+	reqlog.Dump(req, "usermgmt.Create")
 
 	var nu uservalue.NewUser
-	if err := jsonfmt.Decode(r, &nu); err != nil {
+	if err := jsonfmt.Decode(req, &nu); err != nil {
 		return errors.Wrapf(err, "unable to decode payload")
 	}
 

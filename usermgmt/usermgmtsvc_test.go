@@ -2,13 +2,15 @@
 package usermgmt_test
 
 import (
+	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"net/http"
 	"strings"
 	"testing"
 
 	"github.com/rsachdeva/illuminatingdeposits-rest/testserver"
+	"github.com/rsachdeva/illuminatingdeposits-rest/usermgmt/uservalue"
+	"github.com/stretchr/testify/require"
 )
 
 func TestServiceServer_CreateUser(t *testing.T) {
@@ -45,10 +47,19 @@ func TestServiceServer_CreateUser(t *testing.T) {
 	}
 	defer res.Body.Close()
 
-	body, err := ioutil.ReadAll(res.Body)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	fmt.Println("in string the body is", string(body))
+	// body, err := ioutil.ReadAll(res.Body)
+	// if err != nil {
+	// 	fmt.Println(err)
+	// 	return
+	// }
+	// fmt.Println("in string the body is", string(body))
+
+	var nu uservalue.User
+	decoder := json.NewDecoder(res.Body)
+	decoder.DisallowUnknownFields()
+	err = decoder.Decode(&nu)
+	require.Nil(t, err, "decording error for user")
+	fmt.Printf("nu is %v", nu)
+	require.NotNil(t, nu.Uuid, "UUID should not be nil")
+	require.Equal(t, nu.Email, "growth@drinnovations.us")
 }

@@ -147,8 +147,8 @@ To run all tests wirh coverages reports for focussed packages:
 ```shell 
 docker pull postgres:11.1-alpine (only once as tests use this image; so faster)
 export GODEBUG=x509ignoreCN=0  (only once for your shell as tests use tls) 
-go test -v -count=1 -covermode=count -coverpkg=./userauthn,./usermgmt,./postgreshealth,./interestcal -coverprofile cover.out ./... && go tool cover -func cover.out
-go test -v -count=1 -covermode=count -coverpkg=./userauthn,./usermgmt,./postgreshealth,./interestcal -coverprofile cover.out ./... && go tool cover -html cover.out
+go test -v -count=1 -covermode=count -coverpkg=./userauthn,./usermgmt,./postgreshealth,./interestcal -coverprofile cover.out $(go list ./... | grep -v /conf) && go tool cover -func cover.out
+go test -v -count=1 -covermode=count -coverpkg=./userauthn,./usermgmt,./postgreshealth,./interestcal -coverprofile cover.out $(go list ./... | grep -v /conf) && go tool cover -html cover.out
 ```
 The -v is for Verbose output: log all tests as they are run. Search "FAIL:" in parallel test output here to see reason for failure
 in case any test fails.
