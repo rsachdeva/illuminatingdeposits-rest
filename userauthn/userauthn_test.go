@@ -53,7 +53,7 @@ func TestServer_AccessTokenCreation(t *testing.T) {
 		tc := tc // capture range variable https://golang.org/pkg/testing/#hdr-Subtests_and_Sub_benchmarks
 		t.Run(tc.name, func(t *testing.T) {
 			t.Parallel()
-			cr := testserver.InitRestHttpTls(t, true)
+			cr := testserver.InitRestHttpTLS(t, true)
 			client := cr.TestClient
 			address := cr.URL
 			fmt.Printf("address is %v\n", address)

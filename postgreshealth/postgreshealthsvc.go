@@ -24,9 +24,7 @@ func (c service) Health(ctx context.Context, w http.ResponseWriter, _ *http.Requ
 	ctx, span := trace.StartSpan(ctx, "postgresconn.service.Health")
 	defer span.End()
 
-	var health struct {
-		Status string `json:"status"`
-	}
+	var ht healthvalue.Postgres
 
 	// service if the postgresconn is ready.
 	if err := healthvalue.StatusCheck(ctx, c.db); err != nil {
@@ -34,12 +32,12 @@ func (c service) Health(ctx context.Context, w http.ResponseWriter, _ *http.Requ
 		// If the postgresconn is not ready we will tell the cli and use a 500
 		// status. Do not respond by just returning an error because further up in
 		// the call stack will interpret that as an unhandled error.
-		health.Status = "Db not ready"
-		return jsonfmt.Respond(ctx, w, health, http.StatusInternalServerError)
+		ht.Status = "Postgres Db Not Ready"
+		return jsonfmt.Respond(ctx, w, ht, http.StatusInternalServerError)
 	}
 
-	health.Status = "ok"
-	return jsonfmt.Respond(ctx, w, health, http.StatusOK)
+	ht.Status = "Postgres Db Ok"
+	return jsonfmt.Respond(ctx, w, ht, http.StatusOK)
 }
 
 func RegisterSvc(db *sqlx.DB, rt *muxhttp.Router) {

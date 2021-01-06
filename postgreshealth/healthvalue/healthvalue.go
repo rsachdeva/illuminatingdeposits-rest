@@ -7,6 +7,10 @@ import (
 	"go.opencensus.io/trace"
 )
 
+type Postgres struct {
+	Status string `json:"status"`
+}
+
 // StatusCheck returns nil if it can successfully talk to the postgresconn. It
 // returns a non-nil error otherwise.
 func StatusCheck(ctx context.Context, db *sqlx.DB) error {

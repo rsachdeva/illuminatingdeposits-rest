@@ -25,7 +25,7 @@ type ClientResult struct {
 	PostgresClient *sqlx.DB
 }
 
-func InitRestHttpTls(t *testing.T, allowPurge bool) ClientResult {
+func InitRestHttpTLS(t *testing.T, allowPurge bool) ClientResult {
 	log := log.New(os.Stdout, "DEPOSITSTESTS: ", log.LstdFlags|log.Lmicroseconds|log.Llongfile)
 	log.Println("Starting ServiceServer...")
 	db, pool, resource := PostgresConnect()

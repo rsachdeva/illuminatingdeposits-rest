@@ -16,7 +16,7 @@ import (
 func TestServiceServer_CreateUser(t *testing.T) {
 	t.Parallel()
 
-	cr := testserver.InitRestHttpTls(t, true)
+	cr := testserver.InitRestHttpTLS(t, true)
 	client := cr.TestClient
 	address := cr.URL
 	fmt.Printf("address is %v\n", address)
