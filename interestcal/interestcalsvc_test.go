@@ -16,6 +16,7 @@ import (
 
 func TestServiceServer_CreateInterest(t *testing.T) {
 	t.Parallel()
+
 	cr := testserver.InitRestHttpTLS(t, true)
 	client := cr.TestClient
 	address := cr.URL
