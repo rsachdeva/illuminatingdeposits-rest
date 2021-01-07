@@ -21,12 +21,12 @@ func TestJsonDecodeCal(t *testing.T) {
 	tt := []struct {
 		name      string
 		payload   *strings.Reader
-		checkFunc func(err error, rec *httptest.ResponseRecorder)
+		checkFunc func(rec *httptest.ResponseRecorder, err error)
 	}{
 		{
 			name:    "FormatCorrect",
 			payload: strings.NewReader(formatCorrectJson),
-			checkFunc: func(err error, rec *httptest.ResponseRecorder) {
+			checkFunc: func(rec *httptest.ResponseRecorder, err error) {
 				require.Nil(t, err)
 
 				var ciresp interestvalue.CreateInterestResponse
@@ -43,7 +43,7 @@ func TestJsonDecodeCal(t *testing.T) {
 		{
 			name:    "FormatInCorrect",
 			payload: strings.NewReader(formatIncorrectJson),
-			checkFunc: func(err error, rec *httptest.ResponseRecorder) {
+			checkFunc: func(rec *httptest.ResponseRecorder, err error) {
 				require.NotNil(t, err)
 				require.Regexp(t, regexp.MustCompile(`ecoding new interest calculation request with banks and deposits: json: unknown field "institutions"`), err)
 			},
@@ -51,7 +51,7 @@ func TestJsonDecodeCal(t *testing.T) {
 		{
 			name:    "DeltaCalErrNeedsMin30days",
 			payload: strings.NewReader(err30DayMinJson),
-			checkFunc: func(err error, rec *httptest.ResponseRecorder) {
+			checkFunc: func(rec *httptest.ResponseRecorder, err error) {
 				require.NotNil(t, err)
 				require.Regexp(t, regexp.MustCompile("creating new interest calculations: calculation for Account: 1256: NewDeposit period in years 0.0001 should not be less than 30 days"), err)
 			},
@@ -60,10 +60,11 @@ func TestJsonDecodeCal(t *testing.T) {
 	for _, tc := range tt {
 		tc := tc // capture range variable https://golang.org/pkg/testing/#hdr-Subtests_and_Sub_benchmarks
 		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+
 			rec := httptest.NewRecorder()
 			method := "POST"
 			payload := tc.payload
-			t.Parallel()
 
 			url := fmt.Sprintf("%v/v1/interests", "https://localhost:2828")
 			req, _ := http.NewRequest(method, url, payload)
@@ -76,7 +77,7 @@ func TestJsonDecodeCal(t *testing.T) {
 			ctx := context.WithValue(context.Background(), muxhttp.KeyValues, &v)
 			err := svc.CreateInterest(ctx, rec, req)
 
-			tc.checkFunc(err, rec)
+			tc.checkFunc(rec, err)
 		})
 	}
 }

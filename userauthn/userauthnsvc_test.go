@@ -18,12 +18,12 @@ func TestServer_AccessTokenCreation(t *testing.T) {
 	tt := []struct {
 		name              string
 		verifyCredentails string
-		authnTestFunc     func(r io.Reader)
+		authnTestFunc     func(r io.ReadCloser)
 	}{
 		{
 			name:              "Allowed",
 			verifyCredentails: `{"verify_user": { "email": "growth@drinnovations.us", "password": "kubernetes"}}`,
-			authnTestFunc: func(r io.Reader) {
+			authnTestFunc: func(r io.ReadCloser) {
 				var ctres userauthnvalue.CreateTokenResponse
 				decoder := json.NewDecoder(r)
 				decoder.DisallowUnknownFields()
@@ -36,7 +36,7 @@ func TestServer_AccessTokenCreation(t *testing.T) {
 		{
 			name:              "NotAllowed",
 			verifyCredentails: `{"verify_user": { "email": "growth@drinnovationsus", "password": "kubernete"}}`,
-			authnTestFunc: func(r io.Reader) {
+			authnTestFunc: func(r io.ReadCloser) {
 				var errResp struct {
 					Error string `json:"error"`
 				}
@@ -53,6 +53,7 @@ func TestServer_AccessTokenCreation(t *testing.T) {
 		tc := tc // capture range variable https://golang.org/pkg/testing/#hdr-Subtests_and_Sub_benchmarks
 		t.Run(tc.name, func(t *testing.T) {
 			t.Parallel()
+
 			cr := testserver.InitRestHttpTLS(t, true)
 			client := cr.TestClient
 			address := cr.URL

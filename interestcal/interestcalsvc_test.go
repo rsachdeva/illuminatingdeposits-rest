@@ -3,6 +3,7 @@ package interestcal_test
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"log"
 	"net/http"
 	"strings"
@@ -15,70 +16,142 @@ import (
 )
 
 func TestServiceServer_CreateInterest(t *testing.T) {
-	t.Parallel()
+	tt := []struct {
+		name       string
+		addToToken string
+		checkFunc  func(r io.ReadCloser)
+	}{
+		{
+			name:       "CorrectToken",
+			addToToken: "",
+			checkFunc: func(r io.ReadCloser) {
+				var ciresp interestvalue.CreateInterestResponse
+				decoder := json.NewDecoder(r)
+				decoder.DisallowUnknownFields()
+				err := decoder.Decode(&ciresp)
+				require.Nil(t, err)
+				require.Equal(t, 23.46, ciresp.Banks[0].Deposits[2].Delta, "delta for a deposit in a bank must match")
+				require.Equal(t, 259.86, ciresp.Banks[0].Delta, "delta for a bank must match")
+				require.Equal(t, 336.74, ciresp.Delta, "overall delta for all deposists in all banks must match")
+			},
+		},
+		{
+			name:       "InCorrectToken",
+			addToToken: "CauseError",
+			checkFunc: func(r io.ReadCloser) {
+				var errResp struct {
+					Error string `json:"error"`
+				}
+				decoder := json.NewDecoder(r)
+				decoder.DisallowUnknownFields()
+				err := decoder.Decode(&errResp)
+				require.Nil(t, err, "should be able to decode the error response")
+				require.Equal(t, "Internal Server Error", errResp.Error)
+			},
+		},
+	}
+	for _, tc := range tt {
+		tc := tc // capture range variable https://golang.org/pkg/testing/#hdr-Subtests_and_Sub_benchmarks
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
 
-	cr := testserver.InitRestHttpTLS(t, true)
-	client := cr.TestClient
-	address := cr.URL
-	fmt.Printf("address is %v\n", address)
-	url := fmt.Sprintf("%v/v1/users", address)
-	method := "POST"
-	usr := `{
+			cr := testserver.InitRestHttpTLS(t, true)
+			client := cr.TestClient
+			address := cr.URL
+			fmt.Printf("address is %v\n", address)
+			url := fmt.Sprintf("%v/v1/users", address)
+			method := "POST"
+			usr := `{
            "name":            "Rohit Sachdeva",
 		   "email":           "growth@drinnovations.us",
 		   "roles":           ["USER"],
            "password":        "kubernetes",
            "password_confirm": "kubernetes"}`
 
-	fmt.Println("usr is ", usr)
-	payload := strings.NewReader(usr)
+			fmt.Println("usr is ", usr)
+			payload := strings.NewReader(usr)
 
-	req, err := http.NewRequest(method, url, payload)
+			req, err := http.NewRequest(method, url, payload)
 
-	if err != nil {
-		fmt.Println(err)
-		return
+			if err != nil {
+				fmt.Println(err)
+				return
+			}
+			req.Header.Add("Content-Type", "application/json")
+
+			res, err := client.Do(req)
+			if err != nil {
+				fmt.Println(err)
+				return
+			}
+			defer res.Body.Close()
+			verifyCredentials := `{"verify_user": { "email": "growth@drinnovations.us", "password": "kubernetes"}}`
+			payload = strings.NewReader(verifyCredentials)
+
+			url = fmt.Sprintf("%v/v1/users/token", address)
+			req, err = http.NewRequest(method, url, payload)
+
+			if err != nil {
+				log.Fatalln(err)
+			}
+			req.Header.Add("Content-Type", "application/json")
+
+			authnRes, err := client.Do(req)
+			if err != nil {
+				log.Fatalln(err)
+			}
+			defer authnRes.Body.Close()
+
+			log.Printf("authnRes is %v", authnRes)
+
+			var ctresp userauthnvalue.CreateTokenResponse
+			decoder := json.NewDecoder(authnRes.Body)
+			decoder.DisallowUnknownFields()
+			err = decoder.Decode(&ctresp)
+			require.Nil(t, err, "token response decoding should not be give error")
+			fmt.Printf("ctresp is %v", ctresp)
+			require.NotNil(t, ctresp.VerifiedUser.AccessToken, "access token should not be nil")
+
+			accessToken := ctresp.VerifiedUser.AccessToken
+			t.Logf("access accessToken is %v", accessToken)
+
+			method = "POST"
+			payload = strings.NewReader(jsonValidForInterest())
+
+			url = fmt.Sprintf("%v/v1/interests", address)
+			req, err = http.NewRequest(method, url, payload)
+
+			if err != nil {
+				fmt.Println(err)
+				return
+			}
+			req.Header.Add("Content-Type", "application/json")
+			req.Header.Set("Authorization", "Bearer "+accessToken+tc.addToToken)
+
+			istCalRes, err := client.Do(req)
+			if err != nil {
+				fmt.Println(err)
+				return
+			}
+			defer istCalRes.Body.Close()
+
+			// body, err := ioutil.ReadAll(istCalRes.Body)
+			// if err != nil {
+			// 	fmt.Println(err)
+			// 	return
+			// }
+			// fmt.Println("in string the body is", string(body))
+
+			// checkErrDecoding(t, istCalRes.Body)
+
+			tc.checkFunc(istCalRes.Body)
+		})
 	}
-	req.Header.Add("Content-Type", "application/json")
 
-	res, err := client.Do(req)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	defer res.Body.Close()
-	verifyCredentials := `{"verify_user": { "email": "growth@drinnovations.us", "password": "kubernetes"}}`
-	payload = strings.NewReader(verifyCredentials)
+}
 
-	url = fmt.Sprintf("%v/v1/users/token", address)
-	req, err = http.NewRequest(method, url, payload)
-
-	if err != nil {
-		log.Fatalln(err)
-	}
-	req.Header.Add("Content-Type", "application/json")
-
-	authnRes, err := client.Do(req)
-	if err != nil {
-		log.Fatalln(err)
-	}
-	defer authnRes.Body.Close()
-
-	log.Printf("authnRes is %v", authnRes)
-
-	var ctresp userauthnvalue.CreateTokenResponse
-	decoder := json.NewDecoder(authnRes.Body)
-	decoder.DisallowUnknownFields()
-	err = decoder.Decode(&ctresp)
-	require.Nil(t, err, "token response decoding should not be give error")
-	fmt.Printf("ctresp is %v", ctresp)
-	require.NotNil(t, ctresp.VerifiedUser.AccessToken, "access token should not be nil")
-
-	accessToken := ctresp.VerifiedUser.AccessToken
-	t.Logf("access accessToken is %v", accessToken)
-
-	method = "POST"
-	payload = strings.NewReader(`{
+func jsonValidForInterest() string {
+	return `{
 		  "banks": [
 			{
 			  "name": "HAPPIEST",
@@ -138,31 +211,5 @@ func TestServiceServer_CreateInterest(t *testing.T) {
 			  ]
 			}
 		  ]
-		}`)
-
-	url = fmt.Sprintf("%v/v1/interests", address)
-	req, err = http.NewRequest(method, url, payload)
-
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	req.Header.Add("Content-Type", "application/json")
-	req.Header.Set("Authorization", "Bearer "+accessToken)
-
-	istCalRes, err := client.Do(req)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	defer res.Body.Close()
-
-	var ciresp interestvalue.CreateInterestResponse
-	decoder = json.NewDecoder(istCalRes.Body)
-	decoder.DisallowUnknownFields()
-	err = decoder.Decode(&ciresp)
-	require.Nil(t, err)
-	require.Equal(t, 23.46, ciresp.Banks[0].Deposits[2].Delta, "delta for a deposit in a bank must match")
-	require.Equal(t, 259.86, ciresp.Banks[0].Delta, "delta for a bank must match")
-	require.Equal(t, 336.74, ciresp.Delta, "overall delta for all deposists in all banks must match")
+		}`
 }
