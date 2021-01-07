@@ -38,13 +38,14 @@ func NewMiddleware(log *log.Logger) muxhttp.Middleware {
 }
 
 // valid validates the authorization.
-func valid(authorization []string) error {
-	if len(authorization) < 1 {
+func valid(authnHeader []string) error {
+	fmt.Printf("authnHeader is %v and len(authnHeader) is %v\n", authnHeader, len(authnHeader))
+	if len(authnHeader) < 1 {
 		return muxhttp.NewRequestError(
 			errors.New("no authorization header"),
 			http.StatusUnauthorized)
 	}
-	token := strings.TrimPrefix(authorization[0], "Bearer ")
+	token := strings.TrimPrefix(authnHeader[0], "Bearer ")
 	fmt.Println("token extracted for verification is: ", token)
 	claims, err := verify(token)
 	if err != nil {
