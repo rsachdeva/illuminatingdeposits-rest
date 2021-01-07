@@ -8,20 +8,21 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-// Mock bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(password))
+type PasswordVerifier struct {
+	hashedPassword []byte
+	password       string
+}
 
-type PasswordVerifier struct{}
-
-func (cp PasswordVerifier) CompareHashAndPassword(hashedPassword, password []byte) error {
-	return bcrypt.CompareHashAndPassword(hashedPassword, []byte(password))
+func (pv PasswordVerifier) CompareHashAndPassword() error {
+	return bcrypt.CompareHashAndPassword(pv.hashedPassword, []byte(pv.password))
 }
 
 type PasswordVeriferInterface interface {
-	CompareHashAndPassword(hashedPassword, password []byte) error
+	CompareHashAndPassword() error
 }
 
-func PasswordMatch(hashedPassword []byte, password string) error {
-	err := PasswordVerifier{}.CompareHashAndPassword(hashedPassword, []byte(password))
+func PasswordMatch(pvi PasswordVeriferInterface) error {
+	err := pvi.CompareHashAndPassword()
 	if err != nil {
 		return muxhttp.NewRequestError(
 			errors.New("NotFound Error: User email/password combination not found"),

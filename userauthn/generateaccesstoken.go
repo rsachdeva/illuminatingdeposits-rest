@@ -36,7 +36,7 @@ func generateAccessToken(ctx context.Context, db *sqlx.DB, ctreq *userauthnvalue
 			http.StatusNotFound)
 	}
 	log.Printf("we were actually able to find the user email %v\n", uFound.Email)
-	err = PasswordMatch(uFound.PasswordHash, vyu.Password)
+	err = PasswordMatch(PasswordVerifier{hashedPassword: uFound.PasswordHash, password: vyu.Password})
 	log.Printf("Password match Err is %v\n", err)
 	if err != nil {
 		return nil, err

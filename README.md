@@ -154,7 +154,7 @@ go test -v -count=1 -covermode=count -coverpkg=./userauthn,./usermgmt,./postgres
 go test -v -count=1 -covermode=count -coverpkg=./userauthn,./usermgmt,./postgreshealth,./interestcal -coverprofile cover.out $(go list ./... | grep -v /conf) && go tool cover -html cover.out
 ```
 Coverage Result for covered packages:  
-**total:	(statements)	81.7%**  
+**total:	(statements)	82.7%**  
 
 To run a single test - no coverage:
 ```shell 
