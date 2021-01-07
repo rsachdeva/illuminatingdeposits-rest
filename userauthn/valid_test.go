@@ -26,7 +26,7 @@ func TestValidAuthNoEmailInClaims(t *testing.T) {
 	require.Regexp(t, regexp.MustCompile("invalid token without email"), err)
 }
 
-func verifyWithNoEmailClaims(accessToken string) (*customClaims, error) {
+func verifyWithNoEmailClaims(_ string) (*customClaims, error) {
 	claims := &customClaims{
 		Email:          "",
 		Roles:          []string{"TestRole"},
