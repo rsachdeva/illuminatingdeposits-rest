@@ -22,7 +22,7 @@ func NewMiddleware(log *log.Logger) muxhttp.Middleware {
 			defer span.End()
 
 			log.Println("Authentication Middleware now going to verify token...")
-			err := valid(r.Header["Authorization"])
+			err := valid(r.Header["Authorization"], verify)
 			if err != nil {
 				return err
 			}
@@ -38,7 +38,7 @@ func NewMiddleware(log *log.Logger) muxhttp.Middleware {
 }
 
 // valid validates the authorization.
-func valid(authnHeader []string) error {
+func valid(authnHeader []string, vryFunc tokenVerifyFunc) error {
 	fmt.Printf("authnHeader is %v and len(authnHeader) is %v\n", authnHeader, len(authnHeader))
 	if len(authnHeader) < 1 {
 		return muxhttp.NewRequestError(
@@ -47,11 +47,14 @@ func valid(authnHeader []string) error {
 	}
 	token := strings.TrimPrefix(authnHeader[0], "Bearer ")
 	fmt.Println("token extracted for verification is: ", token)
-	claims, err := verify(token)
+	claims, err := vryFunc(token)
+	fmt.Printf("tkv.vryFunc(token) err is %v\n", err)
+	fmt.Printf("tkv.vryFunc(token) claims is %v\n", claims)
 	if err != nil {
 		return err
 	}
 	email := claims.Email
+	fmt.Printf("claims email is %v\n", len(email))
 	if len(email) < 1 {
 		return muxhttp.NewRequestError(
 			errors.New("invalid token without email"),

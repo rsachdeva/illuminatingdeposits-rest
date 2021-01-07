@@ -10,6 +10,8 @@ import (
 	"github.com/rsachdeva/illuminatingdeposits-rest/muxhttp"
 )
 
+type tokenVerifyFunc func(accessToken string) (*customClaims, error)
+
 // Verify verifies the access token string and return a user claim if the token is valid
 func verify(accessToken string) (*customClaims, error) {
 	token, err := jwt.ParseWithClaims(

@@ -4,19 +4,35 @@ import (
 	"regexp"
 	"testing"
 
+	"github.com/dgrijalva/jwt-go"
 	"github.com/stretchr/testify/require"
 )
 
 func TestValidAuthHeaderExpired(t *testing.T) {
-	err := valid(authHeaderExpired())
+	err := valid(authHeaderExpired(), verify)
 	require.NotNil(t, err)
 	require.Regexp(t, regexp.MustCompile("Token is expired"), err)
 }
 
 func TestValidAuthHeaderNotPresent(t *testing.T) {
-	err := valid(authHeaderNotPresent())
+	err := valid(authHeaderNotPresent(), verify)
 	require.NotNil(t, err)
 	require.Regexp(t, regexp.MustCompile("no authorization header"), err)
+}
+
+func TestValidAuthNoEmailInClaims(t *testing.T) {
+	err := valid(authHeaderSampleForMocked(), verifyWithNoEmailClaims)
+	require.NotNil(t, err)
+	require.Regexp(t, regexp.MustCompile("invalid token without email"), err)
+}
+
+func verifyWithNoEmailClaims(accessToken string) (*customClaims, error) {
+	claims := &customClaims{
+		Email:          "",
+		Roles:          []string{"TestRole"},
+		StandardClaims: jwt.StandardClaims{},
+	}
+	return claims, nil
 }
 
 func authHeaderExpired() []string {
@@ -27,4 +43,10 @@ func authHeaderExpired() []string {
 
 func authHeaderNotPresent() []string {
 	return nil
+}
+
+func authHeaderSampleForMocked() []string {
+	return []string{
+		"Bearer a.b.c",
+	}
 }
