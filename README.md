@@ -152,11 +152,11 @@ docker pull postgres:11.1-alpine
 ``` 
 And then run the following with coverages for key packages concerned:
 ```shell
-go test -v -count=1 -covermode=count -coverpkg=./userauthn,./usermgmt,./postgreshealth,./interestcal -coverprofile cover.out $(go list ./... | grep -v /conf) && go tool cover -func cover.out
-go test -v -count=1 -covermode=count -coverpkg=./userauthn,./usermgmt,./postgreshealth,./interestcal -coverprofile cover.out $(go list ./... | grep -v /conf) && go tool cover -html cover.out
+go test -v -count=1 -covermode=count -coverpkg=./userauthn/...,./usermgmt/...,./postgreshealth/...,./interestcal/... -coverprofile cover.out ./... && go tool cover -func cover.out
+go test -v -count=1 -covermode=count -coverpkg=./userauthn/...,./usermgmt/...,./postgreshealth/...,./interestcal/... -coverprofile cover.out ./... && go tool cover -html cover.out
 ```
 Coverage Result for key packages:  
-**total:	(statements)	94.0%**  
+**total:	(statements)	94.1%**  
 
 To run a single test - no coverage:
 ```shell 
