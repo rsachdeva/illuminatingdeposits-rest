@@ -28,7 +28,7 @@ type ClientResult struct {
 func InitRestHttpTLS(t *testing.T, allowPurge bool) ClientResult {
 	log := log.New(os.Stdout, "DEPOSITSTESTS: ", log.LstdFlags|log.Lmicroseconds|log.Llongfile)
 	log.Println("Starting ServiceServer...")
-	db, pool, resource := PostgresConnect()
+	db := PostgresConnect(t, allowPurge)
 
 	shutdownCh := make(chan os.Signal, 1)
 	m := muxhttp.NewRouter(shutdownCh, log,
@@ -49,18 +49,10 @@ func InitRestHttpTLS(t *testing.T, allowPurge bool) ClientResult {
 	s := httptest.NewTLSServer(m)
 
 	t.Cleanup(func() {
-		log.Println("Shutting down / stopping  the server...")
-		log.Println("Stopping the server...")
+		t.Log("Shutting down / stopping  the server...")
+		t.Log("Stopping the server...")
 		s.Close()
-		t.Logf("Purge allowed is %v", allowPurge)
-		if allowPurge {
-			t.Log("Purging dockertest for postgres")
-			err := pool.Purge(resource)
-			if err != nil {
-				t.Fatalf("Could not purge container: %v", err)
-			}
-		}
-		log.Println("End of program")
+		t.Log("Stopped the server")
 	})
 
 	cr := ClientResult{

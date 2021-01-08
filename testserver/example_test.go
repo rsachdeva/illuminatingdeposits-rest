@@ -7,9 +7,8 @@ import (
 	"github.com/rsachdeva/illuminatingdeposits-rest/tools/dbcli/schema"
 )
 
-func ExamplePostgresConnect() {
-
-	db, pool, resource := testserver.PostgresConnect()
+func ExampleStartPostgresAndMigrate() {
+	db, pool, resource := testserver.StartPostgresAndMigrate()
 	// this is just for this test to make sure can populate db; we don't require this for tests in general
 	err := schema.Seed(db)
 	if err != nil {

@@ -156,7 +156,7 @@ go test -v -count=1 -covermode=count -coverpkg=./userauthn/...,./usermgmt/...,./
 go test -v -count=1 -covermode=count -coverpkg=./userauthn/...,./usermgmt/...,./postgreshealth/...,./interestcal/... -coverprofile cover.out ./... && go tool cover -html cover.out
 ```
 Coverage Result for key packages:  
-**total:	(statements)	94.1%**  
+**total:	(statements)	95.7%**  
 
 To run a single test - no coverage:
 ```shell 
@@ -243,4 +243,4 @@ Access [zipkin](https://zipkin.io/) service at [http://zipkin.127.0.0.1.nip.io/z
 kubectl delete -f deploy/kubernetes/.
 
 # Version
-v2.51
+v2.71

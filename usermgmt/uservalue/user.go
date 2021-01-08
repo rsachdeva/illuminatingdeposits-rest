@@ -55,7 +55,7 @@ func AddUser(ctx context.Context, db *sqlx.DB, n NewUser, now time.Time) (*User,
 	_, err = db.ExecContext(ctx, q, u.Uuid, u.Name, u.Email, u.PasswordHash, u.Roles, u.DateCreated, u.DateUpdated)
 	if err != nil {
 		fmt.Printf("\ndb err is %T %v", err, err)
-		return nil, errors.Wrap(err, "inserting usermgmt")
+		return nil, errors.Wrap(err, "inserting user")
 	}
 
 	return &u, nil
@@ -68,9 +68,6 @@ func FindByEmail(ctx context.Context, db *sqlx.DB, email string) (User, error) {
 	fmt.Printf("\nusr just after Postgres query %#v", usr)
 	if err != nil {
 		return User{}, err
-	}
-	if usr.Email != email {
-		return User{}, errors.Wrap(err, "error finding user by email")
 	}
 
 	return usr, nil

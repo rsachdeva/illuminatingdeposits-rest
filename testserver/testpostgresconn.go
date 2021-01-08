@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net/url"
+	"testing"
 	"time"
 
 	"github.com/jmoiron/sqlx"
@@ -12,7 +13,24 @@ import (
 	"github.com/rsachdeva/illuminatingdeposits-rest/tools/dbcli/schema"
 )
 
-func PostgresConnect() (*sqlx.DB, *dockertest.Pool, *dockertest.Resource) {
+func PostgresConnect(t *testing.T, allowPurge bool) *sqlx.DB {
+	db, pool, resource := StartPostgresAndMigrate()
+	t.Cleanup(func() {
+		t.Logf("Purge allowed is %v", allowPurge)
+		if allowPurge {
+			t.Log("Purging dockertest for postgres")
+			err := pool.Purge(resource)
+			if err != nil {
+				t.Fatalf("Could not purge container: %v", err)
+			}
+		}
+		log.Println("End of program")
+	})
+
+	return db
+}
+
+func StartPostgresAndMigrate() (*sqlx.DB, *dockertest.Pool, *dockertest.Resource) {
 	q := make(url.Values)
 	q.Set("sslmode", "disable")
 	q.Set("timezone", "utc")
@@ -66,6 +84,5 @@ func PostgresConnect() (*sqlx.DB, *dockertest.Pool, *dockertest.Resource) {
 	if err != nil {
 		log.Fatalf("Could not bring the schema for db up to date with schema migrations: %v", err)
 	}
-
 	return db, pool, resource
 }
