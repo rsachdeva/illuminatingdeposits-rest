@@ -1,6 +1,7 @@
 package userauthn
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/pkg/errors"
@@ -14,7 +15,9 @@ type PasswordVerifier struct {
 }
 
 func (pv PasswordVerifier) CompareHashAndPassword() error {
-	return bcrypt.CompareHashAndPassword(pv.hashedPassword, []byte(pv.password))
+	err := bcrypt.CompareHashAndPassword(pv.hashedPassword, []byte(pv.password))
+	fmt.Println("err after std bycrypt is", err)
+	return err
 }
 
 type PasswordVeriferInterface interface {
