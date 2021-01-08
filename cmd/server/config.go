@@ -7,8 +7,8 @@ import (
 	"os"
 	"time"
 
+	"github.com/ardanlabs/conf"
 	"github.com/pkg/errors"
-	"github.com/rsachdeva/illuminatingdeposits-rest/conf"
 )
 
 type AppConfig struct {

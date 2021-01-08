@@ -7,8 +7,8 @@ import (
 	"os"
 	"time"
 
+	"github.com/ardanlabs/conf"
 	"github.com/pkg/errors"
-	"github.com/rsachdeva/illuminatingdeposits-rest/conf"
 	"github.com/rsachdeva/illuminatingdeposits-rest/postgresconn"
 	"github.com/rsachdeva/illuminatingdeposits-rest/tools/dbcli/schema"
 	"github.com/rsachdeva/illuminatingdeposits-rest/usermgmt/uservalue"

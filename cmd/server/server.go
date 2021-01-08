@@ -11,8 +11,8 @@ import (
 	_ "net/http/pprof" // Register the pprof interestsvc
 	"os"
 
+	"github.com/ardanlabs/conf"
 	"github.com/pkg/errors"
-	"github.com/rsachdeva/illuminatingdeposits-rest/conf"
 	"github.com/rsachdeva/illuminatingdeposits-rest/errconv"
 	"github.com/rsachdeva/illuminatingdeposits-rest/interestcal"
 	"github.com/rsachdeva/illuminatingdeposits-rest/metriccnt"
