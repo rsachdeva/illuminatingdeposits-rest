@@ -19,7 +19,7 @@ require (
 	github.com/go-chi/chi v1.5.1
 	github.com/go-playground/locales v0.13.0
 	github.com/go-playground/universal-translator v0.17.0
-	github.com/google/go-cmp v0.5.4
+	github.com/google/go-cmp v0.5.4 // indirect
 	github.com/google/uuid v1.1.4
 	github.com/gotestyourself/gotestyourself v2.2.0+incompatible // indirect
 	github.com/jmoiron/sqlx v1.2.0

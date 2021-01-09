@@ -1,6 +1,7 @@
 package userauthn
 
 import (
+	"errors"
 	"fmt"
 	"regexp"
 	"testing"
@@ -10,7 +11,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-// No mocking
+// No mocking; just passwing parameters to trigger error
 func TestPasswordNotMatchingNoMock(t *testing.T) {
 	hash, _ := bcrypt.GenerateFromPassword([]byte("hello"), bcrypt.DefaultCost)
 	pv := PasswordVerifier{hashedPassword: hash, password: "bye"}
@@ -31,11 +32,10 @@ func TestPasswordMatchingNoMock(t *testing.T) {
 // With mocking for demo purposes only to compare in case we had to mock
 // not really needed here as just a library package
 // https://github.com/stretchr/testify#mock-package
-// // Mock bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(password)) as an example of mocking
+// Mock bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(password)) as an example of mocking
+// Mock the behavior defined in PasswordVeriferInterface interface
 type MockedPasswordVerifier struct {
 	mock.Mock
-	hashedPassword []byte
-	password       string
 }
 
 func (mpv *MockedPasswordVerifier) CompareHashAndPassword() error {
@@ -44,11 +44,10 @@ func (mpv *MockedPasswordVerifier) CompareHashAndPassword() error {
 }
 
 func TestPasswordNotMatching(t *testing.T) {
-	hash, _ := bcrypt.GenerateFromPassword([]byte("hello"), bcrypt.DefaultCost)
-	mpv := MockedPasswordVerifier{hashedPassword: hash, password: "bye"}
+	mpv := MockedPasswordVerifier{}
 
 	// setup expectations
-	mpv.On("CompareHashAndPassword").Return(bcrypt.ErrMismatchedHashAndPassword)
+	mpv.On("CompareHashAndPassword").Return(errors.New("matching issue"))
 
 	// call the code we are testing
 	err := PasswordMatch(&mpv)
@@ -57,8 +56,7 @@ func TestPasswordNotMatching(t *testing.T) {
 }
 
 func TestPasswordMatches(t *testing.T) {
-	hash, _ := bcrypt.GenerateFromPassword([]byte("hello"), bcrypt.DefaultCost)
-	mpv := MockedPasswordVerifier{hashedPassword: hash, password: "hello"}
+	mpv := MockedPasswordVerifier{}
 
 	// setup expectations
 	mpv.On("CompareHashAndPassword").Return(nil)

@@ -11,7 +11,7 @@
 # Features include:
 - Golang (Go)  REST Http Service requests with json for Messages
 - TLS for all requests
-- Integration and Unit tests
+- Integration and Unit tests run in parallel
 - Coverage Result for key packages
 - Postgres DB health check service
 - User Management service with Postgres for user creation
@@ -156,7 +156,7 @@ go test -v -count=1 -covermode=count -coverpkg=./userauthn/...,./usermgmt/...,./
 go test -v -count=1 -covermode=count -coverpkg=./userauthn/...,./usermgmt/...,./postgreshealth/...,./interestcal/... -coverprofile cover.out ./... && go tool cover -html cover.out
 ```
 Coverage Result for key packages:  
-**total:	(statements)	95.7%**  
+**total:	(statements)	96.3%**  
 
 To run a single test - no coverage:
 ```shell 
@@ -243,4 +243,4 @@ Access [zipkin](https://zipkin.io/) service at [http://zipkin.127.0.0.1.nip.io/z
 kubectl delete -f deploy/kubernetes/.
 
 # Version
-v2.71
+v3.0

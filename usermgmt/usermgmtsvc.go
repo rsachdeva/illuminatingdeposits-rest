@@ -13,6 +13,7 @@ import (
 	"github.com/rsachdeva/illuminatingdeposits-rest/reqlog"
 	"github.com/rsachdeva/illuminatingdeposits-rest/usermgmt/uservalue"
 	"go.opencensus.io/trace"
+	"golang.org/x/crypto/bcrypt"
 )
 
 // Users holds interestsvc for dealing with usermgmt.
@@ -31,7 +32,7 @@ func (us service) Create(ctx context.Context, w http.ResponseWriter, req *http.R
 		return errors.Wrapf(err, "unable to decode payload")
 	}
 
-	u, err := uservalue.AddUser(ctx, us.db, nu, time.Now())
+	u, err := uservalue.AddUser(ctx, us.db, nu, time.Now(), bcrypt.GenerateFromPassword)
 	if err != nil {
 		return muxhttp.NewRequestError(err, http.StatusConflict)
 	}

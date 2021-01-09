@@ -9,18 +9,24 @@ import (
 )
 
 func TestValidAuthHeaderExpired(t *testing.T) {
+	t.Parallel()
+
 	err := valid(authHeaderExpired(), verify)
 	require.NotNil(t, err)
 	require.Regexp(t, regexp.MustCompile("Token is expired"), err)
 }
 
 func TestValidAuthHeaderNotPresent(t *testing.T) {
+	t.Parallel()
+
 	err := valid(authHeaderNotPresent(), verify)
 	require.NotNil(t, err)
 	require.Regexp(t, regexp.MustCompile("no authorization header"), err)
 }
 
 func TestValidAuthNoEmailInClaims(t *testing.T) {
+	t.Parallel()
+
 	err := valid(authHeaderSampleForMocked(), verifyWithNoEmailClaims)
 	require.NotNil(t, err)
 	require.Regexp(t, regexp.MustCompile("invalid token without email"), err)
