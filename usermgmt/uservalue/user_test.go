@@ -9,6 +9,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/rsachdeva/illuminatingdeposits-rest/testserver"
 	"github.com/rsachdeva/illuminatingdeposits-rest/usermgmt/uservalue"
+	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
 )
 
@@ -46,24 +47,38 @@ func TestAddUserDBClientConnectionFailure(t *testing.T) {
 	require.Regexp(t, regexp.MustCompile("inserting user: sql: database is closed"), err)
 }
 
-type MockedPasswordGenerator struct{}
+// type MockedPasswordGenerator struct{}
 
-func (pf MockedPasswordGenerator) Hash(password []byte) ([]byte, error) {
-	return nil, errors.New("some weird error when hashing")
+// func (pg MockedPasswordGenerator) Hash(password []byte) ([]byte, error) {
+// 	return nil, errors.New("some weird error when hashing")
+// }
+
+type MockedPasswordGenerator struct {
+	mock.Mock
 }
 
-func TestAdduserHashingPasswordfails(t *testing.T) {
+func (pg *MockedPasswordGenerator) Hash(password []byte) ([]byte, error) {
+	args := pg.Called(password)
+	return nil, args.Error(1)
+}
+
+func TestAdduserHashingPasswordFails(t *testing.T) {
 	t.Parallel()
 
 	db := testserver.PostgresConnect(t, true)
 	nu := uservalue.NewUser{
 		Name:            "Rohit Sachdeva",
 		Email:           "growth@drinnovations.us",
-		Password:        "",
-		PasswordConfirm: "",
+		Password:        "Hello",
+		PasswordConfirm: "Hello",
 		Roles:           []string{"Admin", "User"},
 	}
-	_, err := uservalue.AddUser(context.Background(), db, nu, time.Now(), MockedPasswordGenerator{})
+
+	pg := MockedPasswordGenerator{}
+	// https://github.com/stretchr/testify/issues/387
+	pg.On("Hash", mock.AnythingOfType("[]uint8")).Return(nil, errors.New("some weird error when hashing"))
+
+	_, err := uservalue.AddUser(context.Background(), db, nu, time.Now(), &pg)
 	require.NotNil(t, err)
 	require.Regexp(t, regexp.MustCompile("generating password hash: some weird error when hashing"), err)
 }
