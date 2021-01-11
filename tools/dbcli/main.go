@@ -12,7 +12,6 @@ import (
 	"github.com/rsachdeva/illuminatingdeposits-rest/postgresconn"
 	"github.com/rsachdeva/illuminatingdeposits-rest/tools/dbcli/schema"
 	"github.com/rsachdeva/illuminatingdeposits-rest/usermgmt/uservalue"
-	"golang.org/x/crypto/bcrypt"
 )
 
 func main() {
@@ -127,7 +126,7 @@ func createAdmin(cfg postgresconn.Config, email, password string) error {
 		Roles:           []string{"Admin", "User"},
 	}
 
-	u, err := uservalue.AddUser(ctx, db, nu, time.Now(), bcrypt.GenerateFromPassword)
+	u, err := uservalue.AddUser(ctx, db, nu, time.Now(), uservalue.PasswordGenerator{})
 	if err != nil {
 		return err
 	}

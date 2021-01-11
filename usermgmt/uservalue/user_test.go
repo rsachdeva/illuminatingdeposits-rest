@@ -10,7 +10,6 @@ import (
 	"github.com/rsachdeva/illuminatingdeposits-rest/testserver"
 	"github.com/rsachdeva/illuminatingdeposits-rest/usermgmt/uservalue"
 	"github.com/stretchr/testify/require"
-	"golang.org/x/crypto/bcrypt"
 )
 
 func TestAddUser(t *testing.T) {
@@ -25,7 +24,7 @@ func TestAddUser(t *testing.T) {
 		Roles:           []string{"Admin", "User"},
 	}
 
-	u, err := uservalue.AddUser(context.Background(), db, nu, time.Now(), bcrypt.GenerateFromPassword)
+	u, err := uservalue.AddUser(context.Background(), db, nu, time.Now(), uservalue.PasswordGenerator{})
 	require.Nil(t, err)
 	require.Equal(t, len(u.Uuid), 36)
 }
@@ -42,9 +41,15 @@ func TestAddUserDBClientConnectionFailure(t *testing.T) {
 		Roles:           []string{"Admin", "User"},
 	}
 	db.Close()
-	_, err := uservalue.AddUser(context.Background(), db, nu, time.Now(), bcrypt.GenerateFromPassword)
+	_, err := uservalue.AddUser(context.Background(), db, nu, time.Now(), uservalue.PasswordGenerator{})
 	require.NotNil(t, err)
 	require.Regexp(t, regexp.MustCompile("inserting user: sql: database is closed"), err)
+}
+
+type MockedPasswordGenerator struct{}
+
+func (pf MockedPasswordGenerator) Hash(password []byte) ([]byte, error) {
+	return nil, errors.New("some weird error when hashing")
 }
 
 func TestAdduserHashingPasswordfails(t *testing.T) {
@@ -58,12 +63,9 @@ func TestAdduserHashingPasswordfails(t *testing.T) {
 		PasswordConfirm: "",
 		Roles:           []string{"Admin", "User"},
 	}
-	hashFunc := func(password []byte, cost int) ([]byte, error) {
-		return nil, errors.New("some weird error when hashing has happened")
-	}
-	_, err := uservalue.AddUser(context.Background(), db, nu, time.Now(), hashFunc)
+	_, err := uservalue.AddUser(context.Background(), db, nu, time.Now(), MockedPasswordGenerator{})
 	require.NotNil(t, err)
-	require.Regexp(t, regexp.MustCompile("generating password hash: some weird error when hashing has happened"), err)
+	require.Regexp(t, regexp.MustCompile("generating password hash: some weird error when hashing"), err)
 }
 
 func TestFindByEmail(t *testing.T) {
@@ -77,7 +79,7 @@ func TestFindByEmail(t *testing.T) {
 		PasswordConfirm: "kubernetes",
 		Roles:           []string{"Admin", "User"},
 	}
-	_, err := uservalue.AddUser(context.Background(), db, nu, time.Now(), bcrypt.GenerateFromPassword)
+	_, err := uservalue.AddUser(context.Background(), db, nu, time.Now(), uservalue.PasswordGenerator{})
 	require.Nil(t, err)
 
 	u, err := uservalue.FindByEmail(context.Background(), db, "growth@drinnovations.us")
@@ -97,7 +99,7 @@ func TestFindByEmailNotFound(t *testing.T) {
 		PasswordConfirm: "kubernetes",
 		Roles:           []string{"Admin", "User"},
 	}
-	_, err := uservalue.AddUser(context.Background(), db, nu, time.Now(), bcrypt.GenerateFromPassword)
+	_, err := uservalue.AddUser(context.Background(), db, nu, time.Now(), uservalue.PasswordGenerator{})
 	require.Nil(t, err)
 
 	_, err = uservalue.FindByEmail(context.Background(), db, "growth@drinnova.us")

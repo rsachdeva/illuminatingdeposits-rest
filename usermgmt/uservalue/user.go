@@ -33,8 +33,18 @@ type NewUser struct {
 	PasswordConfirm string   `json:"password_confirm" validate:"eqfield=Password"`
 }
 
-func AddUser(ctx context.Context, db *sqlx.DB, n NewUser, now time.Time, hashFunc func(password []byte, cost int) ([]byte, error)) (*User, error) {
-	hash, err := hashFunc([]byte(n.Password), bcrypt.DefaultCost)
+type PasswordGenerator struct{}
+
+func (pf PasswordGenerator) Hash(password []byte) ([]byte, error) {
+	return bcrypt.GenerateFromPassword(password, bcrypt.DefaultCost)
+}
+
+type PasswordGeneratorInterface interface {
+	Hash(password []byte) ([]byte, error)
+}
+
+func AddUser(ctx context.Context, db *sqlx.DB, n NewUser, now time.Time, pg PasswordGeneratorInterface) (*User, error) {
+	hash, err := pg.Hash([]byte(n.Password))
 	if err != nil {
 		return nil, errors.Wrap(err, "generating password hash")
 	}
