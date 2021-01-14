@@ -204,10 +204,10 @@ docker volume rm $(docker volume ls -qf dangling=true)
 ### Push Images to Docker Hub
 
 ```shell
-docker build -t rsachdeva/illuminatingdeposits.rest.server:v0.1 -f ./build/Dockerfile.rest.server .  
-docker push rsachdeva/illuminatingdeposits.rest.server:v0.1 
-docker build -t rsachdeva/illuminatingdeposits.seed:v0.1 -f ./build/Dockerfile.seed .  
-docker push rsachdeva/illuminatingdeposits.seed:v0.1  
+docker build -t rsachdeva/illuminatingdeposits.rest.server:v1.3.0 -f ./build/Dockerfile.rest.server .  
+docker push rsachdeva/illuminatingdeposits.rest.server:v1.3.0
+docker build -t rsachdeva/illuminatingdeposits.seed:v1.3.0 -f ./build/Dockerfile.seed .  
+docker push rsachdeva/illuminatingdeposits.seed:v1.3.0
 ``` 
 
 ### kubectl apply
@@ -243,4 +243,4 @@ Access [zipkin](https://zipkin.io/) service at [http://zipkin.127.0.0.1.nip.io/z
 kubectl delete -f deploy/kubernetes/.
 
 # Version
-v1.3.0
+v1.3.20
