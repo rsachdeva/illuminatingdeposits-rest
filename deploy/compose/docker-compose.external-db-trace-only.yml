@@ -19,7 +19,7 @@ services:
     ports:
       - 5432:5432
     volumes:
-      - ./postgres-volume:/var/lib/postgresql/data
+      - ./postgres-compose-volume:/var/lib/postgresql/data
 
   # This sidecar allows for the viewing of traces.
   zipkin:

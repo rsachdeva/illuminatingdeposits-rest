@@ -28,7 +28,7 @@
 
 ## Docker Compose Deployment
 
-### Start postgres and tracing
+### Start postgres and tracing services
 ```shell
 export COMPOSE_IGNORE_ORPHANS=True && \
 docker-compose -f ./deploy/compose/docker-compose.external-db-trace-only.yml up 
@@ -199,7 +199,7 @@ And if mongodb not connecting for tests: (reference: https://www.xspdf.com/help/
 docker volume rm $(docker volume ls -qf dangling=true)
 ```
 
-## Kubernetes Deployment - WIP
+## Kubernetes Deployment Manually (for Better control; For Local Setup can use Docker Desktop)- WIP
 
 ### Push Images to Docker Hub
 
@@ -210,18 +210,34 @@ docker build -t rsachdeva/illuminatingdeposits.seed:v1.3.0 -f ./build/Dockerfile
 docker push rsachdeva/illuminatingdeposits.seed:v1.3.0
 ``` 
 
-### kubectl apply
+### Start postgres service
+
+```shell
+kubectl apply -f deploy/kubernetes/postgres-config.yaml 
+kubectl apply -f deploy/kubernetes/postgres.yaml
+kubectl logs pod/postgres-deposits-0
+```
+
+### Then Migrate and set up seed data:
+First should see in logs
+database system is ready to accept connections
+And then execute migration/seed data for manual control when getting started:
+```shell
+kubectl apply -f deploy/kubernetes/postgres-seed.yaml
+```
+And if status shows completed for seed pod,
+```shell
+kubectl delete -f deploy/kubernetes/postgres-seed.yaml
+```
+
+### Start tracing service
 
 ```shell
 kubectl apply -f deploy/kubernetes/traefik-ingress-daemonset-service.yaml 
 
 kubectl apply -f deploy/kubernetes/zipkin-deployment.yaml   
 kubectl apply -f deploy/kubernetes/zipkin-service.yaml   
-kubectl apply -f deploy/kubernetes/zipkin-ingress.yaml  
-
-kubectl apply -f deploy/kubernetes/postgres-config.yaml 
-kubectl apply -f deploy/kubernetes/postgres-stateful.yaml  
-kubectl apply -f deploy/kubernetes/postgres-service.yaml  
+kubectl apply -f deploy/kubernetes/zipkin-ingress.yaml
 ``` 
 
 To connect external tool with postgres to see database internals use:
@@ -243,4 +259,4 @@ Access [zipkin](https://zipkin.io/) service at [http://zipkin.127.0.0.1.nip.io/z
 kubectl delete -f deploy/kubernetes/.
 
 # Version
-v1.3.20
+v1.3.22

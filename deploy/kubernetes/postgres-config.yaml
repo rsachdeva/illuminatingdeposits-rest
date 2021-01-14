@@ -5,8 +5,8 @@ metadata:
   labels:
     app: postgres
 data:
-  DEPOSITS_DB_POSTGRES_USER: "postgres"
-  DEPOSITS_DB_POSTGRES_PASSWORD: "postgres"
-  DEPOSITS_DB_POSTGRES_HOST: "db"
-  DEPOSITS_DB_POSTGRES_NAME: "postgres"
+  DEPOSITS_DB_USER: "postgres"
+  DEPOSITS_DB_PASSWORD: "postgres"
+  DEPOSITS_DB_HOST: "db"
+  DEPOSITS_DB_NAME: "postgres"
   DEPOSITS_DB_DISABLE_TLS: "true"

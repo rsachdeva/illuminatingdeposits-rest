@@ -7,4 +7,5 @@ build/Dockerfile.mycalculate
 conf/tls/ca.key
 conf/tls/server.csr
 
-deploy/compose/postgres-volume/
+deploy/compose/postgres-compose-volume/
+deploy/kubernetes/postgres-kubernetes-volume
