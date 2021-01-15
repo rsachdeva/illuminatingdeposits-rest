@@ -20,8 +20,6 @@ import (
 )
 
 const (
-	// address  = "localhost:3000"
-	address  = "depositsrest.127.0.0.1.nip.io"
 	emailFmt = "growth-%v@drinnovations.us"
 )
 
@@ -80,9 +78,9 @@ func tlsClient() (*http.Client, error) {
 
 func requestGetDbHealth(client *http.Client, prefix string) {
 	fmt.Println("executing tLSGetRequestHealth()")
-	u := fmt.Sprintf("%v%v/v1/health", prefix, address)
-	fmt.Println("u is ", u)
-	resp, err := client.Get(u)
+	url := fmt.Sprintf("%v%v/v1/health", prefix, svcAddress())
+	fmt.Println("url is ", url)
+	resp, err := client.Get(url)
 	if err != nil {
 		log.Fatalf("err in get is %v", err)
 	}
@@ -97,7 +95,7 @@ func requestGetDbHealth(client *http.Client, prefix string) {
 
 func requestPostCreateUser(client *http.Client, prefix string, email string) {
 	fmt.Println("executing requestPostCreateUser()")
-	url := fmt.Sprintf("%v%v/v1/users", prefix, address)
+	url := fmt.Sprintf("%v%v/v1/users", prefix, svcAddress())
 	method := "POST"
 	usr := fmt.Sprintf(`{
            "name":            "Rohit Sachdeva",
@@ -134,7 +132,7 @@ func requestPostCreateUser(client *http.Client, prefix string, email string) {
 
 func requestPostCreateInterest(accessToken string, client *http.Client, prefix string) {
 	fmt.Println("executing requestPostCreateInterest()")
-	url := fmt.Sprintf("%v%v/v1/interests", prefix, address)
+	url := fmt.Sprintf("%v%v/v1/interests", prefix, svcAddress())
 	method := "POST"
 	payload := strings.NewReader(`{
 		  "banks": [

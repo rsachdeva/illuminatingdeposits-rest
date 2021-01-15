@@ -81,7 +81,77 @@ docker build -f ./build/Dockerfile.calculate -t illumcalculate  . && \
 docker run illumcalculate 
 ```
 
-# Editor/IDE without docker/docker compose 
+# Kubernetes Deployment Manually -WIP
+(for Better control; For Local Setup tested with Docker Desktop latest version with Kubernetes Enabled)
+
+### Push Images to Docker Hub
+
+```shell
+docker build -t rsachdeva/illuminatingdeposits.rest.server:v1.3.0 -f ./build/Dockerfile.rest.server .  
+docker push rsachdeva/illuminatingdeposits.rest.server:v1.3.0
+docker build -t rsachdeva/illuminatingdeposits.seed:v1.3.0 -f ./build/Dockerfile.seed .  
+docker push rsachdeva/illuminatingdeposits.seed:v1.3.0
+``` 
+
+### Start postgres service
+
+```shell
+kubectl apply -f deploy/kubernetes/postgres-env.yaml 
+kubectl apply -f deploy/kubernetes/postgres.yaml
+kubectl logs pod/postgres-deposits-0
+```
+
+### Then Migrate and set up seed data:
+First should see in logs
+database system is ready to accept connections
+And then execute migration/seed data for manual control when getting started:
+```shell
+kubectl apply -f deploy/kubernetes/seed.yaml
+kubectl get pod
+```
+And if status shows completed for seed pod, optionally can be deleted:
+```shell
+kubectl delete -f deploy/kubernetes/seed.yaml
+```
+To connect external tool with postgres to see database internals use:
+Use a connection string similar to:
+jdbc:postgresql://127.0.0.1:30007/postgres
+If still an issue you can try
+kubectl port-forward service/postgres 5432:postgres
+Now can easily connect using
+jdbc:postgresql://localhost:5432/postgres
+
+
+### Installing Ingress controller
+Using helm to install nginx ingress controller
+```shell
+helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+helm repo update
+
+helm install ingress-nginx ingress-nginx/ingress-nginx
+```
+If in case needed to uninstall, use
+
+```helm uninstall ingress-nginx```
+
+### Start tracing service
+
+```shell
+kubectl apply -f deploy/kubernetes/zipkin.yaml    
+kubectl apply -f deploy/kubernetes/zipkin-ingress.yaml
+```
+
+### Distributed Tracing with Kubernetes Ingress
+
+Access [zipkin](https://zipkin.io/) service at [http://zipkin.127.0.0.1.nip.io/zipkin/](http://zipkin.127.0.0.1.nip.io/zipkin/)
+
+
+### Rest server in Kubernetes!
+```shell 
+kubectl logs -l app=restserversvc -f
+```
+
+# Editor/IDE without docker/docker compose/kubernetes 
 To start only external db and trace service for working with local machine:  
 Start postgres and tracing as usual
 export COMPOSE_IGNORE_ORPHANS=True && \
@@ -108,10 +178,17 @@ go run ./cmd/server
 #### Sanity test Client:
 The server side DEPOSITS_REST_SERVICE_TLS should be consistent and set for client also.
 Uncomment any request function if not desired.
+User value as
+```export DEPOSITS_REST_SERVICE_ADDRESS=restserversvc.127.0.0.1.nip.io```
+for Kubernetes Ingress 
+otherwise use
+```export DEPOSITS_REST_SERVICE_ADDRESS=localhost:3000```
 
+Example:
 ```shell
 export GODEBUG=x509ignoreCN=0
 export DEPOSITS_REST_SERVICE_TLS=true
+export DEPOSITS_REST_SERVICE_ADDRESS=localhost:3000
 go run ./cmd/sanitytestclient
 ```
 
@@ -201,72 +278,10 @@ And if mongodb not connecting for tests: (reference: https://www.xspdf.com/help/
 docker volume rm $(docker volume ls -qf dangling=true)
 ```
 
-# Kubernetes Deployment Manually -WIP
-(for Better control; For Local Setup tested with Docker Desktop latest version with Kubernetes Enabled)  
-
-
-### Push Images to Docker Hub
-
-```shell
-docker build -t rsachdeva/illuminatingdeposits.rest.server:v1.3.0 -f ./build/Dockerfile.rest.server .  
-docker push rsachdeva/illuminatingdeposits.rest.server:v1.3.0
-docker build -t rsachdeva/illuminatingdeposits.seed:v1.3.0 -f ./build/Dockerfile.seed .  
-docker push rsachdeva/illuminatingdeposits.seed:v1.3.0
-``` 
-
-### Start postgres service
-
-```shell
-kubectl apply -f deploy/kubernetes/postgres-env.yaml 
-kubectl apply -f deploy/kubernetes/postgres.yaml
-kubectl logs pod/postgres-deposits-0
-```
-
-### Then Migrate and set up seed data:
-First should see in logs
-database system is ready to accept connections
-And then execute migration/seed data for manual control when getting started:
-```shell
-kubectl apply -f deploy/kubernetes/seed.yaml
-kubectl get pod
-```
-And if status shows completed for seed pod, optionally can be deleted:
-```shell
-kubectl delete -f deploy/kubernetes/seed.yaml
-```
-To connect external tool with postgres to see database internals use:
-Use a connection string similar to:
-jdbc:postgresql://127.0.0.1:30007/postgres
-If still an issue you can try
-kubectl port-forward service/postgres 5432:postgres
-Now can easily connect using
-jdbc:postgresql://localhost:5432/postgres
-
-
-### Installing Ingress controller
-Using helm to install traefik ingress controller
-```shell
-helm repo add traefik https://helm.traefik.io/traefik
-helm install traefik traefik/traefik
-```
-If in case needed to uninstall, use 
-
-```helm uninstall traefik```
-
-### Start tracing service
-
-```shell
-kubectl apply -f deploy/kubernetes/zipkin.yaml    
-kubectl apply -f deploy/kubernetes/zipkin-ingress.yaml
-```
-
-### Distributed Tracing with Kubernetes Ingress
-
-Access [zipkin](https://zipkin.io/) service at [http://zipkin.127.0.0.1.nip.io/zipkin/](http://zipkin.127.0.0.1.nip.io/zipkin/)
 
 ### Remove all resources / Shutdown
 
 kubectl delete -f ./deploy/kubernetes/.
 
 # Version
-v1.3.25
+v1.3.50

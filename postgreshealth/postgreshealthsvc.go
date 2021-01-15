@@ -45,5 +45,6 @@ func (c service) Health(ctx context.Context, w http.ResponseWriter, _ *http.Requ
 func RegisterSvc(db *sqlx.DB, rt *muxhttp.Router) {
 	// Register health check handler. This jsonfmt is not authenticated.
 	c := service{db: db}
+	log.Println("registering /v1/health route")
 	rt.Handle(http.MethodGet, "/v1/health", c.Health)
 }

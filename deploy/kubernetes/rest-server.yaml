@@ -1,23 +1,23 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: restserver
+  name: restserversvc
   labels:
-    app: restserver
+    app: restserversvc
 spec:
   # at least 2 for production
   replicas: 1
   selector:
     matchLabels:
-      app: restserver
+      app: restserversvc
   template:
     metadata:
       labels:
-        app: restserver
+        app: restserversvc
     spec:
       containers:
-        - name: restserver
-          image: rsachdeva/illuminatingdeposits.rest.server:v1.3.0
+        - name: restserversvc
+          image: rsachdeva/illuminatingdeposits.rest.server:v1.3.50
           ports:
             - containerPort: 3000
               name: httpserver
@@ -29,6 +29,8 @@ spec:
           env:
             - name: DEPOSITS_REST_SERVICE_TLS
               value: "false"
+            - name: DEPOSITS_WEB_ADDRESS
+              value: "0.0.0.0:3000"
             - name: POSTGRES_PASSWORD
               valueFrom:
                 secretKeyRef:
@@ -55,18 +57,36 @@ spec:
       # for container
       targetPort: 4000
   selector:
-    app: restserver
+    app: restserversvc
 ---
+#apiVersion: networking.k8s.io/v1beta1
+#  kind: Ingress
+#  metadata:
+#    annotations:
+#      kubernetes.io/ingress.class: nginx
+#    name: example
+#    namespace: foo
+#  spec:
+#    rules:
+#      - host: www.example.com
+#        http:
+#          paths:
+#            - backend:
+#                serviceName: exampleService
+#                servicePort: 80
+#              path: /
 apiVersion: networking.k8s.io/v1beta1
 kind: Ingress
 metadata:
-  name: restserveringress
+  name: restserversvc
+  annotations:
+    kubernetes.io/ingress.class: nginx
 spec:
   rules:
-    - host: depositsrest.127.0.0.1.nip.io
+    - host: restserversvc.127.0.0.1.nip.io
       http:
         paths:
-          - path: /
+          - path: /v1/health
             backend:
               serviceName: restserversvc
               #  for service port exposed; not for container directly
@@ -74,7 +94,7 @@ spec:
     - host: debugdepositsrest.127.0.0.1.nip.io
       http:
         paths:
-            - path: /
+            - path: /debug/pprof
               backend:
                 serviceName: restserversvc
                 #  for service port exposed; not for container directly

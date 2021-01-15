@@ -46,6 +46,8 @@ apiVersion: networking.k8s.io/v1beta1
 kind: Ingress
 metadata:
   name: zipkin
+  annotations:
+    kubernetes.io/ingress.class: nginx
 spec:
   rules:
     - host: zipkin.127.0.0.1.nip.io
