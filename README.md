@@ -227,19 +227,8 @@ kubectl apply -f deploy/kubernetes/postgres-seed.yaml
 ```
 And if status shows completed for seed pod,
 ```shell
-kubectl delete -f deploy/kubernetes/postgres-seed.yaml
+kubectl apply -f deploy/kubernetes/postgres-seed.yaml
 ```
-
-### Start tracing service
-
-```shell
-kubectl apply -f deploy/kubernetes/traefik-ingress-daemonset-service.yaml 
-
-kubectl apply -f deploy/kubernetes/zipkin-deployment.yaml   
-kubectl apply -f deploy/kubernetes/zipkin-service.yaml   
-kubectl apply -f deploy/kubernetes/zipkin-ingress.yaml
-``` 
-
 To connect external tool with postgres to see database internals use:
 Use a connection string similar to:
 jdbc:postgresql://127.0.0.1:30007/postgres
@@ -248,15 +237,33 @@ kubectl port-forward service/postgres 5432:postgres
 Now can easily connect using
 jdbc:postgresql://localhost:5432/postgres
 
-Access Traefik Dashboard at [http://localhost:3000/dashboard/#/](http://localhost:3000/dashboard/#/)
+
+### Installing Ingress controller
+Using helm to install traefik ingress controller
+```shell
+helm repo add traefik https://helm.traefik.io/traefik
+helm install traefik traefik/traefik
+```
+If in case needed to uninstall, use 
+
+```helm uninstall traefik```
+
+### Start tracing service
+
+```shell
+kubectl apply -f deploy/kubernetes/zipkin.yaml    
+kubectl apply -f deploy/kubernetes/zipkin-ingress.yaml
+``` 
+
+
 
 ### Distributed Tracing with Kubernetes Ingress
 
-Access [zipkin](https://zipkin.io/) service at [http://zipkin.127.0.0.1.nip.io/zipkin](http://zipkin.127.0.0.1.nip.io/zipkin)
+Access [zipkin](https://zipkin.io/) service at [http://zipkin.127.0.0.1.nip.io/zipkin/](http://zipkin.127.0.0.1.nip.io/zipkin/)
 
-### Shutdown
+### Remove all resources / Shutdown
 
-kubectl delete -f deploy/kubernetes/.
+kubectl delete -f ./deploy/kubernetes/.
 
 # Version
-v1.3.22
+v1.3.23

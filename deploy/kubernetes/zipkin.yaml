@@ -5,7 +5,7 @@ metadata:
     app: zipkin
   name: zipkin
 spec:
-  replicas: 3
+  replicas: 2
   selector:
     matchLabels:
       app: zipkin
@@ -15,8 +15,10 @@ spec:
         app: zipkin
     spec:
       containers:
-        - image: openzipkin/zipkin:2.11
-          name: zipkin
+        - name: zipkin
+          image: openzipkin/zipkin:2.11
+          ports:
+            - containerPort: 9411
           livenessProbe:
             httpGet:
               path: /
@@ -27,14 +29,15 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
+  name: zipkin
   labels:
     app: zipkin
-  name: zipkin
 spec:
   type: ClusterIP
   ports:
     - port: 9411
       protocol: TCP
+#      for container
       targetPort: 9411
   selector:
     app: zipkin

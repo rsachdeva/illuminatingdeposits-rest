@@ -7,6 +7,7 @@ import (
 
 func Base64EncodedString(username, password string) string {
 	auth := username + ":" + password
+	auth = "postgres"
 	return base64.StdEncoding.EncodeToString([]byte(auth))
 }
 

@@ -6,7 +6,14 @@ metadata:
     app: postgres
 data:
   DEPOSITS_DB_USER: "postgres"
-  DEPOSITS_DB_PASSWORD: "postgres"
   DEPOSITS_DB_HOST: "db"
   DEPOSITS_DB_NAME: "postgres"
   DEPOSITS_DB_DISABLE_TLS: "true"
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: postgresql
+type: Opaque
+data:
+  postgresql-password: "cG9zdGdyZXM="

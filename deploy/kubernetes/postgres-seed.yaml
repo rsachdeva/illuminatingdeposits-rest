@@ -3,6 +3,7 @@ kind: Job
 metadata:
   name: seed
 spec:
+  backoffLimit: 10
   template:
     metadata:
       name: seed
@@ -17,4 +18,10 @@ spec:
           envFrom:
             - configMapRef:
                 name: postgres-config-deposits
+          env:
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgresql
+                  key: postgresql-password
       restartPolicy: Never

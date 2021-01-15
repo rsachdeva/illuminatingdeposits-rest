@@ -4,7 +4,7 @@ metadata:
   name: postgres-deposits
 spec:
   serviceName: "postgres"
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: postgres
@@ -16,12 +16,26 @@ spec:
       containers:
         - name: postgres
           image: postgres:11.1-alpine
-          envFrom:
-            - configMapRef:
-                name: postgres-config-deposits
+          env:
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgresql
+                  key: postgresql-password
           ports:
             - containerPort: 5432
               name: postgredb
+          livenessProbe:
+            exec:
+              command:
+                - /bin/sh
+                - -c
+                - exec pg_isready -U "postgres" -h 127.0.0.1 -p 5432
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            successThreshold: 1
+            failureThreshold: 6
           volumeMounts:
             - name: postgredb
               mountPath: /var/lib/postgresql/data
