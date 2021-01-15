@@ -1,0 +1,81 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: restserver
+  labels:
+    app: restserver
+spec:
+  # at least 2 for production
+  replicas: 1
+  selector:
+    matchLabels:
+      app: restserver
+  template:
+    metadata:
+      labels:
+        app: restserver
+    spec:
+      containers:
+        - name: restserver
+          image: rsachdeva/illuminatingdeposits.rest.server:v1.3.0
+          ports:
+            - containerPort: 3000
+              name: httpserver
+            - containerPort: 4000
+              name: debug
+          envFrom:
+            - configMapRef:
+                name: postgres-config-deposits
+          env:
+            - name: DEPOSITS_REST_SERVICE_TLS
+              value: "false"
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgresql
+                  key: postgresql-password
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: restserversvc
+  labels:
+    app: restserversvc
+spec:
+  type: ClusterIP
+  ports:
+    - name: httpserver
+      port: 3000
+      protocol: TCP
+      # for container
+      targetPort: 3000
+    - name: debug
+      port: 4000
+      protocol: TCP
+      # for container
+      targetPort: 4000
+  selector:
+    app: restserver
+---
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: restserveringress
+spec:
+  rules:
+    - host: depositsrest.127.0.0.1.nip.io
+      http:
+        paths:
+          - path: /
+            backend:
+              serviceName: restserversvc
+              #  for service port exposed; not for container directly
+              servicePort: 3000
+    - host: debugdepositsrest.127.0.0.1.nip.io
+      http:
+        paths:
+            - path: /
+              backend:
+                serviceName: restserversvc
+                #  for service port exposed; not for container directly
+                servicePort: 4000

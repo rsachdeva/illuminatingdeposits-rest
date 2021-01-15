@@ -20,7 +20,8 @@ import (
 )
 
 const (
-	address  = "localhost:3000"
+	// address  = "localhost:3000"
+	address  = "depositsrest.127.0.0.1.nip.io"
 	emailFmt = "growth-%v@drinnovations.us"
 )
 
@@ -44,13 +45,13 @@ func main() {
 	email := fmt.Sprintf(emailFmt, uuid.New().String())
 
 	nonAccessTokenRequests(client, prefix, email)
-	accessToken := requestPostCreateToken(client, prefix, email, false)
-	accessTokenRequiredRequests(accessToken, client, prefix)
+	// accessToken := requestPostCreateToken(client, prefix, email, false)
+	// accessTokenRequiredRequests(accessToken, client, prefix)
 }
 
 func nonAccessTokenRequests(client *http.Client, prefix string, email string) {
 	requestGetDbHealth(client, prefix)
-	requestPostCreateUser(client, prefix, email)
+	// requestPostCreateUser(client, prefix, email)
 }
 
 func accessTokenRequiredRequests(accessToken string, client *http.Client, prefix string) {
@@ -79,7 +80,9 @@ func tlsClient() (*http.Client, error) {
 
 func requestGetDbHealth(client *http.Client, prefix string) {
 	fmt.Println("executing tLSGetRequestHealth()")
-	resp, err := client.Get(fmt.Sprintf("%v%v/v1/health", prefix, address))
+	u := fmt.Sprintf("%v%v/v1/health", prefix, address)
+	fmt.Println("u is ", u)
+	resp, err := client.Get(u)
 	if err != nil {
 		log.Fatalf("err in get is %v", err)
 	}
@@ -89,6 +92,7 @@ func requestGetDbHealth(client *http.Client, prefix string) {
 		log.Fatalf("err reading response %v", err)
 	}
 	fmt.Println("body is ", string(body))
+	fmt.Println("res.Status is", resp.Status)
 }
 
 func requestPostCreateUser(client *http.Client, prefix string, email string) {

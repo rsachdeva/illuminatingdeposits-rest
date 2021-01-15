@@ -41,3 +41,18 @@ spec:
       targetPort: 9411
   selector:
     app: zipkin
+---
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: zipkin
+spec:
+  rules:
+    - host: zipkin.127.0.0.1.nip.io
+      http:
+        paths:
+          - path: /
+            backend:
+              serviceName: zipkin
+              #  for service port exposed; not for container directly
+              servicePort: 9411

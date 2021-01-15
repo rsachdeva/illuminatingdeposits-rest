@@ -26,7 +26,7 @@
 - Docker support
 - Docker compose deployment for development
 
-## Docker Compose Deployment
+# Docker Compose Deployment
 
 ### Start postgres and tracing services
 ```shell
@@ -81,7 +81,8 @@ docker build -f ./build/Dockerfile.calculate -t illumcalculate  . && \
 docker run illumcalculate 
 ```
 
-### To start only external db and trace service for working with local machine Editor/IDE:
+# Editor/IDE without docker/docker compose 
+To start only external db and trace service for working with local machine:  
 Start postgres and tracing as usual
 export COMPOSE_IGNORE_ORPHANS=True && \
 docker-compose -f ./deploy/compose/docker-compose.external-db-trace-only.yml up
@@ -102,18 +103,19 @@ export DEPOSITS_TRACE_URL=http://127.0.0.1:9411/api/v2/spans
 go run ./cmd/server
 ```
 
-### REST HTTP Services Endpoints Invoked:
+# REST HTTP Services Endpoints Invoked Externally:
 
 #### Sanity test Client:
 The server side DEPOSITS_REST_SERVICE_TLS should be consistent and set for client also.
 Uncomment any request function if not desired.
 
-```shell 
+```shell
 export GODEBUG=x509ignoreCN=0
+export DEPOSITS_REST_SERVICE_TLS=true
 go run ./cmd/sanitytestclient
 ```
 
-### TLS files
+# TLS files
 ```shell
 docker build -t tlscert:v0.1 -f ./build/Dockerfile.openssl ./conf/tls && \
 docker run -v $PWD/conf/tls:/tls tlscert:v0.1
@@ -133,7 +135,7 @@ Check version using command:
 openssl version
 ```
 
-### Troubleshooting
+# Troubleshooting
 If for any reason no connection is happening from client to server or client hangs or server start up issues:
 Run
 ```
@@ -199,7 +201,9 @@ And if mongodb not connecting for tests: (reference: https://www.xspdf.com/help/
 docker volume rm $(docker volume ls -qf dangling=true)
 ```
 
-## Kubernetes Deployment Manually (for Better control; For Local Setup can use Docker Desktop)- WIP
+# Kubernetes Deployment Manually -WIP
+(for Better control; For Local Setup tested with Docker Desktop latest version with Kubernetes Enabled)  
+
 
 ### Push Images to Docker Hub
 
@@ -213,7 +217,7 @@ docker push rsachdeva/illuminatingdeposits.seed:v1.3.0
 ### Start postgres service
 
 ```shell
-kubectl apply -f deploy/kubernetes/postgres-config.yaml 
+kubectl apply -f deploy/kubernetes/postgres-env.yaml 
 kubectl apply -f deploy/kubernetes/postgres.yaml
 kubectl logs pod/postgres-deposits-0
 ```
@@ -223,11 +227,12 @@ First should see in logs
 database system is ready to accept connections
 And then execute migration/seed data for manual control when getting started:
 ```shell
-kubectl apply -f deploy/kubernetes/postgres-seed.yaml
+kubectl apply -f deploy/kubernetes/seed.yaml
+kubectl get pod
 ```
-And if status shows completed for seed pod,
+And if status shows completed for seed pod, optionally can be deleted:
 ```shell
-kubectl apply -f deploy/kubernetes/postgres-seed.yaml
+kubectl delete -f deploy/kubernetes/seed.yaml
 ```
 To connect external tool with postgres to see database internals use:
 Use a connection string similar to:
@@ -253,9 +258,7 @@ If in case needed to uninstall, use
 ```shell
 kubectl apply -f deploy/kubernetes/zipkin.yaml    
 kubectl apply -f deploy/kubernetes/zipkin-ingress.yaml
-``` 
-
-
+```
 
 ### Distributed Tracing with Kubernetes Ingress
 
@@ -266,4 +269,4 @@ Access [zipkin](https://zipkin.io/) service at [http://zipkin.127.0.0.1.nip.io/z
 kubectl delete -f ./deploy/kubernetes/.
 
 # Version
-v1.3.23
+v1.3.25

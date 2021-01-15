@@ -3,6 +3,7 @@ package postgreshealth
 
 import (
 	"context"
+	"log"
 	"net/http"
 
 	"github.com/jmoiron/sqlx"
@@ -21,6 +22,7 @@ type service struct {
 
 // Health validates the jsonfmt is healthy and ready to accept requests.
 func (c service) Health(ctx context.Context, w http.ResponseWriter, _ *http.Request) error {
+	log.Println("in Health service")
 	ctx, span := trace.StartSpan(ctx, "postgresconn.service.Health")
 	defer span.End()
 
