@@ -84,13 +84,14 @@ docker run illumcalculate
 # Kubernetes Deployment Manually -WIP
 (for Better control; For Local Setup tested with Docker Desktop latest version with Kubernetes Enabled)
 
-### Push Images to Docker Hub
+### Make docker images and Push Images to Docker Hub
 
 ```shell
-docker build -t rsachdeva/illuminatingdeposits.rest.server:v1.3.0 -f ./build/Dockerfile.rest.server .  
-docker push rsachdeva/illuminatingdeposits.rest.server:v1.3.0
-docker build -t rsachdeva/illuminatingdeposits.seed:v1.3.0 -f ./build/Dockerfile.seed .  
-docker push rsachdeva/illuminatingdeposits.seed:v1.3.0
+docker build -t rsachdeva/illuminatingdeposits.rest.server:v1.3.60 -f ./build/Dockerfile.rest.server .  
+docker build -t rsachdeva/illuminatingdeposits.seed:v1.3.60 -f ./build/Dockerfile.seed .  
+
+docker push rsachdeva/illuminatingdeposits.rest.server:v1.3.60
+docker push rsachdeva/illuminatingdeposits.seed:v1.3.60
 ``` 
 
 ### Start postgres service
@@ -98,18 +99,18 @@ docker push rsachdeva/illuminatingdeposits.seed:v1.3.0
 ```shell
 kubectl apply -f deploy/kubernetes/postgres-env.yaml 
 kubectl apply -f deploy/kubernetes/postgres.yaml
-kubectl logs pod/postgres-deposits-0
 ```
 
-### Then Migrate and set up seed data:
+### Then Migrate and set up seed data manually for more control initially:
 First should see in logs
 database system is ready to accept connections
+```kubectl logs pod/postgres-deposits-0```
 And then execute migration/seed data for manual control when getting started:
 ```shell
 kubectl apply -f deploy/kubernetes/seed.yaml
-kubectl get pod
 ```
-And if status shows completed for seed pod, optionally can be deleted:
+And if status for ```kubectl get pod``` 
+shows completed for seed pod, optionally can be deleted:
 ```shell
 kubectl delete -f deploy/kubernetes/seed.yaml
 ```
@@ -125,103 +126,62 @@ jdbc:postgresql://localhost:5432/postgres
 ### Installing Ingress controller
 Using helm to install nginx ingress controller
 ```shell
+brew install helm
 helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
 helm repo update
-
-helm install ingress-nginx ingress-nginx/ingress-nginx
 ```
-If in case needed to uninstall, use
-
-```helm uninstall ingress-nginx```
+and then use 
+```helm install ingress-nginx ingress-nginx/ingress-nginx```
+to install ingress controller
 
 ### Start tracing service
+```shell
+kubectl apply -f deploy/kubernetes/zipkin.yaml
+```
+##### Distributed Tracing with Kubernetes Ingress
+Access [zipkin](https://zipkin.io/) service at [http://zipkin.127.0.0.1.nip.io](http://zipkin.127.0.0.1.nip.io)
+Sort Newest First and Click Find Traces
+
+### Illuminating deposists Rest server in Kubernetes!
+```shell
+kubectl apply -f deploy/kubernetes/rest-server.yaml
+```
+And see logs using 
+```kubectl logs -l app=restserversvc -f```
+
+### Remove all resources / Shutdown
 
 ```shell
-kubectl apply -f deploy/kubernetes/zipkin.yaml    
-kubectl apply -f deploy/kubernetes/zipkin-ingress.yaml
+kubectl delete -f ./deploy/kubernetes/.
+helm uninstall ingress-nginx
 ```
 
-### Distributed Tracing with Kubernetes Ingress
-
-Access [zipkin](https://zipkin.io/) service at [http://zipkin.127.0.0.1.nip.io/zipkin/](http://zipkin.127.0.0.1.nip.io/zipkin/)
-
-
-### Rest server in Kubernetes!
-```shell 
-kubectl logs -l app=restserversvc -f
-```
-
-# Editor/IDE without docker/docker compose/kubernetes 
-To start only external db and trace service for working with local machine:  
-Start postgres and tracing as usual
-export COMPOSE_IGNORE_ORPHANS=True && \
-docker-compose -f ./deploy/compose/docker-compose.external-db-trace-only.yml up
-
-##### Then Migrate and set up seed data:
-```shell
-export COMPOSE_IGNORE_ORPHANS=True && \
-docker-compose -f ./deploy/compose/docker-compose.seed.yml up --build
-````
-
-Then Set the following env variables when starting directly running server: change as needed
-And per your Editor/IDE:
-```shell
-export DEPOSITS_REST_SERVICE_TLS=true
-export DEPOSITS_DB_DISABLE_TLS=true
-export DEPOSITS_DB_HOST=127.0.0.1
-export DEPOSITS_TRACE_URL=http://127.0.0.1:9411/api/v2/spans
-go run ./cmd/server
-```
-
-# REST HTTP Services Endpoints Invoked Externally:
-
-#### Sanity test Client:
-The server side DEPOSITS_REST_SERVICE_TLS should be consistent and set for client also.
-Uncomment any request function if not desired.
-User value as
+# Sanity test Client -REST HTTP Services Endpoints Invoked Externally:
+Use env as
 ```export DEPOSITS_REST_SERVICE_ADDRESS=restserversvc.127.0.0.1.nip.io```
 for Kubernetes Ingress 
 otherwise use
 ```export DEPOSITS_REST_SERVICE_ADDRESS=localhost:3000```
+Similarly,
+The server side DEPOSITS_REST_SERVICE_TLS should be consistent and set for client also.
+```export DEPOSITS_REST_SERVICE_TLS=false```
 
 Example:
 ```shell
 export GODEBUG=x509ignoreCN=0
-export DEPOSITS_REST_SERVICE_TLS=true
-export DEPOSITS_REST_SERVICE_ADDRESS=localhost:3000
+export DEPOSITS_REST_SERVICE_TLS=false
+export DEPOSITS_REST_SERVICE_ADDRESS=restserversvc.127.0.0.1.nip.io
 go run ./cmd/sanitytestclient
 ```
 
-# TLS files
-```shell
-docker build -t tlscert:v0.1 -f ./build/Dockerfile.openssl ./conf/tls && \
-docker run -v $PWD/conf/tls:/tls tlscert:v0.1
-``` 
-
-To see openssl version being used in Docker:
-```shell
-docker build -t tlscert:v0.1 -f ./build/Dockerfile.openssl ./conf/tls && \
-docker run -ti -v $PWD/conf/tls:/tls tlscert:v0.1 sh
-```
-
-You get a prompt
-/tls
-
-Check version using command:
-```shell
-openssl version
-```
-
-# Troubleshooting
-If for any reason no connection is happening from client to server or client hangs or server start up issues:
-Run
-```
-ps aux | grep "go run"
-ps aux | grep "go_build" 
-```
-
-to confirm is something else is already running
-
+With this Sanity test client, you will be able to:
+- get status of Prostres DB
+- add a new user
+- JWT generation for Authentication
+- JWT Authentication for Interest Delta Calculations for each deposit; each bank with all deposits and all banks
+Quickly confirms Sanity check for the Envirinment set up with Kubernetes/Docker. 
+There are also separate Integration and Unit tests.
+  
 # Running Integration/Unit tests
 Tests are designed to run in parallel with its own test server and docker based postgres db using dockertest.
 To run all tests with coverages reports for focussed packages:
@@ -278,10 +238,57 @@ And if mongodb not connecting for tests: (reference: https://www.xspdf.com/help/
 docker volume rm $(docker volume ls -qf dangling=true)
 ```
 
+# TLS files
+```shell
+docker build -t tlscert:v0.1 -f ./build/Dockerfile.openssl ./conf/tls && \
+docker run -v $PWD/conf/tls:/tls tlscert:v0.1
+``` 
 
-### Remove all resources / Shutdown
+To see openssl version being used in Docker:
+```shell
+docker build -t tlscert:v0.1 -f ./build/Dockerfile.openssl ./conf/tls && \
+docker run -ti -v $PWD/conf/tls:/tls tlscert:v0.1 sh
+```
 
-kubectl delete -f ./deploy/kubernetes/.
+You get a prompt
+/tls
+
+Check version using command:
+```shell
+openssl version
+```
+
+# Editor/IDE development without docker/docker compose/kubernetes as described above
+To start only external db and trace service for working with local machine:  
+Start postgres and tracing as usual
+export COMPOSE_IGNORE_ORPHANS=True && \
+docker-compose -f ./deploy/compose/docker-compose.external-db-trace-only.yml up
+
+##### Then Migrate and set up seed data:
+```shell
+export COMPOSE_IGNORE_ORPHANS=True && \
+docker-compose -f ./deploy/compose/docker-compose.seed.yml up --build
+````
+
+Then Set the following env variables when starting directly running server: change as needed
+And per your Editor/IDE:
+```shell
+export DEPOSITS_REST_SERVICE_TLS=true
+export DEPOSITS_DB_DISABLE_TLS=true
+export DEPOSITS_DB_HOST=127.0.0.1
+export DEPOSITS_TRACE_URL=http://127.0.0.1:9411/api/v2/spans
+go run ./cmd/server
+```
+
+# Troubleshooting
+If for any reason no connection is happening from client to server or client hangs or server start up issues:
+Run
+```
+ps aux | grep "go run"
+ps aux | grep "go_build" 
+```
+
+to confirm is something else is already running
 
 # Version
-v1.3.50
+v1.3.51

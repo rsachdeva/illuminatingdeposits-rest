@@ -29,7 +29,7 @@ func requestPostCreateToken(client *http.Client, prefix string, email string, us
 }
 
 func createToken(client *http.Client, prefix string, email string) string {
-	url := fmt.Sprintf("%vlocalhost:3000/v1/users/token", prefix)
+	url := fmt.Sprintf("%v%v/v1/users/token", prefix, svcAddress())
 	method := "POST"
 	vusr := fmt.Sprintf(`{
 		"verify_user": {

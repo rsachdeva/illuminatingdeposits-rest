@@ -43,13 +43,13 @@ func main() {
 	email := fmt.Sprintf(emailFmt, uuid.New().String())
 
 	nonAccessTokenRequests(client, prefix, email)
-	// accessToken := requestPostCreateToken(client, prefix, email, false)
-	// accessTokenRequiredRequests(accessToken, client, prefix)
+	accessToken := requestPostCreateToken(client, prefix, email, false)
+	accessTokenRequiredRequests(accessToken, client, prefix)
 }
 
 func nonAccessTokenRequests(client *http.Client, prefix string, email string) {
 	requestGetDbHealth(client, prefix)
-	// requestPostCreateUser(client, prefix, email)
+	requestPostCreateUser(client, prefix, email)
 }
 
 func accessTokenRequiredRequests(accessToken string, client *http.Client, prefix string) {

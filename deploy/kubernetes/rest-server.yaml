@@ -17,7 +17,8 @@ spec:
     spec:
       containers:
         - name: restserversvc
-          image: rsachdeva/illuminatingdeposits.rest.server:v1.3.50
+          image: rsachdeva/illuminatingdeposits.rest.server:v1.3.60
+          imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 3000
               name: httpserver
@@ -86,7 +87,7 @@ spec:
     - host: restserversvc.127.0.0.1.nip.io
       http:
         paths:
-          - path: /v1/health
+          - path: /
             backend:
               serviceName: restserversvc
               #  for service port exposed; not for container directly

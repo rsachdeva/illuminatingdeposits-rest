@@ -10,7 +10,8 @@ spec:
     spec:
       containers:
         - name: seed
-          image: rsachdeva/illuminatingdeposits.seed:v1.3.0
+          image: rsachdeva/illuminatingdeposits.seed:v1.3.51
+          imagePullPolicy: IfNotPresent
           command:
             - "bash"
             - "-c"
