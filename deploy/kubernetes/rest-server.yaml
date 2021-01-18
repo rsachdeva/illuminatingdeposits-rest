@@ -83,8 +83,12 @@ metadata:
   annotations:
     kubernetes.io/ingress.class: nginx
 spec:
+  tls:
+    - hosts:
+       - restserversvc.us
+      secretName: illuminatingdeposits-rest-secret-tls
   rules:
-    - host: restserversvc.127.0.0.1.nip.io
+    - host: restserversvc.us
       http:
         paths:
           - path: /
@@ -92,7 +96,7 @@ spec:
               serviceName: restserversvc
               #  for service port exposed; not for container directly
               servicePort: 3000
-    - host: debugdepositsrest.127.0.0.1.nip.io
+    - host: debugrestserversvc.us
       http:
         paths:
             - path: /debug/pprof

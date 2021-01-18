@@ -134,6 +134,7 @@ and then use
 ```helm install ingress-nginx ingress-nginx/ingress-nginx```
 to install ingress controller
 
+```
 ### Start tracing service
 ```shell
 kubectl apply -f deploy/kubernetes/zipkin.yaml
@@ -291,4 +292,4 @@ ps aux | grep "go_build"
 to confirm is something else is already running
 
 # Version
-v1.3.51
+v1.3.60
