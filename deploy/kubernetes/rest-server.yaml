@@ -85,10 +85,10 @@ metadata:
 spec:
   tls:
     - hosts:
-       - restserversvc.us
+       - restserversvc.127.0.0.1.nip.io
       secretName: illuminatingdeposits-rest-secret-tls
   rules:
-    - host: restserversvc.us
+    - host: restserversvc.127.0.0.1.nip.io
       http:
         paths:
           - path: /
@@ -96,7 +96,7 @@ spec:
               serviceName: restserversvc
               #  for service port exposed; not for container directly
               servicePort: 3000
-    - host: debugrestserversvc.us
+    - host: debugdepositsrest.127.0.0.1.nip.io
       http:
         paths:
             - path: /debug/pprof

@@ -1,7 +1,7 @@
 #!/bin/bash
 # This script is executed by Dockerfile.openssl
 
-HOST=restserversvc.us
+HOST=restserversvc.127.0.0.1.nip.io
 
 # out ca.key
 openssl genrsa -passout pass:1111 -des3 -out ca.key 4096
