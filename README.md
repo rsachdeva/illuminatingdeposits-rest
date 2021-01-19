@@ -165,12 +165,13 @@ otherwise use
 ```export DEPOSITS_REST_SERVICE_ADDRESS=localhost:3000```
 Similarly,
 The server side DEPOSITS_REST_SERVICE_TLS should be consistent and set for client also.
-```export DEPOSITS_REST_SERVICE_TLS=false```
+The DEPOSITS_REST_SERVICE_TLS for client is true when Ingress is used with tls.
+```export DEPOSITS_REST_SERVICE_TLS=true```
 
 Example:
 ```shell
 export GODEBUG=x509ignoreCN=0
-export DEPOSITS_REST_SERVICE_TLS=false
+export DEPOSITS_REST_SERVICE_TLS=true
 export DEPOSITS_REST_SERVICE_ADDRESS=restserversvc.127.0.0.1.nip.io
 go run ./cmd/sanitytestclient
 ```
