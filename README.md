@@ -131,8 +131,12 @@ helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
 helm repo update
 ```
 and then use 
-```helm install ingress-nginx ingress-nginx/ingress-nginx```
+```shell
+helm install -f ./deploy/kubernetes/values-nginx-ingress.yaml ingress-nginx ingress-nginx/ingress-nginx
+```
 to install ingress controller
+To see logs for nginx ingress controller:
+```kubectl logs -l app.kubernetes.io/name=ingress-nginx -f```
 
 ```
 ### Start tracing service
