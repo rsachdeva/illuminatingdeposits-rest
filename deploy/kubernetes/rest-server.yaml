@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: restserversvc
-          image: rsachdeva/illuminatingdeposits.rest.server:v1.3.60
+          image: rsachdeva/illuminatingdeposits.rest.server:v1.4.0
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 3000

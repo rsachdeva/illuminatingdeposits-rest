@@ -1,7 +1,15 @@
 #!/bin/bash
 # This script is executed by Dockerfile.openssl
 
-HOST=restserversvc.127.0.0.1.nip.io
+if [[ -z $DEPOSITS_REST_SERVICE_ADDRESS ]]; then
+  echo DEPOSITS_REST_SERVICE_ADDRESS not provided so please export DEPOSITS_REST_SERVICE_ADDRESS
+  exit 1
+else
+  echo EPOSITS_GRPC_SERVICE_ADDRESS=$DEPOSITS_REST_SERVICE_ADDRESS is provided
+fi
+
+HOST=$DEPOSITS_REST_SERVICE_ADDRESS
+
 
 # out ca.key
 openssl genrsa -passout pass:1111 -des3 -out ca.key 4096
