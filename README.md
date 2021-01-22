@@ -205,6 +205,7 @@ shows completed for seed pod, optionally can be deleted:
 ```shell
 kubectl delete -f deploy/kubernetes/seed.yaml
 ```
+Allows connecting Postgres UI using NodePort at 30007 from outside cluster locally to view data.
 
 ### Detailed - Step by Step
 

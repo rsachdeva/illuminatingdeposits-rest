@@ -77,7 +77,7 @@ func tlsClient() (*http.Client, error) {
 }
 
 func requestGetDbHealth(client *http.Client, prefix string) {
-	fmt.Println("executing tLSGetRequestHealth()")
+	log.Println("=============executing tLSGetRequestHealth()=============")
 	url := fmt.Sprintf("%v%v/v1/health", prefix, svcAddress())
 	fmt.Println("url is ", url)
 	resp, err := client.Get(url)
@@ -94,7 +94,7 @@ func requestGetDbHealth(client *http.Client, prefix string) {
 }
 
 func requestPostCreateUser(client *http.Client, prefix string, email string) {
-	fmt.Println("executing requestPostCreateUser()")
+	log.Println("=============executing requestPostCreateUser()=============")
 	url := fmt.Sprintf("%v%v/v1/users", prefix, svcAddress())
 	method := "POST"
 	usr := fmt.Sprintf(`{
@@ -131,7 +131,7 @@ func requestPostCreateUser(client *http.Client, prefix string, email string) {
 }
 
 func requestPostCreateInterest(accessToken string, client *http.Client, prefix string) {
-	fmt.Println("executing requestPostCreateInterest()")
+	log.Println("=============executing requestPostCreateInterest()=============")
 	url := fmt.Sprintf("%v%v/v1/interests", prefix, svcAddress())
 	method := "POST"
 	payload := strings.NewReader(`{

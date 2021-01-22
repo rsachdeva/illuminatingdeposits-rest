@@ -130,7 +130,6 @@ func NewServer(cfg AppConfig, tlc *tls.Config) *http.Server {
 	if tlc != nil {
 		server.TLSConfig = tlc
 	}
-	fmt.Println("server.TLSConfig is ", server.TLSConfig)
 	fmt.Println("DEPOSITS_DB_HOST is ", cfg.DB.Host)
 	fmt.Println("DEPOSITS_TRACE_URL is", cfg.Trace.URL)
 	fmt.Println("DEPOSITS_WEB_ADDRESS is", cfg.Web.Address)

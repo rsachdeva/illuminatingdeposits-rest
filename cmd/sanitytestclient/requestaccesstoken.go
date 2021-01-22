@@ -12,7 +12,7 @@ import (
 )
 
 func requestPostCreateToken(client *http.Client, prefix string, email string, useExpired bool) string {
-	fmt.Println("executing requestPostCreateToken()")
+	fmt.Println("=============executing requestPostCreateToken()=============")
 	var token string
 	if useExpired {
 		storedTk, err := ioutil.ReadFile("cmd/sanitytestclient/expiredtoken.data")

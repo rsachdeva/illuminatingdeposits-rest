@@ -75,7 +75,6 @@ func FindByEmail(ctx context.Context, db *sqlx.DB, email string) (User, error) {
 	usr := User{}
 
 	err := db.GetContext(ctx, &usr, db.Rebind("SELECT u.uuid, u.password_hash, u.roles, u.Email FROM users u WHERE u.email=?"), email)
-	fmt.Printf("\nusr just after Postgres query %#v", usr)
 	if err != nil {
 		return User{}, err
 	}
