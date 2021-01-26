@@ -11,7 +11,7 @@
 # Features include:
 - Golang (Go)  REST Http Service requests with json for Messages
 - TLS for all requests
-- Integration and Unit tests; run in parallel for faster feedback
+- Integration and Unit tests; run in parallel using dockertest for faster feedback
 - Coverage Result for key packages
 - Postgres DB health check service
 - User Management service with Postgres for user creation
@@ -22,11 +22,12 @@
     - each deposit
     - each bank with all deposits
     - all banks!
-- Sanity test client included
-- Docker support
+- Sanity test client included for settings for each deployment
+- Dockering and using it for both Docker Compose and Kubernetes
 - Docker compose deployment for development
 - Kuberenets Deployment with Ingress; Helm
-
+- Running from Editor/IDE directly included
+  
 # Docker Compose Deployment
 
 ### TLS files
