@@ -78,8 +78,6 @@ Access [zipkin](https://zipkin.io/) service at [http://localhost:9411/zipkin/](h
 
 ### Sanity test Client -REST HTTP Services Endpoints Invoked Externally:
 The server side DEPOSITS_REST_SERVICE_TLS should be consistent and set for client also.
-The DEPOSITS_REST_SERVICE_TLS for client is true when Ingress is used with tls.
-```export DEPOSITS_REST_SERVICE_TLS=true```
 ```shell
 export GODEBUG=x509ignoreCN=0
 export DEPOSITS_REST_SERVICE_TLS=true
@@ -134,8 +132,6 @@ go run ./cmd/server
 ```
 ### Sanity test Client -REST HTTP Services Endpoints Invoked Externally:
 The server side DEPOSITS_REST_SERVICE_TLS should be consistent and set for client also.
-The DEPOSITS_REST_SERVICE_TLS for client is true when Ingress is used with tls.
-```export DEPOSITS_REST_SERVICE_TLS=true```
 ```shell
 export GODEBUG=x509ignoreCN=0
 export DEPOSITS_REST_SERVICE_TLS=true
