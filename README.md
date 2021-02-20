@@ -27,6 +27,7 @@
 - Docker compose deployment for development
 - Kuberenets Deployment with Ingress; Helm
 - Running from Editor/IDE directly included
+- Tracing enabled using Zipkin for Observability
   
 # Docker Compose Deployment
 
@@ -65,16 +66,7 @@ COMPOSE_IGNORE_ORPHANS is there for
 docker compose [setting](https://docs.docker.com/compose/reference/envvars/#compose_ignore_orphans).
 
 ### Logs of running services (in a separate terminal):
-docker-compose -f ./deploy/compose/docker-compose.rest.server.yml logs -f --tail 1  
-
-### Distributed Tracing
-Access [zipkin](https://zipkin.io/) service at [http://localhost:9411/zipkin/](http://localhost:9411/zipkin/)  
-
-### Profiling
-[http://localhost:4000/debug/pprof/](http://localhost:4000/debug/pprof/)
-
-### Metrics
-[http://localhost:4000/debug/vars](http://localhost:4000/debug/vars)  
+docker-compose -f ./deploy/compose/docker-compose.rest.server.yml logs -f --tail 1
 
 ### Sanity test Client -REST HTTP Services Endpoints Invoked Externally:
 The server side DEPOSITS_REST_SERVICE_TLS should be consistent and set for client also.
@@ -84,6 +76,15 @@ export DEPOSITS_REST_SERVICE_TLS=true
 export DEPOSITS_REST_SERVICE_ADDRESS=localhost
 go run ./cmd/sanitytestclient
 ```
+
+### Server Tracing
+Access [zipkin](https://zipkin.io/) service at [http://localhost:9411/zipkin/](http://localhost:9411/zipkin/)
+
+### Profiling
+[http://localhost:4000/debug/pprof/](http://localhost:4000/debug/pprof/)
+
+### Metrics
+[http://localhost:4000/debug/vars](http://localhost:4000/debug/vars)
 
 ### Shutdown 
 ```shell
@@ -204,6 +205,29 @@ kubectl delete -f deploy/kubernetes/seed.yaml
 ```
 Allows connecting Postgres UI using NodePort at 30007 from outside cluster locally to view data.
 
+### Sanity test Client -REST HTTP Services Endpoints Invoked Externally:
+The server side DEPOSITS_REST_SERVICE_TLS should be consistent and set for client also.
+The DEPOSITS_REST_SERVICE_TLS for client is true when Ingress is used with tls.
+```export DEPOSITS_REST_SERVICE_TLS=true```
+
+```shell
+export GODEBUG=x509ignoreCN=0
+export DEPOSITS_REST_SERVICE_TLS=true
+export DEPOSITS_REST_SERVICE_ADDRESS=restserversvc.127.0.0.1.nip.io
+go run ./cmd/sanitytestclient
+```
+
+With this Sanity test client, you will be able to:
+- get status of Prostres DB
+- add a new user
+- JWT generation for Authentication
+- JWT Authentication for Interest Delta Calculations for each deposit; each bank with all deposits and all banks
+  Quickly confirms Sanity check for set up with Kubernetes/Docker.
+  There are also separate Integration and Unit tests.
+
+### Server Tracing
+Access [zipkin](https://zipkin.io/) service at [http://zipkin.127.0.0.1.nip.io](http://zipkin.127.0.0.1.nip.io)
+
 ### Detailed - Step by Step
 
 ##### Start postgres service
@@ -257,26 +281,6 @@ kubectl apply -f deploy/kubernetes/rest-server.yaml
 And see logs using 
 ```kubectl logs -l app=restserversvc -f```
 
-### Sanity test Client -REST HTTP Services Endpoints Invoked Externally:
-The server side DEPOSITS_REST_SERVICE_TLS should be consistent and set for client also.
-The DEPOSITS_REST_SERVICE_TLS for client is true when Ingress is used with tls.
-```export DEPOSITS_REST_SERVICE_TLS=true```
-
-```shell
-export GODEBUG=x509ignoreCN=0
-export DEPOSITS_REST_SERVICE_TLS=true
-export DEPOSITS_REST_SERVICE_ADDRESS=restserversvc.127.0.0.1.nip.io
-go run ./cmd/sanitytestclient
-```
-
-With this Sanity test client, you will be able to:
-- get status of Prostres DB
-- add a new user
-- JWT generation for Authentication
-- JWT Authentication for Interest Delta Calculations for each deposit; each bank with all deposits and all banks
-  Quickly confirms Sanity check for set up with Kubernetes/Docker.
-  There are also separate Integration and Unit tests.
-
 ### Remove all resources / Shutdown
 
 ```shell
@@ -290,8 +294,9 @@ Tests are designed to run in parallel with its own test server and docker based 
 To run all tests with coverages reports for focussed packages:
 Run following only once as tests use this image; so faster:
 ```shell 
-docker pull postgres:11.1-alpine
+docker pull postgres:13-alpine
 ``` 
+go test -v -count=1 -covermode=count -coverpkg=./postgreshealth/... -coverprofile cover.out ./postgreshealth -run TestServiceServer_HealthOk && go tool cover -func cover.out
 And then run the following with coverages for key packages concerned:
 ```shell
 go test -v -count=1 -covermode=count -coverpkg=./userauthn/...,./usermgmt/...,./postgreshealth/...,./interestcal/... -coverprofile cover.out ./... && go tool cover -func cover.out
@@ -299,6 +304,9 @@ go test -v -count=1 -covermode=count -coverpkg=./userauthn/...,./usermgmt/...,./
 ```
 Coverage Result for key packages:  
 **total:	(statements)	96.3%**  
+<p align="center">
+<img src="./coverageresults.png" alt="Illuminating Deposits REST Test Coverage" title="lluminating Deposits REST Test Coverage" />
+</p>
 
 To run a single test - no coverage:
 ```shell 

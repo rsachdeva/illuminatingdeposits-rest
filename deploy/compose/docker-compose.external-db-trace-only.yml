@@ -15,7 +15,7 @@ services:
     container_name: deposits_db
     networks:
       - deposits_shared_rest_network
-    image: postgres:11.1-alpine
+    image: postgres:13-alpine
     ports:
       - 5432:5432
     volumes:

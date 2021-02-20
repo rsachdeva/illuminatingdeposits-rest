@@ -42,6 +42,7 @@ func Migrate(db *sqlx.DB) error {
 
 	d := darwin.New(driver, migrations, nil)
 	err := d.Migrate()
+	log.Println("migrate err", err)
 	if err != nil {
 		return err
 	}

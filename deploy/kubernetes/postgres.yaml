@@ -4,7 +4,12 @@ metadata:
   name: postgres-deposits
 spec:
   serviceName: "postgres"
-  replicas: 2
+  #  using fixed local path for experimentation; in prod increase to 3 and accordingly set persistent volume
+  #  Kubernetes supports hostPath for development and testing on a single-node cluster.
+  #  A hostPath PersistentVolume uses a file or directory on the Node to emulate network-attached storage.
+  #  In a production cluster, you would not use hostPath.
+  #  Reference: https://kubernetes.io/docs/tasks/configure-pod-container/configure-persistent-volume-storage/#create-a-persistentvolume
+  replicas: 1
   selector:
     matchLabels:
       app: postgres
@@ -15,7 +20,7 @@ spec:
     spec:
       containers:
         - name: postgres
-          image: postgres:11.1-alpine
+          image: postgres:13-alpine
           env:
             - name: POSTGRES_PASSWORD
               valueFrom:

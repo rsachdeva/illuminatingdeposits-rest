@@ -37,7 +37,9 @@ func Seed(db *sqlx.DB) error {
 	}
 
 	if _, err := tx.Exec(seeds); err != nil {
+		log.Println("tx exec error", err)
 		if err := tx.Rollback(); err != nil {
+			log.Println("tx rollback error", err)
 			return err
 		}
 		return err

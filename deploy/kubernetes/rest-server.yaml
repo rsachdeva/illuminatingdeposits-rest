@@ -18,6 +18,7 @@ spec:
       containers:
         - name: restserversvc
           image: rsachdeva/illuminatingdeposits.rest.server:v1.4.0
+          # use imagePullPolicy: Never for always using the same tagged image locally
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 3000
